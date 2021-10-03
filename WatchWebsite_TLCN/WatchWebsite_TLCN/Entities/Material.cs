@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 
 namespace WatchWebsite_TLCN.Entities
 {
-    [Table("Role")]
-    public class Role
+    [Table("Material")]
+    public class Material
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int RoleId { get; set; }
+        public int MaterialId { get; set; }
         [Required]
-        public string RoleName { get; set; }
+        public string MaterialValue { get; set; }
 
-        public virtual ICollection<User_Role> User_Roles { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
+
 
     }
 }

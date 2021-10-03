@@ -9,6 +9,20 @@
     <Compile Remove="Migrations\20210925100334_DbInit.Designer.cs" />
     <Compile Remove="Migrations\20210925100501_DbInit.cs" />
     <Compile Remove="Migrations\20210925100501_DbInit.Designer.cs" />
+    <Compile Remove="Migrations\20210925102141_DbInit.cs" />
+    <Compile Remove="Migrations\20210925102141_DbInit.Designer.cs" />
+    <Compile Remove="Migrations\20211003102445_DbInit.cs" />
+    <Compile Remove="Migrations\20211003102445_DbInit.Designer.cs" />
+    <Compile Remove="Migrations\20211003104000_DbInit.cs" />
+    <Compile Remove="Migrations\20211003104000_DbInit.Designer.cs" />
+    <Compile Remove="Migrations\20211003120450_DbInit.cs" />
+    <Compile Remove="Migrations\20211003120450_DbInit.Designer.cs" />
+    <Compile Remove="Migrations\20211003120851_DbInit.cs" />
+    <Compile Remove="Migrations\20211003120851_DbInit.Designer.cs" />
+    <Compile Remove="Migrations\20211003121358_DbInit.cs" />
+    <Compile Remove="Migrations\20211003121358_DbInit.Designer.cs" />
+    <Compile Remove="Migrations\20211003121448_DbInit.cs" />
+    <Compile Remove="Migrations\20211003121448_DbInit.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,10 +36,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 

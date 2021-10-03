@@ -16,5 +16,8 @@ namespace WatchWebsite_TLCN.Entities
 
         [Required]
         public string EnergyValue { get; set; }
+
+        public virtual ICollection<Product> Products { get; set; }
+
     }
 }
