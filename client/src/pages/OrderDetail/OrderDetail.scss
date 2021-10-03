@@ -1,0 +1,25 @@
+.orderDetail {
+    padding-top: 65px;
+    max-width: 980px;
+    padding-bottom: 36px;
+    margin: auto;
+    @media (max-width: 1006px) {
+        padding-top: 56px;
+    }
+    .ant-row {
+        margin-bottom: 12px;
+    }
+    div{
+        font-size: 18px;
+    }
+    .total {
+        float: right;
+        margin-top: 20px;
+        span {
+            font-size: 16px;
+            font-weight: 400;
+            margin-right: 12px;
+        }
+        font-weight: 500;
+    }
+}

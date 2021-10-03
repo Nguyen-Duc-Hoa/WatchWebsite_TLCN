@@ -1,0 +1,30 @@
+@mixin flex() {
+    display: flex;
+    align-items: center;
+}
+
+.menu {
+    font-weight: 500;
+    height: 100%;
+    width: 40%;
+    display: flex;
+    .menu__item {
+        @include flex();
+        padding: 20px 16px;
+        @media (max-width: 1006px) {
+            display: none;
+        }
+        span {
+            font-size: 16px;
+        }
+    }
+    .hamburger {
+        @include flex();
+        font-size: 22px;
+        display: none;
+        cursor: pointer;
+        @media (max-width: 1006px) {
+            display: flex;
+        }
+    }
+}

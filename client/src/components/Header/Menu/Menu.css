@@ -1,0 +1,49 @@
+.menu {
+  font-weight: 500;
+  height: 100%;
+  width: 40%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.menu .menu__item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 20px 16px;
+}
+
+@media (max-width: 1006px) {
+  .menu .menu__item {
+    display: none;
+  }
+}
+
+.menu .menu__item span {
+  font-size: 16px;
+}
+
+.menu .hamburger {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 22px;
+  display: none;
+  cursor: pointer;
+}
+
+@media (max-width: 1006px) {
+  .menu .hamburger {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+}
+/*# sourceMappingURL=Menu.css.map */
