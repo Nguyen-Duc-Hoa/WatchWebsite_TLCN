@@ -1,0 +1,80 @@
+@mixin boder() {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.shipping {
+    padding-top: 65px;
+    @media (max-width: 1006px) {
+        padding-top: 56px;
+    }
+    .shipping__info {
+        display: flex;
+        justify-content: space-between;
+        padding: 35px;
+        @media (max-width: 1080px) {
+            flex-direction: column-reverse;
+        }
+        @media (max-width: 860px) {
+            padding: 2rem 0;
+        }
+        .info__content {
+            width: 50%;
+            padding: 0 2.5rem;
+            @media (max-width: 1080px) {
+                padding: 0;
+                width: 100%;
+            }
+            .content__top {
+                @include boder();
+                position: relative;
+                margin-bottom: 34px;
+                .content__item {
+                    width: 100%;
+                    display: flex;
+                    font-size: 16px;
+                    align-items: center;
+                    &--first {
+                        border-bottom: 1px solid #ccc;
+                    }
+                    .title {
+                        padding: 10px 25px;
+                    }
+                    .text {
+                        flex: 1;
+                        padding: 10px 0;
+                    }
+                    a {
+                        padding: 10px 25px;
+                    }
+                }
+            }
+            .heading {
+                font-size: 20px;
+                margin-bottom: 18px;
+            }
+            .content__bottom {
+                @include boder();
+                display: flex;
+                align-items: center;
+                font-size: 16px;
+                margin-bottom: 18px;
+                .circle {
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;
+                    background-color: white;
+                    position: relative;
+                    border: 6px solid black;
+                    margin: 0 10px 0 25px;
+                }
+                .method {
+                    flex: 1;
+                }
+                .price {
+                    padding: 10px 25px;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,33 @@
+.orderDetail {
+  padding-top: 65px;
+  max-width: 980px;
+  padding-bottom: 36px;
+  margin: auto;
+}
+
+@media (max-width: 1006px) {
+  .orderDetail {
+    padding-top: 56px;
+  }
+}
+
+.orderDetail .ant-row {
+  margin-bottom: 12px;
+}
+
+.orderDetail div {
+  font-size: 18px;
+}
+
+.orderDetail .total {
+  float: right;
+  margin-top: 20px;
+  font-weight: 500;
+}
+
+.orderDetail .total span {
+  font-size: 16px;
+  font-weight: 400;
+  margin-right: 12px;
+}
+/*# sourceMappingURL=OrderDetail.css.map */
