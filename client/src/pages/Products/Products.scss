@@ -1,4 +1,8 @@
 .products {
+    padding-top: 65px;
+    @media (max-width: 1006px) {
+        padding-top: 56px;
+    }
     .banner {
         width: 100%;
         padding: 0 60px 0;

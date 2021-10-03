@@ -57,6 +57,8 @@ section.header {
             top: 62%;
         }
         .dropdown-account {
+            background-color: white;
+            z-index: 4;
             transition: all 0.3s;
             font-size: 16px;
             font-weight: 500;

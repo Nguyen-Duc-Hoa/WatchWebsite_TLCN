@@ -1,89 +1,3 @@
-$base-line-height: 28;
-$color-primary: #000000;
-$plyr-color-main: #000000;
-$color-primary-darker: #333333;
-$color-body-text: #000000;
-$color-heading-text: #000000;
-$color-sub-text: #666666;
-$color-text-link: #000000;
-$color-text-link-hover: #999999;
-$color-btn-bg: #000000;
-$color-btn-bg-hover: #000000;
-$color-btn-text: #ffffff;
-$color-btn-text-hover: #ffffff;
-$btn-letter-spacing: 0px;
-$btn-border-radius: 5px;
-$btn-border-width: 1px;
-$btn-line-height: 23px;
-$product-title-color: #000000;
-$product-sale-price-color: #666666;
-$product-regular-price-color: #000000;
-$product-type-color: #666666;
-$product-desc-color: #666666;
-$color-topbar-background: #ffffff;
-$color-topbar-text: #000000;
-$color-menu-background: #000000;
-$color-menu-text: #f8f8f8;
-$color-border: #dedede;
-$color-footer-text: #000000;
-$color-footer-subtext: #666666;
-$color-footer-background: #f5f5f5;
-$color-footer-link: #666666;
-$color-footer-link-hover: #000000;
-$color-footer-background-mobile: #f5f5f5;
-$color-footer-bottom-text: #000;
-$color-footer-bottom-background: #f5f5f5;
-$color-footer-bottom-background-mobile: #f5f5f5;
-$color-header-text: #000000;
-$color-header-transparent-text: #000000;
-$color-main-background: #ffffff;
-$color-field-background: #ffffff;
-$color-header-background: #ffffff;
-$color-cart-wishlist-count: #ffffff;
-$bg-cart-wishlist-count: #da3f3f;
-$swatch-item-background-default: #f7f8fa;
-$text-gray-400: #777777;
-$text-gray-9b: #9b9b9b;
-$text-black: #000000;
-$text-white: #ffffff;
-$bg-gray-400: #f7f8fa;
-$bg-black: #000000;
-$rounded-full: 9999px;
-$border-color-1: #eeeeee;
-$border-color-2: #b2b2b2;
-$border-color-3: #d2d2d2;
-$border-color-4: #737373;
-$color-secondary: #666666;
-$color-success: #3a8735;
-$color-warning: #ff706b;
-$color-info: #959595;
-$color-disabled: #cecece;
-$bg-disabled: #f7f7f7;
-$bg-hover: #737373;
-$bg-color-tooltip: #000000;
-$text-color-tooltip: #ffffff;
-$color-image-overlay: #000000;
-$opacity-image-overlay: 0.2;
-$theme-shadow: 0 5px 15px 0 rgba(0, 0, 0, 0.07);
-$arrow-select-box: url(//cdn.shopify.com/s/files/1/0591/1350/4958/t/2/assets/ar-down.svg?v=9272826455844137785);
-$font-base-size: 16px;
-$font-btn-size: 16px;
-$font-btn-weight: 500;
-$font-h1-desktop: 54;
-$font-h1-mobile: 50;
-$font-h2-desktop: 42;
-$font-h2-mobile: 37;
-$font-h3-desktop: 31;
-$font-h3-mobile: 28;
-$font-h4-desktop: 27;
-$font-h4-mobile: 24;
-$font-h5-desktop: 23;
-$font-h5-mobile: 20;
-$font-h6-desktop: 21;
-$font-h6-mobile: 19;
-$arrow-down-url: url(//cdn.shopify.com/s/files/1/0591/1350/4958/t/2/assets/arrow-down.svg?v=1575524…);
-$arrow-down-white-url: url(//cdn.shopify.com/s/files/1/0591/1350/4958/t/2/assets/arrow-down-white.svg?v=7053573672783413553) ;
-
 * {
   margin: 0;
   padding: 0;
@@ -92,9 +6,12 @@ $arrow-down-white-url: url(//cdn.shopify.com/s/files/1/0591/1350/4958/t/2/assets
 
 html {
   font-family: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
-  line-height: 1.5;
   overflow-x: hidden;
-  font-size: $font-base-size;
+  font-size: 16px;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 a {
