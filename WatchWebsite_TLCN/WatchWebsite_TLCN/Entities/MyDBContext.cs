@@ -59,8 +59,8 @@ namespace WatchWebsite_TLCN.Entities
             .WithMany(c => c.ReplyComments)
             .OnDelete(DeleteBehavior.Cascade);*/
 
-            //Username is unique
-            modelBuilder.Entity<User>().HasIndex(u => new { u.Username})
+            //Username, email is unique
+            modelBuilder.Entity<User>().HasIndex(u => new { u.Username, u.Email})
             .IsUnique(true);
 
             //BrandName is unique

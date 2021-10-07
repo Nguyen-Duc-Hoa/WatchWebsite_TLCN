@@ -23,9 +23,13 @@
     <Compile Remove="Migrations\20211003121358_DbInit.Designer.cs" />
     <Compile Remove="Migrations\20211003121448_DbInit.cs" />
     <Compile Remove="Migrations\20211003121448_DbInit.Designer.cs" />
+    <Compile Remove="Migrations\20211003122549_DbInit.cs" />
+    <Compile Remove="Migrations\20211003122549_DbInit.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.19" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.19" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.19" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="3.1.19" />
