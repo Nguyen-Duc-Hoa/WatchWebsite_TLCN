@@ -2,7 +2,7 @@ import React from 'react'
 import { Pagination } from 'antd'
 import './Pagination.scss'
 
-function Paging({ currentPage, totalPage, setCurrentPage }) {
+function Paging({ currentPage, totalPage, setCurrentPage, noPadding }) {
     const onShowSizeChange = (current, pageSize) => {
         setCurrentPage(current)
     }
@@ -10,7 +10,7 @@ function Paging({ currentPage, totalPage, setCurrentPage }) {
     return (
         <Pagination
             responsive
-            style={{ padding: '40px', textAlign: 'center' }}
+            style={!noPadding ? { padding: '40px', textAlign: 'center' } : {textAlign: 'right'}}
             current={currentPage}
             showSizeChanger={false}
             total={totalPage * 10}

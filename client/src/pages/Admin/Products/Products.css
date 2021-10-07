@@ -1,0 +1,46 @@
+.adminProducts,
+.adminComments {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.adminProducts .heading,
+.adminComments .heading {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.adminProducts .buttonLayout,
+.adminComments .buttonLayout {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  margin: 16px 0;
+}
+
+.adminProducts .buttonLayout .icon,
+.adminComments .buttonLayout .icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.adminProducts .buttonLayout .ant-btn,
+.adminComments .buttonLayout .ant-btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.adminProducts .ant-table-row-selected,
+.adminComments .ant-table-row-selected {
+  color: white;
+}
+/*# sourceMappingURL=Products.css.map */

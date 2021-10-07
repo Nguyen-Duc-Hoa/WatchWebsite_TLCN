@@ -8,9 +8,10 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk'
 import uiReducer from './store/uiReducer'
 
+
 const composeEnhancers = (process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null) || compose;
 
-const rootReducer = combineReducers({ui: uiReducer})
+const rootReducer = combineReducers({ ui: uiReducer })
 
 const store = createStore(rootReducer, composeEnhancers(
   applyMiddleware(thunk)
@@ -20,7 +21,7 @@ const store = createStore(rootReducer, composeEnhancers(
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+        <App />
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

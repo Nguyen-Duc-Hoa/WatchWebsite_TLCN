@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,cAAc,CAAC;EACX,WAAW,EAAE,IAAI;EACjB,cAAc,EAAE,IAAI;CAYvB;;AAdD,AAGI,cAHU,CAGV,QAAQ,CAAC;EACL,SAAS,EAAE,IAAI;EACf,WAAW,EAAE,GAAG;EAChB,aAAa,EAAE,IAAI;CACtB;;AAPL,AAQI,cARU,CAQV,KAAK,CAAC;EACF,SAAS,EAAE,IAAI;EACf,MAAM,EAAE,OAAO;EACf,OAAO,EAAE,KAAK;EACd,MAAM,EAAE,IAAI;CACf",
+    "sources": [
+        "ManageAccount.scss"
+    ],
+    "names": [],
+    "file": "ManageAccount.css"
+}

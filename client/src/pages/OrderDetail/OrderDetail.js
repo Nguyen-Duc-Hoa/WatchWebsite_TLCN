@@ -2,7 +2,8 @@ import React from 'react'
 import './OrderDetail.scss'
 import Breadcrumbing from '../../components/Breadcrumb/Breadcrumb'
 import OrderCard from '../../components/OrderCard/OrderCard'
-import {Row, Col} from 'antd'
+import { Row, Col } from 'antd'
+import OrderState from '../../components/OrderState/OrderState'
 
 const breadcrumbRoute = [
     { name: 'Home', link: '/' },
@@ -28,7 +29,7 @@ const data = {
         },
     ],
     total: 1865.5,
-    status: 'Đã giao',
+    status: 0,
     name: 'Jhong Le',
     address: '1 Vo Van Ngan',
     phone: '0123456798',
@@ -57,7 +58,9 @@ function OrderDetail() {
             </Row>
             <Row>
                 <Col span={6}>Status:</Col>
-                <Col span={18}>{data.status}</Col>
+                <Col span={18}>
+                    <OrderState currentStep={data.status} />
+                </Col>
             </Row>
             {data.product.map((ele, index) =>
                 <OrderCard {...ele} key={index} />

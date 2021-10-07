@@ -5,7 +5,7 @@ import moment from 'moment';
 
 const { TextArea } = Input;
 
-function AddComment() {
+function AddComment({ replyUser }) {
     const [value, setValue] = useState('')
     const [loading, setLoading] = useState(false)
 
@@ -32,26 +32,30 @@ function AddComment() {
             }
             content={
                 <Editor
+                    replyUser={replyUser}
                     handleSubmit={handleSubmit}
                     handleChange={handleChange}
                     loading={loading}
                     value={value} />
-            }/>
+            } />
     )
 }
 
 export default AddComment
 
-function Editor({ handleSubmit, handleChange, loading, value }) {
+function Editor({ handleSubmit, handleChange, loading, value, replyUser }) {
     return (
         <Form
             onSubmit={handleSubmit}
+            initialValues={{content: replyUser}}
         >
-            <Form.Item>
-                <TextArea rows={4} onChange={handleChange} value={value} />
+            <Form.Item
+                name='content'
+            >
+                <TextArea defaultValue={replyUser} rows={4} onChange={handleChange} value={value} />
             </Form.Item>
             <Form.Item>
-                <Button style={{background: '#000', color: 'white'}} htmlType="submit" loading={loading} type="primary">
+                <Button style={{ background: '#000', color: 'white' }} htmlType="submit" loading={loading} type="primary">
                     Add Comment
                 </Button>
             </Form.Item>
