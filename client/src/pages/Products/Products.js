@@ -62,14 +62,14 @@ const products = [
 ]
 
 const breadCrumbRoute = [
-    {link: '/', name: 'Home'},
-    {link: '/Products', name: 'Products'}
+    { name: 'Home', link: '/' },
+    { name: 'Products', link: '/' }
 ]
 
 function Products() {
     return (
         <section className="products">
-            <Breadcrumbing route={breadCrumbRoute}/>
+            <Breadcrumbing route={breadCrumbRoute} />
             <GallaryCard
                 className='banner'
                 image='https://cdn.shopify.com/s/files/1/1063/3618/files/gallerie-003_3024x.jpg?v=1592242046'
