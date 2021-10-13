@@ -81,10 +81,11 @@ namespace WatchWebsite_TLCN.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(nullable: false),
                     Password = table.Column<string>(nullable: false),
+                    Email = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Address = table.Column<string>(nullable: true),
                     State = table.Column<bool>(nullable: false),
-                    Phone = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: false),
                     Birthday = table.Column<string>(nullable: true),
                     Avatar = table.Column<byte[]>(nullable: true)
                 },
@@ -396,9 +397,9 @@ namespace WatchWebsite_TLCN.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_User_Username",
+                name: "IX_User_Username_Email",
                 table: "User",
-                column: "Username",
+                columns: new[] { "Username", "Email" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

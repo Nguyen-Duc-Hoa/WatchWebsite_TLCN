@@ -2,62 +2,90 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly MyDBContext _context;
+        private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
 
-        public AccountController (MyDBContext context)
+        public AccountController (IJwtAuthenticationManager jwtAuthenticationManager, MyDBContext context)
         {
             _context = context;
+            _jwtAuthenticationManager = jwtAuthenticationManager;
         }
+
+
+        [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody]RegisterViewModel model)
+        public async Task<IActionResult> Register([FromBody]Register model)
         {
-
-            var user = new User { Username = model.Username, Password = model.Password, State= true };
-            try
+            //Kiem tra confirm password
+            if(model.Password == model.ConfirmPass)
             {
-                _context.Users.Add(user);
-                var result = await _context.SaveChangesAsync();
-
-
-                if (result.Equals(1))
+                var user = new User { Username = model.Username, Password = model.Password, Phone = model.Phone, Email = model.Email, State = true };
+                try
                 {
-                    return Ok();
+                    _context.Users.Add(user);
+                    var result = await _context.SaveChangesAsync();
+
+
+                    if (result.Equals(1))
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        return BadRequest("Dang ki khong thanh cong");
+                    }
                 }
-                else
+                catch
                 {
                     return BadRequest();
                 }
+
             }
-            catch
-            {
-                return BadRequest();
-            }
+
+            return BadRequest("Xac nhan mat khau sai!");
+           
             
 
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] RegisterViewModel model)
+        public async Task<IActionResult> Login([FromBody] Login model)
         {
-            User user = _context.Users.Where(x => x.Username == model.Username).FirstOrDefault();
-            if(user != null && user.Password == model.Password)
+            string username = model.Username;
+            string password = model.Password;
+            User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
+            if (user == null)
             {
-                return Ok();
+                username = null;
+                password = null;
             }
-            return BadRequest("Dang nhap khong thanh cong");
+            
+            var token = _jwtAuthenticationManager.Authenticate(username, password);
+
+            if(token == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(token);
+            
         }
     }
 }

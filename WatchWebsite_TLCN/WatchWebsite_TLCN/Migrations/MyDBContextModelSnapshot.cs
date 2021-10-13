@@ -329,6 +329,10 @@ namespace WatchWebsite_TLCN.Migrations
                     b.Property<string>("Birthday")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -337,6 +341,7 @@ namespace WatchWebsite_TLCN.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("State")
@@ -348,7 +353,7 @@ namespace WatchWebsite_TLCN.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Username")
+                    b.HasIndex("Username", "Email")
                         .IsUnique();
 
                     b.ToTable("User");
