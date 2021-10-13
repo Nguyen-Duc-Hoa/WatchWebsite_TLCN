@@ -1,5 +1,4 @@
 import React from 'react'
-import './Products.scss'
 import { Button, Space, Table, Tag } from 'antd'
 import Pagination from '../../../components/Pagination/Pagination'
 import { AiOutlineAppstoreAdd, AiTwotoneDelete } from 'react-icons/ai'
@@ -178,17 +177,17 @@ const data = [
 
 const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     },
     getCheckboxProps: (record) => ({
-      // Column configuration not to be checked
-      name: record.name,
+        // Column configuration not to be checked
+        name: record.name,
     }),
-  };
+};
 
 function Products() {
     return (
-        <section className='adminProducts'>
+        <section className='admin'>
             <div className="heading">Products</div>
             <div className="buttonLayout">
                 <Space>
@@ -203,7 +202,7 @@ function Products() {
                 rowSelection={{
                     type: 'checkbox',
                     ...rowSelection,
-                  }}
+                }}
                 pagination={{ position: ['none', 'none'] }}
                 footer={() => (
                     <Pagination

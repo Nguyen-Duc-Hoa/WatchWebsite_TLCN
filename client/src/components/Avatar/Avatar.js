@@ -3,10 +3,13 @@ import { Avatar, Menu, Dropdown } from 'antd'
 import { DownOutlined } from '@ant-design/icons';
 import './Avatar.scss'
 import { RiLogoutCircleRLine } from 'react-icons/ri'
+import { AiOutlineProfile, AiOutlineKey } from 'react-icons/ai'
 
 const menu = (
     <Menu>
-        <Menu.Item danger><RiLogoutCircleRLine /> Log out</Menu.Item>
+        <Menu.Item icon={<AiOutlineProfile />}>Profile</Menu.Item>
+        <Menu.Item icon={<AiOutlineKey />}>Password</Menu.Item>
+        <Menu.Item danger icon={<RiLogoutCircleRLine />}>Log out</Menu.Item>
     </Menu>
 );
 

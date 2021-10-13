@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Form, Input, Button, Select, InputNumber, Row, Col, Space } from 'antd';
-import './Product.scss'
 import UploadImage from '../../../components/UploadImage/UploadImage';
 
 const { Option } = Select;
@@ -28,7 +27,7 @@ function Product() {
     }
 
     return (
-        <section className='adminProduct'>
+        <section className='admin'>
             <div className="heading">Add/Edit product</div>
             <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
                 <Col lg={{ span: 16, order: 2 }} sm={{ span: 24, order: 2 }}>
@@ -38,7 +37,7 @@ function Product() {
                         {...layout}
                         initialValues={{ amount: 1 }}
                         validateMessages={validateMessage}
-                        className='formAdminProduct'
+                        style={{maxWidth: 600}}
                     >
                         <Form.Item
                             name='name'
@@ -183,7 +182,7 @@ function Product() {
                                 <Button type="primary" htmlType="submit">
                                     Submit
                                 </Button>
-                                <Button htmlType="button" onClick={onReset}>
+                                <Button htmlType="button" onClick={onReset} disabled={!image}>
                                     Reset
                                 </Button>
                             </Space>

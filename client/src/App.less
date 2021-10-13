@@ -12,12 +12,13 @@
 
 html {
   font-family: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
-  overflow-x: hidden;
+  // overflow-x: hidden;
   font-size: 16px;
 }
 
 body {
   overflow-x: hidden;
+  width: 100%;
 }
 
 a {
@@ -32,6 +33,38 @@ ul {
 section {
   padding-left: 16px;
   padding-right: 16px;
+}
+
+section.admin {
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+section.admin .heading {
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+section.admin .buttonLayout {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin: 16px 0;
+}
+
+section.admin .ant-table-row-selected {
+  color: white;
+}
+
+section.admin .buttonLayout .icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+section.admin .buttonLayout .ant-btn {
+  display: flex;
+  align-items: center;
 }
 
 @media screen and (min-width: 1024px) {

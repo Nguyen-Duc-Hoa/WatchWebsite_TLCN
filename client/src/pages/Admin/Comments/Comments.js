@@ -1,7 +1,6 @@
 import React from 'react'
 import { Table, Button } from 'antd'
 import Pagination from '../../../components/Pagination/Pagination'
-import '../Products/Products.scss'
 import { AiTwotoneDelete } from 'react-icons/ai'
 import AddComment from '../../../components/AddComment/AddComment'
 
@@ -84,7 +83,7 @@ const rowSelection = {
 
 function Comments() {
     return (
-        <section className='adminComments'>
+        <section className='admin'>
             <div className="heading">Comments</div>
             <div className="buttonLayout">
                 <Button size='large' type='danger'><AiTwotoneDelete className='icon' /> Delete</Button>

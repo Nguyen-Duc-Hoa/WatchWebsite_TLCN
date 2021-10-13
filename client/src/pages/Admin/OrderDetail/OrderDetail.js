@@ -53,7 +53,7 @@ function OrderDetail() {
     const [currentStep, setCurrentStep] = useState(0)
 
     return (
-        <section className='orderDetailAdmin'>
+        <section className='admin orderDetailAdmin'>
             <div className="heading">Order # 3154</div>
             <Divider />
             <div className="personalInfo">

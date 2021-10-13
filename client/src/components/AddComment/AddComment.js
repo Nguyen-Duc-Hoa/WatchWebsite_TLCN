@@ -52,7 +52,7 @@ function Editor({ handleSubmit, handleChange, loading, value, replyUser }) {
             <Form.Item
                 name='content'
             >
-                <TextArea defaultValue={replyUser} rows={4} onChange={handleChange} value={value} />
+                <TextArea rows={4} onChange={handleChange} value={value} />
             </Form.Item>
             <Form.Item>
                 <Button style={{ background: '#000', color: 'white' }} htmlType="submit" loading={loading} type="primary">

@@ -13,6 +13,7 @@ import OrderDetail from './pages/OrderDetail/OrderDetail';
 import AdminMain from './pages/Admin/AdminMain/AdminMain';
 import PublicRoute from './components/Routes/PublicRoute';
 import UserLayout from './components/Layouts/UserLayout';
+import Profile from './pages/Profile/Profile';
 
 function App() {
   return (
@@ -65,8 +66,13 @@ function App() {
             component={OrderDetail}
             layout={UserLayout}
           />
+          <PublicRoute
+            path='/profile'
+            component={Profile}
+            layout={UserLayout}
+          />
           <Route
-            path='/employee'
+            path='/admin'
             component={AdminMain}
           />
         </Switch>

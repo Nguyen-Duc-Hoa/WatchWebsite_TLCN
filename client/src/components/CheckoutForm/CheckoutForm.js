@@ -32,7 +32,7 @@ function CheckoutForm() {
                     <Col span={12}>
                         <Form.Item
                             name='firstName'
-                            rules={[{ required: true, message: 'First name is required' }]}
+                            rules={[{ required: true, message: 'First name is required!' }]}
                         >
                             <Input placeholder='First name' />
                         </Form.Item>
@@ -40,7 +40,7 @@ function CheckoutForm() {
                     <Col span={12}>
                         <Form.Item
                             name='lastName'
-                            rules={[{ required: true, message: 'Last name is required' }]}
+                            rules={[{ required: true, message: 'Last name is required!' }]}
                         >
                             <Input placeholder='Last name' />
                         </Form.Item>
@@ -49,13 +49,25 @@ function CheckoutForm() {
 
                 <Form.Item
                     name='address'
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: 'Address is required!' }]}
                 >
                     <Input placeholder='Address' />
                 </Form.Item>
 
                 <Form.Item
                     name='phone'
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Phone is required!'
+                        },
+                        {
+                            validator: (_, value) => {
+                                const regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+                                return regex.test(value) ? Promise.resolve() : Promise.reject(new Error("Phone Number is not valid!"))
+                            }
+                        }
+                    ]}
                 >
                     <Input placeholder='Phone' />
                 </Form.Item>

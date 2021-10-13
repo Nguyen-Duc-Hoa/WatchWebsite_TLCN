@@ -39,6 +39,14 @@ function Register() {
                                 required: true,
                                 message: 'Please input your username!'
                             },
+                            {
+                                min: 6,
+                                message: 'Username length must be more than 6 characters!'
+                            },
+                            {
+                                max: 15,
+                                message: 'Username length must be less than 15 characters!'
+                            }
                         ]}
                     >
                         <Input size='large' placeholder='Username' />

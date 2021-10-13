@@ -10,9 +10,13 @@ function PublicRoute({ component: Component, path, exact, layout: Layout }) {
             exact={exact}
             render={(props) => {
                 return (
-                    <Layout>
+                    Layout
+                        ?
+                        <Layout>
+                            <Component {...props} />
+                        </Layout>
+                        :
                         <Component {...props} />
-                    </Layout>
                 )
             }}
         />

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import './Order.scss'
 import { Table, Tag } from 'antd';
 import Pagination from '../../../components/Pagination/Pagination'
 
@@ -121,7 +120,7 @@ function Order() {
     ])
 
     return (
-        <section className='order'>
+        <section className='admin'>
             <div className="heading">Order</div>
             <Table
                 columns={columns}
@@ -133,8 +132,8 @@ function Order() {
                         noPadding={true}
                         totalPage={5} />
                 )}
-                bordered={true} />
-
+                bordered={true}
+            />
         </section>
     )
 }
