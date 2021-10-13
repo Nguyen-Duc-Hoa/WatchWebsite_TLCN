@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Intefaces;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -14,10 +15,12 @@ namespace WatchWebsite_TLCN.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly MyDBContext _context;
+        private readonly IProductsRepository _product;
 
-        public ProductsController(MyDBContext context)
+        public ProductsController(MyDBContext context, IProductsRepository product)
         {
             _context = context;
+            _product = product;
         }
 
         // GET: api/Products
@@ -118,6 +121,13 @@ namespace WatchWebsite_TLCN.Controllers
         private bool ProductExists(string id)
         {
             return _context.Products.Any(e => e.Id == id);
+        }
+
+        [HttpGet]
+        [Route("PopularProduct")]
+        public IEnumerable<Product> GetPopularProducts()
+        {
+            return _product.GetPopularProduct().ToList();
         }
     }
 }

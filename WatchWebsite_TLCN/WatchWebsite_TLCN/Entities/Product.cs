@@ -19,27 +19,27 @@ namespace WatchWebsite_TLCN.Entities
         [Required]
         public int Amount { get; set; }
 
-        [Required]
+        //[Required]
         public byte[] Image { get; set; }
 
         public string Description { get; set; }
 
-        [Required]
+        //[Required]
         public int BrandId { get; set; }
 
-        [Required]
+        //[Required]
         public int Gender { get; set; }
 
-        [Required]
+        //[Required]
         public int MaterialId { get; set; }
 
-        [Required]
+        //[Required]
         public int WaterResistanceId { get; set; }
 
-        [Required]
+        //[Required]
         public int SizeId { get; set; }
 
-        [Required]
+        //[Required]
         public int EnergyId { get; set; }
 
         [ForeignKey("BrandId")]

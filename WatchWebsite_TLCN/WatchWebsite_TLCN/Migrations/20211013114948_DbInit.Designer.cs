@@ -10,7 +10,7 @@ using WatchWebsite_TLCN.Entities;
 namespace WatchWebsite_TLCN.Migrations
 {
     [DbContext(typeof(MyDBContext))]
-    [Migration("20211007134021_DbInit")]
+    [Migration("20211013114948_DbInit")]
     partial class DbInit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -138,11 +138,9 @@ namespace WatchWebsite_TLCN.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DeliveryStatus")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -152,11 +150,9 @@ namespace WatchWebsite_TLCN.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("PaymentStatus")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Total")
@@ -221,7 +217,6 @@ namespace WatchWebsite_TLCN.Migrations
                         .HasColumnType("int");
 
                     b.Property<byte[]>("Image")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("MaterialId")

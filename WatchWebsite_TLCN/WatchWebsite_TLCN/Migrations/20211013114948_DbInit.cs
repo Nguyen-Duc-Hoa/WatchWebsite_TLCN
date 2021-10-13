@@ -117,11 +117,11 @@ namespace WatchWebsite_TLCN.Migrations
                     OrderDate = table.Column<DateTime>(nullable: false),
                     Total = table.Column<float>(nullable: false),
                     Transaction = table.Column<string>(nullable: true),
-                    PaymentStatus = table.Column<string>(nullable: false),
-                    Address = table.Column<string>(nullable: false),
+                    PaymentStatus = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: false),
-                    DeliveryStatus = table.Column<string>(nullable: false)
+                    Phone = table.Column<string>(nullable: true),
+                    DeliveryStatus = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -165,7 +165,7 @@ namespace WatchWebsite_TLCN.Migrations
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Amount = table.Column<int>(nullable: false),
-                    Image = table.Column<byte[]>(nullable: false),
+                    Image = table.Column<byte[]>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     BrandId = table.Column<int>(nullable: false),
                     Gender = table.Column<int>(nullable: false),
