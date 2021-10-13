@@ -17,24 +17,23 @@ namespace WatchWebsite_TLCN.Repository
             _context = context;
         }
 
-        public List<Product> GetPopularProduct()
+        public IEnumerable<Product> GetPopularProduct()
         {
             //Tinh so luong ban theo tung san pham
-            var countProduct = from orderDetails in _context.OrderDetails
-                               group orderDetails by orderDetails.ProductId into g
-                               select new CountSellProduct()
-                               {
-                                   ProductId = g.First().ProductId,
-                                   Count = g.Sum(x => x.Count)
-                               };
 
-            var product = from p in _context.Products
-                          join c in countProduct on p.Id equals c.ProductId
-                          orderby c.Count descending
-                          select p;
+            var product = (from p in _context.Products
+                           join c in (from orderDetails in _context.OrderDetails
+                                      group orderDetails by orderDetails.ProductId into g
+                                      select new CountSellProduct()
+                                      {
+                                          ProductId = g.Key,
+                                          Count = g.Sum(x => x.Count)
+                                      })
+                                      on p.Id equals c.ProductId
+                           orderby c.Count descending
+                           select p).Take(10).ToList();
 
-
-            return product.ToList();
+            return product;
         }
     }
 }

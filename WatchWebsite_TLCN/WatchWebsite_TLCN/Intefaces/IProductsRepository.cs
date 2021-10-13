@@ -8,6 +8,6 @@ namespace WatchWebsite_TLCN.Intefaces
 {
     public interface IProductsRepository
     {
-        List<Product> GetPopularProduct();
+        IEnumerable<Product> GetPopularProduct();
     }
 }
