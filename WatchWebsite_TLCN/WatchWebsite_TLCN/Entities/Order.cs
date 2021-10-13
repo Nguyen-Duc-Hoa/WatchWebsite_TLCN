@@ -17,26 +17,26 @@ namespace WatchWebsite_TLCN.Entities
         [Required]
         public int UserId { get; set; }
 
-        [Required]
+        //[Required]
         public DateTime OrderDate { get; set; }
 
-        [Required]
+        //[Required]
         public float Total { get; set; }
 
         public string Transaction { get; set; }
 
-        [Required]
+        //[Required]
         public string PaymentStatus { get; set; }
 
-        [Required]
+        //[Required]
         public string Address { get; set; }
 
         public string Name { get; set; }
 
-        [Required]
+        //[Required]
         public string Phone { get; set; }
 
-        [Required]
+        //[Required]
         public string DeliveryStatus { get; set; }
 
         [ForeignKey("UserId")]

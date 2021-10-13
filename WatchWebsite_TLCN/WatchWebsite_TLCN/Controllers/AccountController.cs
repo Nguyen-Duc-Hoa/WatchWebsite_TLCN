@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Methods;
 using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
@@ -18,21 +20,23 @@ namespace WatchWebsite_TLCN.Controllers
     {
         private readonly MyDBContext _context;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
+        private readonly ITokenRefresher _tokenRefresher;
 
-        public AccountController (IJwtAuthenticationManager jwtAuthenticationManager, MyDBContext context)
+        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, ITokenRefresher tokenRefresher, MyDBContext context)
         {
             _context = context;
             _jwtAuthenticationManager = jwtAuthenticationManager;
+            _tokenRefresher = tokenRefresher;
         }
 
 
         [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody]Register model)
+        public async Task<IActionResult> Register([FromBody] Register model)
         {
             //Kiem tra confirm password
-            if(model.Password == model.ConfirmPass)
+            if (model.Password == model.ConfirmPass)
             {
                 var user = new User { Username = model.Username, Password = model.Password, Phone = model.Phone, Email = model.Email, State = true };
                 try
@@ -58,8 +62,8 @@ namespace WatchWebsite_TLCN.Controllers
             }
 
             return BadRequest("Xac nhan mat khau sai!");
-           
-            
+
+
 
         }
 
@@ -76,8 +80,24 @@ namespace WatchWebsite_TLCN.Controllers
                 username = null;
                 password = null;
             }
-            
+
             var token = _jwtAuthenticationManager.Authenticate(username, password);
+
+            if (token == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(token);
+
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Refresh")]
+        public IActionResult Refresh([FromBody] RefreshCred refreshCred)
+        {
+            var token = _tokenRefresher.Refresh(refreshCred);
 
             if(token == null)
             {
@@ -85,7 +105,6 @@ namespace WatchWebsite_TLCN.Controllers
             }
 
             return Ok(token);
-            
         }
     }
 }

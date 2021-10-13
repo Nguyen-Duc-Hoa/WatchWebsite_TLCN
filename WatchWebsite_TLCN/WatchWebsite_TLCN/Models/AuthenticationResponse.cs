@@ -5,15 +5,7 @@ using System.Threading.Tasks;
 
 namespace WatchWebsite_TLCN.Models
 {
-    public class Login
-    {
-        public string Username { get; set; }
-
-        public string Password { get; set; }
-
-    }
-
-    public class RefreshCred
+    public class AuthenticationResponse
     {
         public string JwtToken { get; set; }
         public string RefreshToken { get; set; }

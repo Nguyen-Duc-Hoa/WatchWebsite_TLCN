@@ -16,6 +16,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Intefaces;
+using WatchWebsite_TLCN.Methods;
+using WatchWebsite_TLCN.Repository;
 
 namespace WatchWebsite_TLCN
 {
@@ -46,6 +49,7 @@ namespace WatchWebsite_TLCN
 
 
             services.AddControllers();
+            services.AddScoped<IProductsRepository, ProductsRepository>();
 
             services.AddDbContext<MyDBContext>(option =>
             {
@@ -53,7 +57,8 @@ namespace WatchWebsite_TLCN
 
             });
 
-            var key = "this is my test key";
+            var tokenKey = "this is my test key";
+            var key = Encoding.ASCII.GetBytes(tokenKey);
 
             services.AddAuthentication(x =>
             {
@@ -66,13 +71,17 @@ namespace WatchWebsite_TLCN
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false    
                 };
             });
 
-            services.AddSingleton<IJwtAuthenticationManager>(new JwtAuthenticationManager(key));
+            services.AddSingleton<ITokenRefresher>(x => 
+                new TokenRefresher(key, x.GetService<IJwtAuthenticationManager>()));
+            services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
+            services.AddSingleton<IJwtAuthenticationManager>(x => 
+                new JwtAuthenticationManager(tokenKey, x.GetService<IRefreshTokenGenerator>()));
 
         }
 
