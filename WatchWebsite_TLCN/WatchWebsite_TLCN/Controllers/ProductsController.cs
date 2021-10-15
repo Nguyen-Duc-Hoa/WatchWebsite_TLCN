@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -128,6 +129,14 @@ namespace WatchWebsite_TLCN.Controllers
         public IEnumerable<Product> GetPopularProducts()
         {
             return _product.GetPopularProduct().ToList();
+        }
+
+
+        [HttpGet]
+        [Route("ProductDetail/{id}")]
+        public ProductDetail GetProductDetail(string id)
+        {
+            return _product.GetProductDetail(id);
         }
     }
 }
