@@ -314,3 +314,5 @@ E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\net
 E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.dll
 E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.pdb
 E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.genruntimeconfig.cache
+E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\AutoMapper.dll
+E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

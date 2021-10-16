@@ -19,6 +19,9 @@ namespace WatchWebsite_TLCN.Entities
         [Required]
         public int Amount { get; set; }
 
+        [Required]
+        public double Price { get; set; }
+
         //[Required]
         public byte[] Image { get; set; }
 
@@ -59,8 +62,6 @@ namespace WatchWebsite_TLCN.Entities
 
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-
-        
 
     }
 }

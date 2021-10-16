@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -16,12 +20,14 @@ namespace WatchWebsite_TLCN.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly IProductsRepository _product;
 
-        public ProductsController(IUnitOfWork unitOfWork, IProductsRepository product)
+        public ProductsController(IUnitOfWork unitOfWork, IProductsRepository product, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _product = product;
+            _mapper = mapper;
         }
 
         // GET: api/Products
@@ -129,6 +135,28 @@ namespace WatchWebsite_TLCN.Controllers
         public IEnumerable<Product> GetPopularProducts()
         {
             return _product.GetPopularProduct().ToList();
+        }
+
+        [HttpGet]
+        [Route("Search")]
+        public async Task<IActionResult> SearchProducts(int currentPage, string searchKey)
+        {
+            Expression<Func<Product, bool>> expression = null;
+            expression = p => p.Name.Contains(searchKey);
+
+            var result = await _unitOfWork.Products.GetAllWithPagination(
+                expression: expression,
+                orderBy: p => p.OrderBy(x => x.Name),
+                pagination: new Pagination { CurrentPage = currentPage });
+
+            var listProductDTO = _mapper.Map<List<ProductDTO>>(result.Item1);
+
+            return Ok(new ListProductDTO
+            {
+                Products = listProductDTO,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
         }
     }
 }

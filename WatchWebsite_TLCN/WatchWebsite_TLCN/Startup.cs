@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using WatchWebsite_TLCN.Configuration;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
@@ -86,6 +87,9 @@ namespace WatchWebsite_TLCN
             services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
             services.AddSingleton<IJwtAuthenticationManager>(x => 
                 new JwtAuthenticationManager(tokenKey, x.GetService<IRefreshTokenGenerator>()));
+
+            // Đăng ký sử dụng AutoMapper
+            services.AddAutoMapper(typeof(MapperInitializer));
 
         }
 
