@@ -33,7 +33,6 @@ namespace WatchWebsite_TLCN.Controllers
         public async Task<ActionResult<Brand>> GetBrand(int id)
         {
             var brand = await _unitOfWork.Brands.Get(b => b.BrandId == id);
-
             if (brand == null)
             {
                 return NotFound();
@@ -54,13 +53,14 @@ namespace WatchWebsite_TLCN.Controllers
             }
 
             _unitOfWork.Brands.Update(brand);
+
             try
             {
                 await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!(await _unitOfWork.Brands.IsExist(id)))
+                if (!(await BrandExists(id)))
                 {
                     return NotFound();
                 }
@@ -95,7 +95,7 @@ namespace WatchWebsite_TLCN.Controllers
                 return NotFound();
             }
 
-            _unitOfWork.Brands.Delete(id);
+            await _unitOfWork.Brands.Delete(id);
             await _unitOfWork.Save();
 
             return brand;
@@ -103,7 +103,7 @@ namespace WatchWebsite_TLCN.Controllers
 
         private Task<bool> BrandExists(int id)
         {
-            return _unitOfWork.Brands.IsExist(id);
+            return _unitOfWork.Brands.IsExist<int>(id);
         }
     }
 }

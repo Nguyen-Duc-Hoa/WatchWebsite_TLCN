@@ -19,7 +19,7 @@ namespace WatchWebsite_TLCN.Repository
             this._context = context;
             this._db = _context.Set<T>();
         }
-        public async Task Delete(int id)
+        public async Task Delete<A>(A id)
         {
             var entity = await _db.FindAsync(id);
             _db.Remove(entity);
@@ -113,7 +113,7 @@ namespace WatchWebsite_TLCN.Repository
             await _db.AddRangeAsync(entities);
         }
 
-        public async Task<bool> IsExist(int id)
+        public async Task<bool> IsExist<A>(A id)
         {
             var entities = await _db.FindAsync(id);
             if(entities != null)

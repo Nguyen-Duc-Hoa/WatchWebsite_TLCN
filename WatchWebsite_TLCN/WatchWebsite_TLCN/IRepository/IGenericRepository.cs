@@ -26,9 +26,9 @@ namespace WatchWebsite_TLCN.IRepository
 
         Task Insert(T entity);
         Task InsertRange(IEnumerable<T> entities);
-        Task Delete(int id);
+        Task Delete<A>(A id);
         void DeleteRange(IEnumerable<T> entities);
         void Update(T entity);
-        Task<bool> IsExist(int id);
+        Task<bool> IsExist<A>(A id);
     }
 }
