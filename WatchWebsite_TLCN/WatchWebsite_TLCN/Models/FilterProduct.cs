@@ -7,5 +7,9 @@ namespace WatchWebsite_TLCN.Models
 {
     public class FilterProduct
     {
+        public string SortBy { get; set; }
+        public int Gender { get; set; } = -1;
+        public string Prices { get; set; }
+        public string[] Brands { get; set; }
     }
 }

@@ -13,6 +13,7 @@ using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
 using WatchWebsite_TLCN.Models;
 
+
 namespace WatchWebsite_TLCN.Controllers
 {
     [Route("api/[controller]")]
@@ -137,7 +138,7 @@ namespace WatchWebsite_TLCN.Controllers
             return _product.GetPopularProduct().ToList();
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("Search")]
         public async Task<IActionResult> SearchProducts(int currentPage, string searchKey)
         {
@@ -148,6 +149,44 @@ namespace WatchWebsite_TLCN.Controllers
                 expression: expression,
                 orderBy: p => p.OrderBy(x => x.Name),
                 pagination: new Pagination { CurrentPage = currentPage });
+
+            var listProductDTO = _mapper.Map<List<ProductDTO>>(result.Item1);
+
+            return Ok(new ListProductDTO
+            {
+                Products = listProductDTO,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
+        }
+
+        [HttpPost]
+        [Route("FilterProduct")]
+        public async Task<IActionResult> Filter(int currentPage, [FromBody] FilterProduct filter)
+        {
+            double[] limit = new double[2];
+            limit[0] = 0;
+            limit[1] = int.MaxValue;
+            if(filter.Prices != null)
+            {
+                /*
+                 * Ex:
+                 * 30/90
+                 * 90/200
+                 * 200/-1
+                 */
+                limit = Array.ConvertAll(filter.Prices.Split('/'), Double.Parse);
+                if(limit[1] == -1)
+                {
+                    limit[1] = int.MaxValue;
+                }
+            }
+            var result = await _product.GetFilterProduct(
+                limit, 
+                filter.Brands, 
+                filter.Gender, 
+                filter.SortBy,
+                new Pagination { CurrentPage = currentPage });
 
             var listProductDTO = _mapper.Map<List<ProductDTO>>(result.Item1);
 
