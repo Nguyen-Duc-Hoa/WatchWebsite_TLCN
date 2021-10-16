@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
+using WatchWebsite_TLCN.IRepository;
 using WatchWebsite_TLCN.Methods;
 using WatchWebsite_TLCN.Repository;
 
@@ -34,6 +35,9 @@ namespace WatchWebsite_TLCN
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Đăng ký UnitOfWork
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
             //Enable Cors
             services.AddCors(c =>
             {

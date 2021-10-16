@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.IRepository;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -13,25 +14,25 @@ namespace WatchWebsite_TLCN.Controllers
     [ApiController]
     public class BrandsController : ControllerBase
     {
-        private readonly MyDBContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BrandsController(MyDBContext context)
+        public BrandsController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Brands
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
         {
-            return await _context.Brands.ToListAsync();
+            return await _unitOfWork.Brands.GetAll();
         }
 
         // GET: api/Brands/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Brand>> GetBrand(int id)
         {
-            var brand = await _context.Brands.FindAsync(id);
+            var brand = await _unitOfWork.Brands.Get(b => b.BrandId == id);
 
             if (brand == null)
             {
@@ -52,15 +53,14 @@ namespace WatchWebsite_TLCN.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(brand).State = EntityState.Modified;
-
+            _unitOfWork.Brands.Update(brand);
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BrandExists(id))
+                if (!(await _unitOfWork.Brands.IsExist(id)))
                 {
                     return NotFound();
                 }
@@ -79,8 +79,8 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {
-            _context.Brands.Add(brand);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Brands.Insert(brand);
+            await _unitOfWork.Save();
 
             return CreatedAtAction("GetBrand", new { id = brand.BrandId }, brand);
         }
@@ -89,21 +89,21 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Brand>> DeleteBrand(int id)
         {
-            var brand = await _context.Brands.FindAsync(id);
+            var brand = await _unitOfWork.Brands.Get(b => b.BrandId == id);
             if (brand == null)
             {
                 return NotFound();
             }
 
-            _context.Brands.Remove(brand);
-            await _context.SaveChangesAsync();
+            _unitOfWork.Brands.Delete(id);
+            await _unitOfWork.Save();
 
             return brand;
         }
 
-        private bool BrandExists(int id)
+        private Task<bool> BrandExists(int id)
         {
-            return _context.Brands.Any(e => e.BrandId == id);
+            return _unitOfWork.Brands.IsExist(id);
         }
     }
 }
