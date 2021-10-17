@@ -12,7 +12,7 @@ using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
 using WatchWebsite_TLCN.Models;
-
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -164,29 +164,75 @@ namespace WatchWebsite_TLCN.Controllers
         [Route("FilterProduct")]
         public async Task<IActionResult> Filter(int currentPage, [FromBody] FilterProduct filter)
         {
+            // Specify Max, Min
             double[] limit = new double[2];
             limit[0] = 0;
             limit[1] = int.MaxValue;
-            if(filter.Prices != null)
+            if (filter.Prices != null)
             {
                 /*
                  * Ex:
-                 * 30/90
-                 * 90/200
-                 * 200/-1
+                 * 30/90 (tu 30 toi 90)
+                 * 90/200 (tu 90 toi 200)
+                 * 200/-1 (lon hon 200)
                  */
                 limit = Array.ConvertAll(filter.Prices.Split('/'), Double.Parse);
-                if(limit[1] == -1)
+                if (limit[1] == -1)
                 {
                     limit[1] = int.MaxValue;
                 }
             }
-            var result = await _product.GetFilterProduct(
-                limit, 
-                filter.Brands, 
-                filter.Gender, 
-                filter.SortBy,
-                new Pagination { CurrentPage = currentPage });
+
+            Expression<Func<Product, bool>> expression = PredicateBuilder.True<Product>();
+
+            // Filter price
+            if (filter.Prices != null)
+            {
+                expression = expression.And(p => p.Price > limit[0] && p.Price <= limit[1]);
+            }
+            var result1 = await _unitOfWork.Products.GetAllWithPagination(
+                expression: expression,
+                pagination: new Pagination { CurrentPage = currentPage });
+
+            // Filter gender
+            if (filter.Gender != -1)
+            {
+                expression = expression.And(p => p.Gender == filter.Gender);
+            }
+
+            //Fitler brands
+            foreach (var b in filter.Brands)
+            {
+                expression = expression.And(p => p.Brand.Name == b);
+            }
+
+            //Fitler sort by
+            Func<IQueryable<Product>, IOrderedQueryable<Product>> orderBy = null;
+
+            switch (filter.SortBy)
+            {
+                case Constant.alphabetically:
+                    orderBy = p => p.OrderBy(x => x.Name);
+                    break;
+                case Constant.nonAlphabetically:
+                    orderBy = p => p.OrderByDescending(x => x.Name);
+                    break;
+                case Constant.priceAscending:
+                    orderBy = p => p.OrderBy(x => x.Price);
+                    break;
+                case Constant.priceDesending:
+                    orderBy = p => p.OrderByDescending(x => x.Price);
+                    break;
+                default:
+                    orderBy = p => p.OrderByDescending(x => x.Sold);
+                    break;
+            }
+
+            var result = await _unitOfWork.Products.GetAllWithPagination(
+                expression: expression,
+                orderBy: orderBy,
+                pagination: new Pagination { CurrentPage = currentPage },
+                includes: new List<String>() { "Brand" });
 
             var listProductDTO = _mapper.Map<List<ProductDTO>>(result.Item1);
 

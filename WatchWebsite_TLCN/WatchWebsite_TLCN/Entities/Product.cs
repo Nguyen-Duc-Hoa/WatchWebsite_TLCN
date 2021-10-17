@@ -27,6 +27,8 @@ namespace WatchWebsite_TLCN.Entities
 
         public string Description { get; set; }
 
+        public int Sold { get; set; } = 0;
+
         //[Required]
         public int BrandId { get; set; }
 

@@ -13,16 +13,26 @@ namespace WatchWebsite_TLCN.IRepository
             Expression<Func<T, bool>> expression = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             List<string> includes = null,
-            Pagination pagination = null);
+            Pagination pagination = null,
+            bool isDescending = true);
 
         Task<List<T>> GetAll(
             Expression<Func<T, bool>> expression = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-            List<string> includes = null);
+            List<string> includes = null,
+            bool isDescending = true);
 
         Task<T> Get(
             Expression<Func<T, bool>> expression = null,
             List<string> includes = null);
+
+        //Expression<Func<B, bool>> Or<B>(
+        //    this Expression<Func<B, bool>> expr1,
+        //    Expression<Func<B, bool>> expr2);
+
+        //Expression<Func<B, bool>> And<B>(
+        //    this Expression<Func<B, bool>> expr1,
+        //    Expression<Func<B, bool>> expr2);
 
         Task Insert(T entity);
         Task InsertRange(IEnumerable<T> entities);
