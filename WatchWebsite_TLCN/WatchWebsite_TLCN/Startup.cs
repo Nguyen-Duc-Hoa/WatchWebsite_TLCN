@@ -55,6 +55,7 @@ namespace WatchWebsite_TLCN
 
             services.AddControllers();
             services.AddScoped<IProductsRepository, ProductsRepository>();
+            services.AddScoped<ICartsRepository, CartsRepository>();
 
             services.AddDbContext<MyDBContext>(option =>
             {
@@ -108,6 +109,7 @@ namespace WatchWebsite_TLCN
             app.UseAuthentication();
             app.UseAuthorization();
 
+            //app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

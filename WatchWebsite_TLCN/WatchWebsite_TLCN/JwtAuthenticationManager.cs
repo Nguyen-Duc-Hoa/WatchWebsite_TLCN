@@ -21,6 +21,7 @@ namespace WatchWebsite_TLCN
 
         public IDictionary<string, string> UsersRefreshTokens { get; set; }
 
+        //tokenKey is private key to encode
         public JwtAuthenticationManager(string tokenKey, IRefreshTokenGenerator refreshTokenGenerator)
         {
             this.tokenKey = tokenKey;
@@ -75,8 +76,11 @@ namespace WatchWebsite_TLCN
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
+
+            //Tạo khóa riêng tư để encode
             var key = Encoding.ASCII.GetBytes(tokenKey);
 
+            //Mô tả mã thông báo
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]

@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Intefaces;
+using WatchWebsite_TLCN.IRepository;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -13,10 +17,16 @@ namespace WatchWebsite_TLCN.Controllers
     [ApiController]
     public class CartsController : ControllerBase
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly MyDBContext _context;
+        private readonly IMapper _mapper;
+        private readonly ICartsRepository _cart;
 
-        public CartsController(MyDBContext context)
+        public CartsController(IUnitOfWork unitOfWork, IMapper mapper, ICartsRepository cart, MyDBContext context)
         {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _cart = cart;
             _context = context;
         }
 
@@ -24,14 +34,14 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cart>>> GetCarts()
         {
-            return await _context.Carts.ToListAsync();
+            return await _unitOfWork.Carts.GetAll();
         }
 
         // GET: api/Carts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Cart>> GetCart(int id)
         {
-            var cart = await _context.Carts.FindAsync(id);
+            var cart = await _unitOfWork.Carts.Get(p => p.UserId == id);
 
             if (cart == null)
             {
@@ -52,15 +62,14 @@ namespace WatchWebsite_TLCN.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(cart).State = EntityState.Modified;
-
+            _unitOfWork.Carts.Update(cart);
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CartExists(id))
+                if (!await CartExists(id))
                 {
                     return NotFound();
                 }
@@ -79,14 +88,14 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Cart>> PostCart(Cart cart)
         {
-            _context.Carts.Add(cart);
+            _ = _unitOfWork.Carts.Insert(cart);
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
             }
             catch (DbUpdateException)
             {
-                if (CartExists(cart.UserId))
+                if (await CartExists(cart.UserId))
                 {
                     return Conflict();
                 }
@@ -103,21 +112,67 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Cart>> DeleteCart(int id)
         {
-            var cart = await _context.Carts.FindAsync(id);
+            var cart = await _unitOfWork.Carts.Get(p => p.UserId == id);
             if (cart == null)
             {
                 return NotFound();
             }
 
-            _context.Carts.Remove(cart);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Carts.Delete(id);
+            await _unitOfWork.Save();
 
             return cart;
         }
 
-        private bool CartExists(int id)
+        private Task<bool> CartExists(int id)
         {
-            return _context.Carts.Any(e => e.UserId == id);
+            return _unitOfWork.Carts.IsExist<int>(id);
+        }
+
+        [HttpGet]
+        [Route("GetCart/{userId}")]
+        public IEnumerable<CartDTO> GetByUser(int userId)
+        {
+            return _cart.GetCart(userId);
+        }
+
+        [HttpPost]
+        [Route("AddToCart")]
+        public ActionResult AddToCart([FromBody] Cart cart)
+        {
+            if (_cart.AddToCart(cart))
+                return Ok();
+            return BadRequest();
+        }
+
+        // Click button (+)
+        [HttpPut]
+        [Route("IncQuantity")]
+        public IActionResult IncreaseQuantity(Cart cart)
+        {
+            if (_cart.IncreaseQuantity(cart))
+                return Ok();
+            return BadRequest("Something was wrong");
+        }
+
+        // Click button (-)
+        [HttpPut]
+        [Route("DecQuantity")]
+        public IActionResult DecreaseQuantity(Cart cart)
+        {
+            if (_cart.DecreaseQuantity(cart))
+                return Ok();
+            return BadRequest("Something was wrong");
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteFromCart(Cart cart)
+        {
+            if(_cart.DeleteFromCart(cart))
+                return Ok("Deleted");
+            return BadRequest("Something was wrong");
         }
     }
+
 }
+
