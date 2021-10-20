@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.IRepository;
+using Newtonsoft.Json;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -13,25 +16,25 @@ namespace WatchWebsite_TLCN.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly MyDBContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public OrdersController(MyDBContext context)
+        public OrdersController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<Entities.Order>>> GetOrders()
         {
-            return await _context.Orders.ToListAsync();
+            return await _unitOfWork.Orders.GetAll();
         }
 
         // GET: api/Orders/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrder(int id)
+        public async Task<ActionResult<Entities.Order>> GetOrder(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _unitOfWork.Orders.Get(o => o.OrderId == id);
 
             if (order == null)
             {
@@ -45,22 +48,22 @@ namespace WatchWebsite_TLCN.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(int id, Order order)
+        public async Task<IActionResult> PutOrder(int id, Entities.Order order)
         {
             if (id != order.OrderId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(order).State = EntityState.Modified;
+            _unitOfWork.Orders.Update(order);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OrderExists(id))
+                if (!(await OrderExists(id)))
                 {
                     return NotFound();
                 }
@@ -77,33 +80,76 @@ namespace WatchWebsite_TLCN.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder(Order order)
+        public async Task<ActionResult<Entities.Order>> PostOrder(Entities.Order order)
         {
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Orders.Insert(order);
+            await _unitOfWork.Save();
 
             return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
         }
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Order>> DeleteOrder(int id)
+        public async Task<ActionResult<Entities.Order>> DeleteOrder(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _unitOfWork.Orders.Get(o => o.OrderId == id);
             if (order == null)
             {
                 return NotFound();
             }
 
-            _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Orders.Delete(id);
+            await _unitOfWork.Save();
 
             return order;
         }
 
-        private bool OrderExists(int id)
+        private Task<bool> OrderExists(int id)
         {
-            return _context.Orders.Any(e => e.OrderId == id);
+            return _unitOfWork.Orders.IsExist<int>(id);
+        }
+
+        [HttpPost]
+        [Route("Payment")]
+        public async Task<IActionResult> Create(PaymentIntentCreateRequest request)
+        {
+            var paymentIntents = new PaymentIntentService();
+            var paymentIntent = paymentIntents.Create(new PaymentIntentCreateOptions
+            {
+                Amount = CalculateOrderAmount(request.Items),
+                Currency = "eur",
+                PaymentMethodTypes = new List<string>
+                {
+                  "giropay",
+                  "eps",
+                  "p24",
+                  "sofort",
+                  "sepa_debit",
+                  "card",
+                  "bancontact",
+                  "ideal",
+                },
+            });
+            return Ok(new { clientSecret = paymentIntent.ClientSecret });
+        }
+        private int CalculateOrderAmount(Item[] items)
+        {
+            // Replace this constant with a calculation of the order's amount
+            // Calculate the order total on the server to prevent
+            // people from directly manipulating the amount on the client
+            return 1400;
+        }
+
+        public class Item
+        {
+            [JsonProperty("id")]
+            public string Id { get; set; }
+        }
+
+        public class PaymentIntentCreateRequest
+        {
+            [JsonProperty("items")]
+            public Item[] Items { get; set; }
         }
     }
 }
