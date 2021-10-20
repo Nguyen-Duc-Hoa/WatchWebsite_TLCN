@@ -15,11 +15,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
+using Stripe;
 using WatchWebsite_TLCN.Configuration;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
 using WatchWebsite_TLCN.Methods;
+using WatchWebsite_TLCN.Models;
 using WatchWebsite_TLCN.Repository;
 
 namespace WatchWebsite_TLCN
@@ -38,6 +40,8 @@ namespace WatchWebsite_TLCN
         {
             // Đăng ký UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
 
             //Enable Cors
             services.AddCors(c =>
@@ -105,6 +109,8 @@ namespace WatchWebsite_TLCN
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["ScretKey"];
 
             app.UseAuthentication();
             app.UseAuthorization();
