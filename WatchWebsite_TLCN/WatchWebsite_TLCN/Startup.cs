@@ -41,6 +41,7 @@ namespace WatchWebsite_TLCN
             // Đăng ký UnitOfWork
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
+            // Stripe
             services.Configure<StripeSettings>(Configuration.GetSection("Stripe"));
 
             //Enable Cors
@@ -108,9 +109,11 @@ namespace WatchWebsite_TLCN
 
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowOrigin");
+
             app.UseRouting();
 
-            StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["ScretKey"];
+            StripeConfiguration.ApiKey = Configuration.GetSection("Stripe")["SecretKey"];
 
             app.UseAuthentication();
             app.UseAuthorization();

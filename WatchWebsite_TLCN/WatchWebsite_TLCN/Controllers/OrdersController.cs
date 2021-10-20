@@ -114,23 +114,32 @@ namespace WatchWebsite_TLCN.Controllers
         public async Task<IActionResult> Create(PaymentIntentCreateRequest request)
         {
             var paymentIntents = new PaymentIntentService();
-            var paymentIntent = paymentIntents.Create(new PaymentIntentCreateOptions
+            try
             {
-                Amount = CalculateOrderAmount(request.Items),
-                Currency = "eur",
-                PaymentMethodTypes = new List<string>
+                var paymentIntent = paymentIntents.Create(new PaymentIntentCreateOptions
                 {
-                  "giropay",
-                  "eps",
-                  "p24",
-                  "sofort",
-                  "sepa_debit",
-                  "card",
-                  "bancontact",
-                  "ideal",
-                },
-            });
-            return Ok(new { clientSecret = paymentIntent.ClientSecret });
+                    Amount = CalculateOrderAmount(request.Items),
+                    Currency = "eur",
+                    PaymentMethodTypes = new List<string>
+                    {
+                      "giropay",
+                      "eps",
+                      "p24",
+                      "sofort",
+                      "sepa_debit",
+                      "card",
+                      "bancontact",
+                      "ideal",
+                    }
+                });
+                return Ok(new { clientSecret = paymentIntent.ClientSecret });
+            }
+            catch(Exception ex)
+            {
+                return Ok(ex.ToString());
+            }
+            return Ok();
+
         }
         private int CalculateOrderAmount(Item[] items)
         {

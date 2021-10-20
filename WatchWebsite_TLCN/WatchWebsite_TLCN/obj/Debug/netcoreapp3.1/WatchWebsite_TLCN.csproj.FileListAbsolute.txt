@@ -318,3 +318,4 @@ C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\o
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.pdb
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.genruntimeconfig.cache
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.csprojAssemblyReference.cache
+E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\Stripe.net.dll

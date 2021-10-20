@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 import CheckoutProducts from '../../components/CheckoutProducts/CheckoutProducts'
 import Breadcrumbing from '../../components/Breadcrumb/Breadcrumb'
-import './Shipping.scss'
+import './Payment.scss'
 import { Button, Space } from 'antd'
+import PaymentForm from "../../components/PaymentForm/PaymentForm";
 
 const breadCrumbRoute = [
     { link: '/', name: 'Home' },
@@ -10,7 +13,39 @@ const breadCrumbRoute = [
     { link: '/Shipping', name: 'Shipping' },
 ]
 
+// Make sure to call loadStripe outside of a component’s render to avoid
+// recreating the Stripe object on every render.
+// loadStripe is initialized with a fake API key.
+const stripePromise = loadStripe("pk_test_51JLIp1IZZBbB9jhOSEmU0HhjLSotrTVGMU7pFcr6wXn75rgcuwHDMFHSQcjzz8OI4f3UosYsfnMKD0qNKLeKiCTU003nNWpvLF");
+
 function Shipping() {
+    const [clientSecret, setClientSecret] = useState("");
+
+    useEffect(() => {
+        // Create PaymentIntent as soon as the page loads
+        fetch("https://localhost:44336/api/Orders/Payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                items: [
+                    { id: "product1" },
+                    { id: "product2" }
+                ]
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => setClientSecret(data.clientSecret));
+    }, []);
+
+    const appearance = {
+        theme: 'stripe',
+    };
+    const options = {
+        clientSecret,
+        appearance,
+    };
+
+
     return (
         <section className='shipping'>
             <Breadcrumbing route={breadCrumbRoute} />
@@ -34,10 +69,12 @@ function Shipping() {
                         <div className="method">Standard</div>
                         <div className="price">Free</div>
                     </div>
-                    <Space>
-                        <Button size='large' type='primary'>Stripe button</Button>
-                        <Button size='large'>Return to information</Button>
-                    </Space>
+                    <div className="heading">Payment</div>
+                    {clientSecret && (
+                        <Elements options={options} stripe={stripePromise}>
+                            <PaymentForm />
+                        </Elements>
+                    )}
                 </div>
                 <CheckoutProducts />
             </div>

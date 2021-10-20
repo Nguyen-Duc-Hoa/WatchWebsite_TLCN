@@ -5,7 +5,7 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import Products from './pages/Products/Products';
 import Product from './pages/Product/Product'
 import Checkout from './pages/Checkout/Checkout'
-import Shipping from './pages/Shipping/Shipping';
+import Payment from './pages/Payment/Payment';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import OrderHistory from './pages/OrderHistory/OrderHistory';
@@ -14,6 +14,7 @@ import AdminMain from './pages/Admin/AdminMain/AdminMain';
 import PublicRoute from './components/Routes/PublicRoute';
 import UserLayout from './components/Layouts/UserLayout';
 import Profile from './pages/Profile/Profile';
+import PaymentSuccess from './pages/PaymentSuccess/PaymentSuccess';
 
 function App() {
   return (
@@ -37,8 +38,8 @@ function App() {
             layout={UserLayout}
           />
           <PublicRoute
-            path='/checkout/shipping'
-            component={Shipping}
+            path='/checkout/payment'
+            component={Payment}
             layout={UserLayout}
           />
           <PublicRoute
@@ -64,6 +65,11 @@ function App() {
           <PublicRoute
             path='/orderDetail/:id'
             component={OrderDetail}
+            layout={UserLayout}
+          />
+          <PublicRoute
+            path='/paymentSuccess'
+            component={PaymentSuccess}
             layout={UserLayout}
           />
           <PublicRoute
