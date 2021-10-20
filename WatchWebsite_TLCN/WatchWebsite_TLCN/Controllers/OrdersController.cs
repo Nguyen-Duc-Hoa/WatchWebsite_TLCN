@@ -120,17 +120,7 @@ namespace WatchWebsite_TLCN.Controllers
                 {
                     Amount = CalculateOrderAmount(request.Items),
                     Currency = "eur",
-                    PaymentMethodTypes = new List<string>
-                    {
-                      "giropay",
-                      "eps",
-                      "p24",
-                      "sofort",
-                      "sepa_debit",
-                      "card",
-                      "bancontact",
-                      "ideal",
-                    }
+                    PaymentMethodTypes = new List<string>{"card"}
                 });
                 return Ok(new { clientSecret = paymentIntent.ClientSecret });
             }
@@ -139,7 +129,6 @@ namespace WatchWebsite_TLCN.Controllers
                 return Ok(ex.ToString());
             }
             return Ok();
-
         }
         private int CalculateOrderAmount(Item[] items)
         {

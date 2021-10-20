@@ -19,32 +19,6 @@ const breadCrumbRoute = [
 const stripePromise = loadStripe("pk_test_51JLIp1IZZBbB9jhOSEmU0HhjLSotrTVGMU7pFcr6wXn75rgcuwHDMFHSQcjzz8OI4f3UosYsfnMKD0qNKLeKiCTU003nNWpvLF");
 
 function Shipping() {
-    const [clientSecret, setClientSecret] = useState("");
-
-    useEffect(() => {
-        // Create PaymentIntent as soon as the page loads
-        fetch("https://localhost:44336/api/Orders/Payment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                items: [
-                    { id: "product1" },
-                    { id: "product2" }
-                ]
-            }),
-        })
-            .then((res) => res.json())
-            .then((data) => setClientSecret(data.clientSecret));
-    }, []);
-
-    const appearance = {
-        theme: 'stripe',
-    };
-    const options = {
-        clientSecret,
-        appearance,
-    };
-
 
     return (
         <section className='shipping'>
@@ -70,11 +44,9 @@ function Shipping() {
                         <div className="price">Free</div>
                     </div>
                     <div className="heading">Payment</div>
-                    {clientSecret && (
-                        <Elements options={options} stripe={stripePromise}>
-                            <PaymentForm />
-                        </Elements>
-                    )}
+                    <Elements stripe={stripePromise}>
+                        <PaymentForm />
+                    </Elements>
                 </div>
                 <CheckoutProducts />
             </div>

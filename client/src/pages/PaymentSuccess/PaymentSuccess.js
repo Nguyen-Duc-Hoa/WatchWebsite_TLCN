@@ -1,5 +1,5 @@
 import { Result, Button } from 'antd'
-import React from 'react'
+import React, { useEffect } from 'react'
 import './PaymentSuccess.scss'
 
 function PaymentSuccess() {
