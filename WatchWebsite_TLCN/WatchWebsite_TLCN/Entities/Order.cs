@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Entities
 {
@@ -26,7 +27,7 @@ namespace WatchWebsite_TLCN.Entities
         public string Transaction { get; set; }
 
         //[Required]
-        public string PaymentStatus { get; set; }
+        public string PaymentStatus { get; set; } 
 
         //[Required]
         public string Address { get; set; }
@@ -37,7 +38,7 @@ namespace WatchWebsite_TLCN.Entities
         public string Phone { get; set; }
 
         //[Required]
-        public string DeliveryStatus { get; set; }
+        public string DeliveryStatus { get; set; } = Constant.status["Waiting"];
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }

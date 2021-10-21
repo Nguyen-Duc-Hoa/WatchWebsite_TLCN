@@ -20,7 +20,7 @@ namespace WatchWebsite_TLCN.Entities
         public int Amount { get; set; }
 
         [Required]
-        public double Price { get; set; }
+        public float Price { get; set; }
 
         //[Required]
         public byte[] Image { get; set; }

@@ -5,6 +5,8 @@ import {
   CardElement
 } from "@stripe/react-stripe-js";
 import { Button, Space, Typography } from "antd";
+import { useHistory } from "react-router";
+
 const { Paragraph } = Typography;
 
 
@@ -28,6 +30,7 @@ const cardStyle = {
 };
 
 export default function PaymentForm() {
+  const history = useHistory();
   const [clientSecret, setClientSecret] = useState("");
 
   const stripe = useStripe();
@@ -44,9 +47,9 @@ export default function PaymentForm() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        items: [
-          { id: "product1" },
-          { id: "product2" }
+        products: [
+          { id: "product1", quantity: 2 },
+          { id: "product2", quantity: 3 }
         ]
       }),
     })
@@ -61,14 +64,33 @@ export default function PaymentForm() {
         card: elements.getElement(CardElement),
       },
     });
-    console.log(payload)
+
     if (payload.error) {
       setError(`Payment failed ${payload.error.message}`);
       setProcessing(false);
     } else {
+      fetch("https://localhost:44336/api/Orders/CreateOrder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: 3,
+          orderDate: new Date(),
+          transaction: payload.paymentIntent.id,
+          paymentStatus: payload.paymentIntent.status,
+          address: '123 Main st, VN',
+          name: 'Duc huy',
+          phone: '0908849505',
+          products: [
+            {id: 'product1', quantity: 2},
+            {id: 'product2', quantity: 3},
+          ]
+        })
+      })
+
       setError(null);
       setProcessing(false);
       setSucceeded(true);
+      history.push('/paymentSuccess')
     }
   };
 
