@@ -127,12 +127,12 @@ namespace WatchWebsite_TLCN.Controllers
                 await _unitOfWork.Orders.Insert(order);
                 await _unitOfWork.Save();
 
-                // Create order detail and update product sold column
+                // Create order detail and update product sold, amound columns
                 foreach (var item in orderDTO.Products)
                 {
                     var product = await _unitOfWork.Products.Get(p => p.Id == item.Id);
-
                     product.Sold = product.Sold + item.Quantity;
+                    product.Amount = product.Amount - item.Quantity;
                     _unitOfWork.Products.Update(product);
 
                     var orderDetail = new OrderDetail()
