@@ -62,19 +62,8 @@ namespace WatchWebsite_TLCN
             };
         }
 
-        public AuthenticationResponse Authenticate(string username, string password)
+        public AuthenticationResponse Authenticate(int userid, string username, string password, int role)
         {
-            
-            /*User user = Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
-            if(user == null)
-            {
-                return null;
-            }*/
-            if(username == null || password == null)
-            {
-                return null;
-            }
-
             var tokenHandler = new JwtSecurityTokenHandler();
 
             //Tạo khóa riêng tư để encode
@@ -85,7 +74,9 @@ namespace WatchWebsite_TLCN
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, username)
+                    new Claim(ClaimTypes.NameIdentifier, userid.ToString()),
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.Role, role.ToString())
                 }),
                 
                 Expires = DateTime.UtcNow.AddHours(1),
@@ -114,7 +105,7 @@ namespace WatchWebsite_TLCN
                 JwtToken = tokenHandler.WriteToken(token),
                 RefreshToken = refreshToken
             };
-        }
+        } 
 
 
     }
