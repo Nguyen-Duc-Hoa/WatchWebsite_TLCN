@@ -1,25 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\PC\\source\\repos\\WatvhWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj": {}
+    "E:\\Đồ án\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj": {}
   },
   "projects": {
-    "C:\\Users\\PC\\source\\repos\\WatvhWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj": {
+    "E:\\Đồ án\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\PC\\source\\repos\\WatvhWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj",
+        "projectUniqueName": "E:\\Đồ án\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj",
         "projectName": "WatchWebsite_TLCN",
-        "projectPath": "C:\\Users\\PC\\source\\repos\\WatvhWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj",
-        "packagesPath": "C:\\Users\\Nguyen Duc Hoa\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\PC\\source\\repos\\WatvhWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\obj\\",
+        "projectPath": "E:\\Đồ án\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj",
+        "packagesPath": "C:\\Users\\APTS\\.nuget\\packages\\",
+        "outputPath": "E:\\Đồ án\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Nguyen Duc Hoa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\APTS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
@@ -30,6 +26,7 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -41,6 +38,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "dependencies": {
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
@@ -83,6 +81,10 @@
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[3.1.5, )"
+            },
+            "Stripe.net": {
+              "target": "Package",
+              "version": "[39.73.0, )"
             }
           },
           "imports": [
@@ -103,7 +105,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
         }
       }
     }

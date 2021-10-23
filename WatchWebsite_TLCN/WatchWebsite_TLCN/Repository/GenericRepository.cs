@@ -20,20 +20,6 @@ namespace WatchWebsite_TLCN.Repository
             this._db = _context.Set<T>();
         }
 
-        //public Expression<Func<B, bool>> And<B>(this Expression<Func<B, bool>> expr1, Expression<Func<B, bool>> expr2)
-        //{
-        //    var invokedExpr = Expression.Invoke(expr2, expr1.Parameters.Cast<Expression>());
-        //    return Expression.Lambda<Func<B, bool>>
-        //          (Expression.OrElse(expr1.Body, invokedExpr), expr1.Parameters);
-        //}
-
-        //public Expression<Func<B, bool>> Or<B>(this Expression<Func<B, bool>> expr1, Expression<Func<B, bool>> expr2)
-        //{
-        //    var invokedExpr = Expression.Invoke(expr2, expr1.Parameters.Cast<Expression>());
-        //    return Expression.Lambda<Func<B, bool>>
-        //          (Expression.AndAlso(expr1.Body, invokedExpr), expr1.Parameters);
-        //}
-
         public async Task Delete<A>(A id)
         {
             var entity = await _db.FindAsync(id);

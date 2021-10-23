@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 import CheckoutProducts from '../../components/CheckoutProducts/CheckoutProducts'
 import Breadcrumbing from '../../components/Breadcrumb/Breadcrumb'
-import './Shipping.scss'
+import './Payment.scss'
 import { Button, Space } from 'antd'
+import PaymentForm from "../../components/PaymentForm/PaymentForm";
 
 const breadCrumbRoute = [
     { link: '/', name: 'Home' },
@@ -10,7 +13,13 @@ const breadCrumbRoute = [
     { link: '/Shipping', name: 'Shipping' },
 ]
 
+// Make sure to call loadStripe outside of a component’s render to avoid
+// recreating the Stripe object on every render.
+// loadStripe is initialized with a fake API key.
+const stripePromise = loadStripe("pk_test_51JLIp1IZZBbB9jhOSEmU0HhjLSotrTVGMU7pFcr6wXn75rgcuwHDMFHSQcjzz8OI4f3UosYsfnMKD0qNKLeKiCTU003nNWpvLF");
+
 function Shipping() {
+
     return (
         <section className='shipping'>
             <Breadcrumbing route={breadCrumbRoute} />
@@ -34,10 +43,10 @@ function Shipping() {
                         <div className="method">Standard</div>
                         <div className="price">Free</div>
                     </div>
-                    <Space>
-                        <Button size='large' type='primary'>Stripe button</Button>
-                        <Button size='large'>Return to information</Button>
-                    </Space>
+                    <div className="heading">Payment</div>
+                    <Elements stripe={stripePromise}>
+                        <PaymentForm />
+                    </Elements>
                 </div>
                 <CheckoutProducts />
             </div>

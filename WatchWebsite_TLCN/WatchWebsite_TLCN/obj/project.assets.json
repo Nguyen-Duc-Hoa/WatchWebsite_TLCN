@@ -1571,6 +1571,20 @@
           "lib/netstandard2.0/SQLitePCLRaw.provider.dynamic_cdecl.dll": {}
         }
       },
+      "Stripe.net/39.73.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "1.1.0",
+          "Newtonsoft.Json": "11.0.1",
+          "System.Configuration.ConfigurationManager": "4.5.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Stripe.net.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Stripe.net.dll": {}
+        }
+      },
       "System.AppContext/4.3.0": {
         "type": "package",
         "dependencies": {
@@ -1850,7 +1864,7 @@
           "System.Security.Permissions": "4.5.0"
         },
         "compile": {
-          "ref/netstandard2.0/_._": {}
+          "ref/netstandard2.0/System.Configuration.ConfigurationManager.dll": {}
         },
         "runtime": {
           "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll": {}
@@ -5292,6 +5306,28 @@
         "lib/netstandard2.0/SQLitePCLRaw.provider.dynamic_cdecl.dll",
         "sqlitepclraw.provider.dynamic_cdecl.2.0.2.nupkg.sha512",
         "sqlitepclraw.provider.dynamic_cdecl.nuspec"
+      ]
+    },
+    "Stripe.net/39.73.0": {
+      "sha512": "Er9zeqCH7cKMRt6u3GyxQgNsI3PmxfBYq8x2eBQdoaE7mPZfMZdi7Joq6Dq/p2wucGjryDG4J1eoYMb3AjUuvA==",
+      "type": "package",
+      "path": "stripe.net/39.73.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "icon.png",
+        "lib/net461/Stripe.net.dll",
+        "lib/net461/Stripe.net.pdb",
+        "lib/net461/Stripe.net.xml",
+        "lib/net5.0/Stripe.net.dll",
+        "lib/net5.0/Stripe.net.pdb",
+        "lib/net5.0/Stripe.net.xml",
+        "lib/netstandard2.0/Stripe.net.dll",
+        "lib/netstandard2.0/Stripe.net.pdb",
+        "lib/netstandard2.0/Stripe.net.xml",
+        "stripe.net.39.73.0.nupkg.sha512",
+        "stripe.net.nuspec"
       ]
     },
     "System.AppContext/4.3.0": {
@@ -9582,29 +9618,25 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 3.1.19",
       "Microsoft.EntityFrameworkCore.Sqlite >= 3.1.18",
       "Microsoft.EntityFrameworkCore.Tools >= 3.1.19",
-      "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 3.1.5"
+      "Microsoft.VisualStudio.Web.CodeGeneration.Design >= 3.1.5",
+      "Stripe.net >= 39.73.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Nguyen Duc Hoa\\.nuget\\packages\\": {},
-    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+    "C:\\Users\\APTS\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\PC\\source\\repos\\WatvhWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj",
+      "projectUniqueName": "E:\\Đồ án\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj",
       "projectName": "WatchWebsite_TLCN",
-      "projectPath": "C:\\Users\\PC\\source\\repos\\WatvhWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj",
-      "packagesPath": "C:\\Users\\Nguyen Duc Hoa\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\PC\\source\\repos\\WatvhWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\obj\\",
+      "projectPath": "E:\\Đồ án\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN.csproj",
+      "packagesPath": "C:\\Users\\APTS\\.nuget\\packages\\",
+      "outputPath": "E:\\Đồ án\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\WatchWebsite_TLCN\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Microsoft\\Xamarin\\NuGet\\"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Nguyen Duc Hoa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        "C:\\Users\\APTS\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "netcoreapp3.1"
@@ -9615,6 +9647,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "projectReferences": {}
         }
       },
@@ -9626,6 +9659,7 @@
     },
     "frameworks": {
       "netcoreapp3.1": {
+        "targetAlias": "netcoreapp3.1",
         "dependencies": {
           "AutoMapper.Extensions.Microsoft.DependencyInjection": {
             "target": "Package",
@@ -9668,6 +9702,10 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
             "target": "Package",
             "version": "[3.1.5, )"
+          },
+          "Stripe.net": {
+            "target": "Package",
+            "version": "[39.73.0, )"
           }
         },
         "imports": [
@@ -9688,7 +9726,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
       }
     }
   }
