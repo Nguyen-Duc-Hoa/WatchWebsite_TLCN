@@ -10,7 +10,9 @@ namespace WatchWebsite_TLCN
 {
     public interface IJwtAuthenticationManager
     {
-        AuthenticationResponse Authenticate(string username, string password)
+
+        AuthenticationResponse Authenticate(int userid, string username, string password, int role)
+
         {
             throw new NotImplementedException();
         }
