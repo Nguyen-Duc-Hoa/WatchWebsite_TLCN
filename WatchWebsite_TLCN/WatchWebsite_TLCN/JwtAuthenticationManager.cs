@@ -63,6 +63,7 @@ namespace WatchWebsite_TLCN
         }
 
         public AuthenticationResponse Authenticate(int userid, string username, string password, int role)
+
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 

@@ -76,7 +76,7 @@ namespace WatchWebsite_TLCN.Controllers
             string password = model.Password;
             int userid = 0;
             int role = 0;
-            
+
             User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
             if (user == null)
             {
