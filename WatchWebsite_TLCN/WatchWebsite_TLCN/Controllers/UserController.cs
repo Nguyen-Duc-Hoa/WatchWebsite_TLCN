@@ -108,17 +108,13 @@ namespace WatchWebsite_TLCN.Controllers
             return user;
         }
 
-        // PUT: api/User/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        // PUT: api/User/UpdateState&id=2
+        [HttpPut]
+        [Route("UpdateState")]
+        public async Task<IActionResult> UpdateState([FromBody] int id)
         {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
-
+            var user = await _unitOfWork.Users.Get(u => u.Id == id);
+            user.State = !user.State;
             _unitOfWork.Users.Update(user);
 
             try
@@ -137,7 +133,7 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/User
