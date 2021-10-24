@@ -26,7 +26,7 @@ namespace WatchWebsite_TLCN.Entities
 
         public string Address { get; set; }
 
-        public bool State { get; set; }
+        public bool State { get; set; } = false;
 
         [Required]
         public string Phone { get; set; }

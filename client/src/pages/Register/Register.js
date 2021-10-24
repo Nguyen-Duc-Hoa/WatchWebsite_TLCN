@@ -69,8 +69,8 @@ function Register() {
                     </Form.Item>
 
                     <Form.Item
-                        name='phoneNumber'
-                        rule={[
+                        name='phone'
+                        rules={[
                             {
                                 required: true,
                                 message: 'Please input your phone number!',

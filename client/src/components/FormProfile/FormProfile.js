@@ -6,32 +6,38 @@ const layout = {
     wrapperCol: { span: 24 },
 };
 
+const regexPhoneNumber = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/
+
 function FormProfile() {
     const onFinish = values => {
         console.log(values)
     }
 
     return (
-        <Form {...layout} style={{maxWidth: 600}} onFinish={onFinish}>
+        <Form {...layout} style={{ maxWidth: 600 }} onFinish={onFinish}>
             <Form.Item
-                label='Full Name'
-                name='name'
+                label="Name"
                 rules={[
                     {
                         required: true,
-                        message: 'Full Name is required!'
+                        message: 'Name is required!'
                     },
                     {
-                        max: 50,
-                        message: 'Full Name length is not over 50 character!'
+                        min: 4,
+                        message: 'Name length must be at least 4 characters!'
+                    },
+                    {
+                        max: 20,
+                        message: 'Name length must be less than 20 characters!'
                     }
                 ]}
+                name='Name'
             >
                 <Input />
             </Form.Item>
 
             <Form.Item
-                label='Address'
+                label="Address"
                 name='address'
                 rules={[
                     {
@@ -39,8 +45,12 @@ function FormProfile() {
                         message: 'Address is required!'
                     },
                     {
-                        max: 150,
-                        message: 'Address length is not over 150 character!'
+                        min: 8,
+                        message: 'Address length must be at least 8 characters!'
+                    },
+                    {
+                        max: 40,
+                        message: 'Address length must be less than 40 characters!'
                     }
                 ]}
             >
@@ -48,18 +58,36 @@ function FormProfile() {
             </Form.Item>
 
             <Form.Item
-                label='Phone Number'
+                label='E-mail'
+                name='email'
+                rules={[
+                    {
+                        type: 'email',
+                        message: 'The input is not valid E-mail!',
+                    },
+                    {
+                        required: true,
+                        message: 'Please input your E-mail!',
+                    },
+                    {
+                        max: 20,
+                        message: 'Email length must be less than 20 characters!'
+                    }
+                ]}
+            >
+                <Input />
+            </Form.Item>
+
+            <Form.Item
                 name='phone'
+                label='Phone'
                 rules={[
                     {
                         required: true,
-                        message: 'Phone is required!'
+                        message: 'Please input your phone number!',
                     },
                     {
-                        validator: (_, value) => {
-                            const regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
-                            return regex.test(value) ? Promise.resolve() : Promise.reject(new Error("Phone Number is not valid!"))
-                        }
+                        validator: (_, value) => value.match(regexPhoneNumber) ? Promise.resolve() : Promise.reject(new Error('Phone number invalid!'))
                     }
                 ]}
             >
@@ -69,7 +97,7 @@ function FormProfile() {
             <Form.Item
                 label='Birthday'
                 name='birthday'
-                rules={[{ type: 'object'}]}
+                rules={[{ type: 'object' }]}
             >
                 <DatePicker />
             </Form.Item>

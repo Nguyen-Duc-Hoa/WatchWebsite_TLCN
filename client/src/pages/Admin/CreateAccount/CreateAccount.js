@@ -6,6 +6,8 @@ const layout = {
     wrapperCol: { span: 24 },
 };
 
+const regexPhoneNumber = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/
+
 function CreateAccount() {
     const onFinish = values => {
         console.log(values)
@@ -17,7 +19,7 @@ function CreateAccount() {
             <Form
                 {...layout}
                 onFinish={onFinish}
-                style={{maxWidth: 500}}
+                style={{ maxWidth: 500 }}
             >
                 <Form.Item
                     label='Username'
@@ -27,8 +29,8 @@ function CreateAccount() {
                             message: 'Username is required!'
                         },
                         {
-                            min: 4,
-                            message: 'Username length must be at least 4 characters!'
+                            min: 6,
+                            message: 'Username length must be at least 6 characters!'
                         },
                         {
                             max: 20,
@@ -84,6 +86,93 @@ function CreateAccount() {
                     ]}
                 >
                     <Input.Password />
+                </Form.Item>
+
+                <Form.Item
+                    label="Name"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Name is required!'
+                        },
+                        {
+                            min: 4,
+                            message: 'Name length must be at least 4 characters!'
+                        },
+                        {
+                            max: 20,
+                            message: 'Name length must be less than 20 characters!'
+                        }
+                    ]}
+                    name='Name'
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    label='E-mail'
+                    name='email'
+                    rules={[
+                        {
+                            type: 'email',
+                            message: 'The input is not valid E-mail!',
+                        },
+                        {
+                            required: true,
+                            message: 'Please input your E-mail!',
+                        },
+                        {
+                            max: 20,
+                            message: 'Email length must be less than 20 characters!'
+                        }
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    name='phone'
+                    label='Phone'
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Please input your phone number!',
+                        },
+                        {
+                            validator: (_, value) => value.match(regexPhoneNumber) ? Promise.resolve() : Promise.reject(new Error('Phone number invalid!'))
+                        }
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    label="Address"
+                    name='address'
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Address is required!'
+                        },
+                        {
+                            min: 8,
+                            message: 'Address length must be at least 8 characters!'
+                        },
+                        {
+                            max: 40,
+                            message: 'Address length must be less than 40 characters!'
+                        }
+                    ]}
+                >
+                    <Input />
+                </Form.Item>
+
+                <Form.Item
+                    label='Birthday'
+                    name='birthday'
+                    rules={[{ type: 'object' }]}
+                >
+                    <DatePicker />
                 </Form.Item>
 
                 <Form.Item>

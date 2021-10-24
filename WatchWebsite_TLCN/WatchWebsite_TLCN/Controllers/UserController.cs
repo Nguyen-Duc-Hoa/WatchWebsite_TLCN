@@ -68,9 +68,9 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 var result = await _unitOfWork.UserRole.GetAllWithPagination(
                     expression: ur => ur.Role.RoleName == "Employee" && 
-                    (ur.User.Name.Contains(searchKey) || 
-                    ur.User.Address.Contains(searchKey) ||
-                    ur.User.Phone.Contains(searchKey)),
+                        (ur.User.Name.Contains(searchKey) || 
+                        ur.User.Address.Contains(searchKey) ||
+                        ur.User.Phone.Contains(searchKey)),
                     includes: new List<string> { "User" },
                     pagination: new Pagination { CurrentPage = currentPage });
 
@@ -108,7 +108,7 @@ namespace WatchWebsite_TLCN.Controllers
             return user;
         }
 
-        // PUT: api/User/UpdateState&id=2
+        // PUT: api/User/UpdateState
         [HttpPut]
         [Route("UpdateState")]
         public async Task<IActionResult> UpdateState([FromBody] int id)
@@ -136,16 +136,28 @@ namespace WatchWebsite_TLCN.Controllers
             return Ok();
         }
 
-        // POST: api/User
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        // POST: api/User/CreateEmployee
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        [Route("CreateEmployee")]
+        public async Task<ActionResult<User>> CreateEmployee(User user)
         {
-            await _unitOfWork.Users.Insert(user);
-            await _unitOfWork.Save();
+            try
+            {
+                await _unitOfWork.Users.Insert(user);
+                await _unitOfWork.Save();
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+                var employeeRole = await _unitOfWork.Roles.Get(role => role.RoleName == "Employee");
+
+                await _unitOfWork.UserRole.Insert(
+                    new User_Role { UserId = user.Id, RoleId = employeeRole.RoleId });
+                await _unitOfWork.Save();
+
+                return Ok();
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
 
         // DELETE: api/User/5
