@@ -37,7 +37,7 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 var result = await _unitOfWork.UserRole.GetAllWithPagination(
                     expression: ur => ur.Role.RoleName == "Employee",
-                    includes: new List<string> { "User", "Role"},
+                    includes: new List<string> { "User"},
                     pagination: new Pagination { CurrentPage = currentPage });
 
                 List<User> employeeList = new List<User>();
@@ -54,6 +54,41 @@ namespace WatchWebsite_TLCN.Controllers
                 });
             }
             catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // GET: api/User/SearchEmployee&currentPage=1&searchKey=abc
+        [HttpGet]
+        [Route("SearchEmployee")]
+        public async Task<ActionResult<IEnumerable<User>>> SearchEmployee(int currentPage, string searchKey)
+        {
+            try
+            {
+                var result = await _unitOfWork.UserRole.GetAllWithPagination(
+                    expression: ur => ur.Role.RoleName == "Employee" && 
+                    (ur.User.Name.Contains(searchKey) || 
+                    ur.User.Address.Contains(searchKey) ||
+                    ur.User.Phone.Contains(searchKey)),
+                    includes: new List<string> { "User" },
+                    pagination: new Pagination { CurrentPage = currentPage });
+
+                List<User> employeeList = new List<User>();
+                foreach (var user in result.Item1)
+                {
+                    employeeList.Add(user.User);
+                }
+
+                var employeeListDTO = _mapper.Map<List<UserDTO>>(employeeList);
+                return Ok(new
+                {
+                    Users = employeeListDTO,
+                    CurrentPage = result.Item2.CurrentPage,
+                    TotalPage = result.Item2.TotalPage
+                });
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, ex.Message);
             }
