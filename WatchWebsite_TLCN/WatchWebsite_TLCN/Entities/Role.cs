@@ -16,7 +16,7 @@ namespace WatchWebsite_TLCN.Entities
         [Required]
         public string RoleName { get; set; }
 
-        public virtual ICollection<User_Role> User_Roles { get; set; }
+        public virtual ICollection<User_Role> User_Role { get; set; }
 
     }
 }

@@ -22,9 +22,33 @@ namespace WatchWebsite_TLCN.Repository
         private IGenericRepository<Size> _sizes;
         private IGenericRepository<User> _users;
         private IGenericRepository<WaterResistance> _waterResistances;
+        private IGenericRepository<Role> _roles;
+        private IGenericRepository<User_Role> _userRole;
         public UnitOfWork(MyDBContext context)
         {
             _context = context;
+        }
+        public IGenericRepository<Role> Roles
+        {
+            get
+            {
+                if (_roles == null)
+                {
+                    _roles = new GenericRepository<Role>(_context);
+                }
+                return _roles;
+            }
+        }
+        public IGenericRepository<User_Role> UserRole
+        {
+            get
+            {
+                if(_userRole == null)
+                {
+                    _userRole = new GenericRepository<User_Role>(_context);
+                }
+                return _userRole;
+            }
         }
         public IGenericRepository<Brand> Brands
         {

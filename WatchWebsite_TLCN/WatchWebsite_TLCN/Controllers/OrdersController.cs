@@ -114,6 +114,7 @@ namespace WatchWebsite_TLCN.Controllers
             return _unitOfWork.Orders.IsExist<int>(id);
         }
 
+        // POST: /api/Orders/CreateOrder
         [HttpPost]
         [Route("CreateOrder")]
         public async Task<IActionResult> PostOrder(OrderDTO orderDTO)
@@ -160,6 +161,7 @@ namespace WatchWebsite_TLCN.Controllers
             }
         }
 
+        // POST: /api/Orders/Payment
         [HttpPost]
         [Route("Payment")]
         public async Task<IActionResult> Create(PaymentIntentCreateRequest request)

@@ -138,7 +138,8 @@ namespace WatchWebsite_TLCN.Controllers
             return _product.GetPopularProduct().ToList();
         }
 
-        [HttpPost]
+        // GET: /api/Products/SearchProducts&currentPage=1&searchKey=abc
+        [HttpGet]
         [Route("Search")]
         public async Task<IActionResult> SearchProducts(int currentPage, string searchKey)
         {
@@ -152,7 +153,7 @@ namespace WatchWebsite_TLCN.Controllers
 
             var listProductDTO = _mapper.Map<List<ProductDTO>>(result.Item1);
 
-            return Ok(new ListProductDTO
+            return Ok(new
             {
                 Products = listProductDTO,
                 CurrentPage = result.Item2.CurrentPage,
@@ -160,6 +161,7 @@ namespace WatchWebsite_TLCN.Controllers
             });
         }
 
+        // POST: /api/Products&currentPage=1
         [HttpPost]
         [Route("FilterProduct")]
         public async Task<IActionResult> Filter(int currentPage, [FromBody] FilterProduct filter)
@@ -236,7 +238,7 @@ namespace WatchWebsite_TLCN.Controllers
 
             var listProductDTO = _mapper.Map<List<ProductDTO>>(result.Item1);
 
-            return Ok(new ListProductDTO
+            return Ok(new
             {
                 Products = listProductDTO,
                 CurrentPage = result.Item2.CurrentPage,

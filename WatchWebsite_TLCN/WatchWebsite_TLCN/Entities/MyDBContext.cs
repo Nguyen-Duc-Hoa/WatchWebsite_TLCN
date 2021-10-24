@@ -37,6 +37,16 @@ namespace WatchWebsite_TLCN.Entities
                 u.RoleId
             });
 
+            modelBuilder.Entity<User_Role>()
+                .HasOne(u => u.User)
+                .WithMany(u => u.UserRole)
+                .HasForeignKey(u => u.UserId);
+
+            modelBuilder.Entity<User_Role>()
+                .HasOne(u => u.Role)
+                .WithMany(x => x.User_Role)
+                .HasForeignKey(x => x.RoleId);
+
             //OrderDetail set 2 Primary Key
             modelBuilder.Entity<OrderDetail>().HasKey(u => new
             {

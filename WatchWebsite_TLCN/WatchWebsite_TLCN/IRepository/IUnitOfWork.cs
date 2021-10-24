@@ -19,6 +19,8 @@ namespace WatchWebsite_TLCN.IRepository
         IGenericRepository<Size> Sizes { get; }
         IGenericRepository<User> Users { get; }
         IGenericRepository<WaterResistance> WaterResistances { get; }
+        IGenericRepository<Role> Roles { get; }
+        IGenericRepository<User_Role> UserRole { get; }
         Task Save();
     }
 }

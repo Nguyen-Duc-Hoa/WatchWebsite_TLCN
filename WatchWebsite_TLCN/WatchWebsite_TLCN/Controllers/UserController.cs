@@ -2,38 +2,68 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly MyDBContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public UserController(MyDBContext context)
+        public UserController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
-        // GET: api/User
+        // GET: api/User/GetEmployeeList
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        [Route("GetEmployeeList")]
+        public async Task<ActionResult<IEnumerable<User>>> GetEmployeeList(int currentPage)
         {
-            return await _context.Users.ToListAsync();
+            try
+            {
+                var result = await _unitOfWork.UserRole.GetAllWithPagination(
+                    expression: ur => ur.Role.RoleName == "Employee",
+                    includes: new List<string> { "User", "Role"},
+                    pagination: new Pagination { CurrentPage = currentPage });
+
+                List<User> employeeList = new List<User>();
+                foreach(var user in result.Item1)
+                {
+                    employeeList.Add(user.User);
+                }
+
+                var employeeListDTO = _mapper.Map<List<UserDTO>>(employeeList);
+                return Ok(new { 
+                    Users = employeeListDTO,
+                    CurrentPage = result.Item2.CurrentPage,
+                    TotalPage = result.Item2.TotalPage
+                });
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // GET: api/User/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _unitOfWork.Users.Get(u => u.Id == id);
 
             if (user == null)
             {
@@ -54,15 +84,15 @@ namespace WatchWebsite_TLCN.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            _unitOfWork.Users.Update(user);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UserExists(id))
+                if (!(await UserExists(user.Id)))
                 {
                     return NotFound();
                 }
@@ -81,8 +111,8 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Users.Insert(user);
+            await _unitOfWork.Save();
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
@@ -91,21 +121,21 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _unitOfWork.Users.Get(u => u.Id == id);
             if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Users.Delete(user);
+            await _unitOfWork.Save();
 
             return user;
         }
 
-        private bool UserExists(int id)
+        private Task<bool> UserExists(int id)
         {
-            return _context.Users.Any(e => e.Id == id);
+            return _unitOfWork.Users.IsExist<int>(id);
         }
     }
 }
