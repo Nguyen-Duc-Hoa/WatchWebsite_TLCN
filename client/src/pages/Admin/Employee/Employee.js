@@ -1,84 +1,112 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Table, Button } from 'antd'
 import { FaLock, FaUnlockAlt } from 'react-icons/fa'
 import Pagination from '../../../components/Pagination/Pagination'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
-
-const columns = [
-    {
-        title: 'Full Name',
-        dataIndex: 'fullname',
-        key: 'fullname',
-        sorter: (a, b) => a.fullname > b.fullname,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Phone',
-        dataIndex: 'phone',
-        key: 'phone'
-    },
-    {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
-        sorter: (a, b) => a.address > b.address,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Status',
-        dataIndex: 'status',
-        key: 'status',
-        align: 'center',
-        render: (status, record) => {
-            return (
-                <>
-                    {status ?
-                        <FaLock
-                            className='icon'
-                            onClick={() => console.log(record)}
-                        /> :
-                        <FaUnlockAlt
-                            className='icon'
-                            onClick={() => console.log(record)}
-                        />}
-                </>
-            )
-        }
-    }
-]
-
-const originData = [
-    {
-        key: '1',
-        fullname: 'John Brown',
-        phone: '0123456789',
-        address: 'New York No. 1 Lake Park',
-        status: true,
-    },
-    {
-        key: '2',
-        fullname: 'Jim Green',
-        phone: '0123456789',
-        address: 'London No. 1 Lake Park',
-        status: false,
-    },
-    {
-        key: '3',
-        fullname: 'Joe Black',
-        phone: '0123456789',
-        address: 'Sidney No. 1 Lake Park',
-        status: false,
-    },
-]
+import { Link } from 'react-router-dom'
 
 function Employee() {
-    const [data, setData] = useState(originData)
+    const [data, setData] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPage, setTotalPage] = useState(0)
+
+    const columns = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            sorter: (a, b) => a.name > b.name,
+            sortDirections: ['descend'],
+        },
+        {
+            title: 'Phone',
+            dataIndex: 'phone',
+            key: 'phone'
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            key: 'address',
+            sorter: (a, b) => a.address > b.address,
+            sortDirections: ['descend'],
+        },
+        {
+            title: 'State',
+            dataIndex: 'state',
+            key: 'state',
+            align: 'center',
+            render: (state, record) => {
+                return (
+                    <>
+                        {state ?
+                            <FaLock
+                                style={{
+                                    fontSize: 20,
+                                    cursor: 'pointer'
+                                }}
+                                onClick={() => changeStateHandler(record)}
+                            /> :
+                            <FaUnlockAlt
+                                style={{
+                                    fontSize: 20,
+                                    cursor: 'pointer'
+                                }}
+                                onClick={() => changeStateHandler(record)}
+                            />}
+                    </>
+                )
+            }
+        }
+    ]
+
+    const updateEmployeeList = res => {
+        const employeeList = []
+        res.Users.map(ele => employeeList.push({
+            key: ele.Id,
+            name: ele.Name,
+            phone: ele.Phone,
+            address: ele.Address,
+            state: ele.State
+        }))
+        setData(employeeList)
+        setCurrentPage(res.CurrentPage)
+        setTotalPage(res.TotalPage)
+    }
+
+    const changeStateHandler = record => {
+        fetch(`https://localhost:44336/api/User/UpdateState?currentPage=${currentPage}`, {
+            method: 'POST',
+            // mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: record.key
+        })
+            .then(response => response.json())
+            .then(res => updateEmployeeList(res))
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
+    useEffect(() => {
+        fetch(`https://localhost:44336/api/User/GetEmployeeList?currentPage=${currentPage}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(res => updateEmployeeList(res))
+            .catch(error => {
+                console.log(error)
+            })
+    }, [currentPage])
 
     return (
         <section className='admin'>
             <div className="heading">Employee</div>
             <div className="buttonLayout">
+                <Link to='/admin/CreateAccount'>
                 <Button size='large' type='primary'><AiOutlineAppstoreAdd className='icon' /> Create new account</Button>
+                </Link>
             </div>
             <Table
                 columns={columns}
@@ -86,9 +114,10 @@ function Employee() {
                 pagination={{ position: ['none', 'none'] }}
                 footer={() => (
                     <Pagination
-                        currentPage={3}
+                        setCurrentPage={setCurrentPage}
+                        currentPage={currentPage}
                         noPadding={true}
-                        totalPage={5} />
+                        totalPage={totalPage} />
                 )}
                 bordered={true} />
         </section>

@@ -196,7 +196,7 @@ namespace WatchWebsite_TLCN.Controllers
                 expression: expression,
                 pagination: new Pagination { CurrentPage = currentPage });
 
-            // Filter gender
+            // Filter gender (1: Male, 0: Female)
             if (filter.Gender != -1)
             {
                 expression = expression.And(p => p.Gender == filter.Gender);

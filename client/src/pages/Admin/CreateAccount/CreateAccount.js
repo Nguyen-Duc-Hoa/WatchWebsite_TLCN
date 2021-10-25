@@ -1,5 +1,5 @@
 import React from 'react'
-import { Form, Button, Input } from 'antd'
+import { Form, Button, Input, DatePicker } from 'antd'
 
 const layout = {
     labelCol: { span: 24 },
@@ -10,7 +10,18 @@ const regexPhoneNumber = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/
 
 function CreateAccount() {
     const onFinish = values => {
-        console.log(values)
+        fetch('https://localhost:44336/api/User/CreateEmployee', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(values)
+        })
+        .then(response => {
+            console.log(response)
+            console.log(response.status)
+        })
+
     }
 
     return (
@@ -104,7 +115,7 @@ function CreateAccount() {
                             message: 'Name length must be less than 20 characters!'
                         }
                     ]}
-                    name='Name'
+                    name='name'
                 >
                     <Input />
                 </Form.Item>
