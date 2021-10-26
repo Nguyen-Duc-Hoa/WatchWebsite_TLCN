@@ -4,11 +4,13 @@ import { FaLock, FaUnlockAlt } from 'react-icons/fa'
 import Pagination from '../../../components/Pagination/Pagination'
 import { AiOutlineAppstoreAdd } from 'react-icons/ai'
 import { Link } from 'react-router-dom'
+import SearchBox from '../../../components/SearchBox/SearchBox'
 
 function Employee() {
     const [data, setData] = useState([])
+    const [searchKey, setSearchKey] = useState("")
     const [currentPage, setCurrentPage] = useState(1)
-    const [totalPage, setTotalPage] = useState(0)
+    const [totalPage, setTotalPage] = useState(1)
 
     const columns = [
         {
@@ -59,7 +61,12 @@ function Employee() {
         }
     ]
 
-    const updateEmployeeList = res => {
+    useEffect(() => {
+        fetchEmployeeList()
+        console.log(data)
+    }, [currentPage, searchKey])
+
+    const updateState = res => {
         const employeeList = []
         res.Users.map(ele => employeeList.push({
             key: ele.Id,
@@ -73,39 +80,43 @@ function Employee() {
         setTotalPage(res.TotalPage)
     }
 
+    const fetchEmployeeList = () => {
+        fetch(`https://localhost:44336/api/User/SearchEmployee?currentPage=${currentPage}&searchKey=${searchKey}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(res => updateState(res))
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
     const changeStateHandler = record => {
-        fetch(`https://localhost:44336/api/User/UpdateState?currentPage=${currentPage}`, {
+        fetch(`https://localhost:44336/api/User/UpdateState?currentPage=${currentPage}&searchKey=${searchKey}`, {
             method: 'POST',
-            // mode: 'no-cors',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: record.key
         })
             .then(response => response.json())
-            .then(res => updateEmployeeList(res))
+            .then(res => updateState(res))
             .catch(error => {
                 console.log(error)
             })
     }
 
-    useEffect(() => {
-        fetch(`https://localhost:44336/api/User/GetEmployeeList?currentPage=${currentPage}`, {
-            method: 'GET'
-        })
-            .then(response => response.json())
-            .then(res => updateEmployeeList(res))
-            .catch(error => {
-                console.log(error)
-            })
-    }, [currentPage])
+    const searchHandler = values => {
+        setSearchKey(values.search)
+    }
 
     return (
         <section className='admin'>
             <div className="heading">Employee</div>
-            <div className="buttonLayout">
+            <div className="buttonLayout" style={{ justifyContent: 'space-between' }}>
+                <SearchBox onSubmit={searchHandler}/>
                 <Link to='/admin/CreateAccount'>
-                <Button size='large' type='primary'><AiOutlineAppstoreAdd className='icon' /> Create new account</Button>
+                    <Button size='large' type='primary'><AiOutlineAppstoreAdd className='icon' /> Create new account</Button>
                 </Link>
             </div>
             <Table

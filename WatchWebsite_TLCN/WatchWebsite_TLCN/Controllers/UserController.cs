@@ -22,13 +22,6 @@ namespace WatchWebsite_TLCN.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public class UserListDTO
-        {
-            public List<UserDTO> Users { get; set; }
-            public int CurrentPage { get; set; }
-            public int TotalPage { get; set; }
-        }
-
         public UserController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _mapper = mapper;
@@ -36,42 +29,43 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/User/GetEmployeeList
-        [HttpGet]
-        [Route("GetEmployeeList")]
-        public async Task<ActionResult<IEnumerable<User>>> GetEmployeeList(int currentPage)
-        {
-            try
-            {
-                var result = await _unitOfWork.UserRole.GetAllWithPagination(
-                    expression: ur => ur.Role.RoleName == "Employee",
-                    includes: new List<string> { "User"},
-                    pagination: new Pagination { CurrentPage = currentPage });
+        //[HttpGet]
+        //[Route("GetEmployeeList")]
+        //public async Task<ActionResult<IEnumerable<User>>> GetEmployeeList(int currentPage)
+        //{
+        //    try
+        //    {
+        //        var result = await _unitOfWork.UserRole.GetAllWithPagination(
+        //            expression: ur => ur.Role.RoleName == "Employee",
+        //            includes: new List<string> { "User"},
+        //            pagination: new Pagination { CurrentPage = currentPage });
 
-                List<User> employeeList = new List<User>();
-                foreach(var user in result.Item1)
-                {
-                    employeeList.Add(user.User);
-                }
+        //        List<User> employeeList = new List<User>();
+        //        foreach(var user in result.Item1)
+        //        {
+        //            employeeList.Add(user.User);
+        //        }
 
-                var employeeListDTO = _mapper.Map<List<UserDTO>>(employeeList);
-                return Ok(new UserListDTO
-                { 
-                    Users = employeeListDTO,
-                    CurrentPage = result.Item2.CurrentPage,
-                    TotalPage = result.Item2.TotalPage
-                });
-            }
-            catch(Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        //        var employeeListDTO = _mapper.Map<List<UserDTO>>(employeeList);
+        //        return Ok(new
+        //        { 
+        //            Users = employeeListDTO,
+        //            CurrentPage = result.Item2.CurrentPage,
+        //            TotalPage = result.Item2.TotalPage
+        //        });
+        //    }
+        //    catch(Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
 
         // GET: api/User/SearchEmployee?currentPage=1&searchKey=abc
         [HttpGet]
         [Route("SearchEmployee")]
         public async Task<ActionResult<IEnumerable<User>>> SearchEmployee(int currentPage, string searchKey)
         {
+            if (String.IsNullOrEmpty(searchKey)) searchKey = "";
             try
             {
                 var result = await _unitOfWork.UserRole.GetAllWithPagination(
@@ -116,11 +110,13 @@ namespace WatchWebsite_TLCN.Controllers
             return user;
         }
 
-        // PUT: api/User/UpdateState
+        // POST: api/User/UpdateState
         [HttpPost]
         [Route("UpdateState")]
-        public async Task<IActionResult> UpdateState([FromBody] int id, int currentPage)
+        public async Task<IActionResult> UpdateState([FromBody] int id, int currentPage, string searchKey)
         {
+            if (String.IsNullOrEmpty(searchKey)) searchKey = "";
+
             var user = await _unitOfWork.Users.Get(u => u.Id == id);
             user.State = !user.State;
             _unitOfWork.Users.Update(user);
@@ -141,7 +137,7 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return RedirectToAction(nameof(GetEmployeeList), new { currentPage = currentPage });
+            return RedirectToAction(nameof(SearchEmployee), new { currentPage = currentPage, searchKey = searchKey });
         }
 
         // POST: api/User/CreateEmployee

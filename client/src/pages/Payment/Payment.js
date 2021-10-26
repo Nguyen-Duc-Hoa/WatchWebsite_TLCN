@@ -4,7 +4,6 @@ import { Elements } from "@stripe/react-stripe-js";
 import CheckoutProducts from '../../components/CheckoutProducts/CheckoutProducts'
 import Breadcrumbing from '../../components/Breadcrumb/Breadcrumb'
 import './Payment.scss'
-import { Button, Space } from 'antd'
 import PaymentForm from "../../components/PaymentForm/PaymentForm";
 
 const breadCrumbRoute = [
