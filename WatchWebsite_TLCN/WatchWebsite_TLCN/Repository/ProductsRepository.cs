@@ -37,5 +37,33 @@ namespace WatchWebsite_TLCN.Repository
 
             return product;
         }
+
+        public ProductDetail GetProductDetail(string id)
+        {
+
+            var productDetail = (from p in _context.Products
+                                 join b in _context.Brands on p.BrandId equals b.BrandId
+                                 join s in _context.Sizes on p.SizeId equals s.SizeId
+                                 join w in _context.WaterResistances on p.WaterResistanceId equals w.WaterId
+                                 join m in _context.Materials on p.MaterialId equals m.MaterialId
+                                 join e in _context.Enegies on p.EnergyId equals e.EnergyId
+                                 where p.Id == id
+                                 select new ProductDetail()
+                                 {
+                                     Id = p.Id,
+                                     Name = p.Name,
+                                     //Price = p.Price,
+                                     Amount = p.Amount,
+                                     Image = p.Image,
+                                     Description = p.Description,
+                                     Brand = b.Name,
+                                     Gender = p.Gender,
+                                     Material = m.MaterialValue,
+                                     WaterResistance = w.WaterValue,
+                                     Size = s.SizeValue,
+                                     Energy = e.EnergyValue
+                                 });
+            return productDetail.FirstOrDefault();
+        }
     }
 }

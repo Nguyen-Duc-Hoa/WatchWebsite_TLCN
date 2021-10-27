@@ -308,6 +308,7 @@ C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\b
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\runtimes\unix\lib\netcoreapp2.0\System.Runtime.Caching.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\runtimes\win\lib\netcoreapp2.0\System.Runtime.Caching.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
+C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.csprojAssemblyReference.cache
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.AssemblyInfoInputs.cache
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.AssemblyInfo.cs
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.csproj.CoreCompileInputs.cache
@@ -319,4 +320,3 @@ C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\o
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.pdb
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.genruntimeconfig.cache
-C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.csprojAssemblyReference.cache

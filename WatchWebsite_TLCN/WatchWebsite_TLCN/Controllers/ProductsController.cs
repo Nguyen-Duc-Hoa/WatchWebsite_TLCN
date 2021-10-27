@@ -138,6 +138,14 @@ namespace WatchWebsite_TLCN.Controllers
             return _product.GetPopularProduct().ToList();
         }
 
+        //Get product detail
+        [HttpGet]
+        [Route("ProductDetail/{id}")]
+        public ProductDetail GetProductDetail(string id)
+        {
+            return _product.GetProductDetail(id);
+        }
+
         // GET: /api/Products/SearchProducts&currentPage=1&searchKey=abc
         [HttpGet]
         [Route("Search")]
