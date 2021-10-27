@@ -74,14 +74,28 @@ namespace WatchWebsite_TLCN.Controllers
         {
             string username = model.Username;
             string password = model.Password;
+            int userid = 0;
+            int role = 0;
+
             User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
             if (user == null)
             {
                 username = null;
                 password = null;
             }
+            else
+            {
+                userid = user.Id;
+                var user_role = _context.User_Roles.Where(x => x.UserId == userid).FirstOrDefault();
 
-            var token = _jwtAuthenticationManager.Authenticate(username, password);
+                //role = user_role.RoleId;
+
+                role = 1;
+            }
+
+            //var token = _jwtAuthenticationManager.Authenticate(username, password);
+
+            var token = _jwtAuthenticationManager.Authenticate(userid, username, password, role);
 
             if (token == null)
             {

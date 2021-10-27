@@ -158,6 +158,7 @@ E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\net
 E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.genruntimeconfig.cache
 E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\AutoMapper.dll
 E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\Stripe.net.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\appsettings.Development.json
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\appsettings.json
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
@@ -222,6 +223,7 @@ C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\b
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\SQLitePCLRaw.nativelibrary.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\SQLitePCLRaw.core.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\SQLitePCLRaw.provider.dynamic_cdecl.dll
+C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\Stripe.net.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\System.Collections.Immutable.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\System.Composition.AttributedModel.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\System.Composition.Convention.dll
@@ -317,5 +319,3 @@ C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\o
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.dll
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.pdb
 C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.genruntimeconfig.cache
-C:\Users\PC\source\repos\WatvhWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\obj\Debug\netcoreapp3.1\WatchWebsite_TLCN.csprojAssemblyReference.cache
-E:\Đồ án\WatchWebsite_TLCN\WatchWebsite_TLCN\WatchWebsite_TLCN\bin\Debug\netcoreapp3.1\Stripe.net.dll

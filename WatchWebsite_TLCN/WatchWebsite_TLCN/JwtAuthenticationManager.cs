@@ -62,7 +62,7 @@ namespace WatchWebsite_TLCN
             };
         }
 
-        public AuthenticationResponse Authenticate(string username, string password)
+        public AuthenticationResponse Authenticate(int userid, string username, string password, int role)
         {
             
             /*User user = Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
@@ -85,7 +85,10 @@ namespace WatchWebsite_TLCN
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, username)
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.NameIdentifier, userid.ToString()),
+                    new Claim(ClaimTypes.Name, username),
+                    new Claim(ClaimTypes.Role, role.ToString())
                 }),
                 
                 Expires = DateTime.UtcNow.AddHours(1),
