@@ -7,7 +7,7 @@ using WatchWebsite_TLCN.Entities;
 
 namespace WatchWebsite_TLCN.Intefaces
 {
-    interface IUserOrder
+    public interface IUserOrder
     {
         IEnumerable<Order> GetByUser(int userid);
 

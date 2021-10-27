@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using WatchWebsite_TLCN.Models;
 using WatchWebsite_TLCN.DTO;
 using AutoMapper;
+using WatchWebsite_TLCN.Intefaces;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -21,11 +22,13 @@ namespace WatchWebsite_TLCN.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IUserOrder _userOrder;
 
-        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper)
+        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper, IUserOrder userOrder)
         {
-            _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _userOrder = userOrder;
         }
 
         // GET: api/Orders
