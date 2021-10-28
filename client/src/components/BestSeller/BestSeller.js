@@ -20,13 +20,8 @@ function BestSeller() {
     const windowDimensions = useWindowDimensions()
     const [resizeFlag, setResizeFlag] = useState(false);
     useEffect(() => {
-        console.log(resizeFlag)
-        if(windowDimensions.width > 750) {
-            setResizeFlag(true)
-        }
-        else {
-            setResizeFlag(false)
-        }
+        // console.log(resizeFlag)
+        setResizeFlag(windowDimensions.width > 750)
     }, [windowDimensions])
 
     return (

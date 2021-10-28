@@ -190,6 +190,8 @@ function Statistic() {
 
     const onFinish = values => {
         console.log(values)
+        console.log(values.date[0])
+        console.log(values.date[1])
     }
 
     return (

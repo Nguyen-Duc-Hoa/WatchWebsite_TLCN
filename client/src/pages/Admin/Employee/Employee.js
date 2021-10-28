@@ -92,7 +92,7 @@ function Employee() {
     }
 
     const changeStateHandler = record => {
-        fetch(`https://localhost:44336/api/User/UpdateState?currentPage=${currentPage}&searchKey=${searchKey}`, {
+        fetch(`https://localhost:44336/api/User/UpdateStateEmployee?currentPage=${currentPage}&searchKey=${searchKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ function Employee() {
         <section className='admin'>
             <div className="heading">Employee</div>
             <div className="buttonLayout" style={{ justifyContent: 'space-between' }}>
-                <SearchBox onSubmit={searchHandler}/>
+                <SearchBox onSubmit={searchHandler} />
                 <Link to='/admin/CreateAccount'>
                     <Button size='large' type='primary'><AiOutlineAppstoreAdd className='icon' /> Create new account</Button>
                 </Link>
@@ -128,7 +128,8 @@ function Employee() {
                         setCurrentPage={setCurrentPage}
                         currentPage={currentPage}
                         noPadding={true}
-                        totalPage={totalPage} />
+                        totalPage={totalPage}
+                    />
                 )}
                 bordered={true} />
         </section>
