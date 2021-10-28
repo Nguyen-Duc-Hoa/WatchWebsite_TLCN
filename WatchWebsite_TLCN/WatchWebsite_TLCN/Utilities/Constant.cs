@@ -21,5 +21,9 @@ namespace WatchWebsite_TLCN.Utilities
             {"Delivering", "Đang giao" },
             {"Complete", "Đã giao" }
         };
+
+        public const string adminRole = "Admin";
+        public const string employeeRole = "Employee";
+        public const string customerRole = "Customer";
     }
 }

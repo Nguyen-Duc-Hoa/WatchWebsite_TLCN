@@ -37,18 +37,13 @@ const brands = [
 function BrandCollection() {
     const windowDimensions = useWindowDimensions()
     const [resizeFlag, setResizeFlag] = useState(false);
+    
     useEffect(() => {
+        setResizeFlag(windowDimensions.width > 750)
         console.log(resizeFlag)
-        if(windowDimensions.width > 750) {
-            setResizeFlag(true)
-        }
-        else {
-            setResizeFlag(false)
-        }
     }, [windowDimensions])
 
-    
-
+    console.log("re-render")
     return (
         <section className='brandCollection'>
             <div className="heading">Brand Collection</div>
@@ -61,7 +56,6 @@ function BrandCollection() {
                     clickable: true
                 }}
             >
-
                 {
                     brands.map((ele, index) => (
                         <SwiperSlide key={index}>

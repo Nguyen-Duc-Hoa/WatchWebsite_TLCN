@@ -11,6 +11,7 @@ using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.IRepository;
 using WatchWebsite_TLCN.Models;
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -69,7 +70,7 @@ namespace WatchWebsite_TLCN.Controllers
             try
             {
                 var result = await _unitOfWork.UserRole.GetAllWithPagination(
-                    expression: ur => ur.Role.RoleName == "Employee" && 
+                    expression: ur => ur.Role.RoleName == Constant.employeeRole && 
                         (ur.User.Name.Contains(searchKey) || 
                         ur.User.Address.Contains(searchKey) ||
                         ur.User.Phone.Contains(searchKey)),
@@ -96,6 +97,42 @@ namespace WatchWebsite_TLCN.Controllers
             }
         }
 
+        // GET: api/User/SearchCustomer?currentPage=1&searchKey=abc
+        [HttpGet]
+        [Route("SearchCustomer")]
+        public async Task<ActionResult<IEnumerable<User>>> SearchCustomer(int currentPage, string searchKey)
+        {
+            if (String.IsNullOrEmpty(searchKey)) searchKey = "";
+            try
+            {
+                var result = await _unitOfWork.UserRole.GetAllWithPagination(
+                    expression: ur => ur.Role.RoleName == Constant.customerRole &&
+                        (ur.User.Name.Contains(searchKey) ||
+                        ur.User.Address.Contains(searchKey) ||
+                        ur.User.Phone.Contains(searchKey)),
+                    includes: new List<string> { "User" },
+                    pagination: new Pagination { CurrentPage = currentPage });
+
+                List<User> customerList = new List<User>();
+                foreach (var user in result.Item1)
+                {
+                    customerList.Add(user.User);
+                }
+
+                var customerListDTO = _mapper.Map<List<UserDTO>>(customerList);
+                return Ok(new
+                {
+                    Users = customerListDTO,
+                    CurrentPage = result.Item2.CurrentPage,
+                    TotalPage = result.Item2.TotalPage
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         // GET: api/User/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
@@ -110,10 +147,10 @@ namespace WatchWebsite_TLCN.Controllers
             return user;
         }
 
-        // POST: api/User/UpdateState
+        // POST: api/User/UpdateStateEmployee?currentPage=1&searchKey=123
         [HttpPost]
-        [Route("UpdateState")]
-        public async Task<IActionResult> UpdateState([FromBody] int id, int currentPage, string searchKey)
+        [Route("UpdateStateEmployee")]
+        public async Task<IActionResult> UpdateStateEmployee([FromBody] int id, int currentPage, string searchKey)
         {
             if (String.IsNullOrEmpty(searchKey)) searchKey = "";
 
@@ -138,6 +175,36 @@ namespace WatchWebsite_TLCN.Controllers
             }
 
             return RedirectToAction(nameof(SearchEmployee), new { currentPage = currentPage, searchKey = searchKey });
+        }
+
+        // POST: api/User/UpdateStateCustomer?currentPage=1&searchKey=123
+        [HttpPost]
+        [Route("UpdateStateCustomer")]
+        public async Task<IActionResult> UpdateStateCustomer([FromBody] int id, int currentPage, string searchKey)
+        {
+            if (String.IsNullOrEmpty(searchKey)) searchKey = "";
+
+            var user = await _unitOfWork.Users.Get(u => u.Id == id);
+            user.State = !user.State;
+            _unitOfWork.Users.Update(user);
+
+            try
+            {
+                await _unitOfWork.Save();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!(await UserExists(user.Id)))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(SearchCustomer), new { currentPage = currentPage, searchKey = searchKey });
         }
 
         // POST: api/User/CreateEmployee
