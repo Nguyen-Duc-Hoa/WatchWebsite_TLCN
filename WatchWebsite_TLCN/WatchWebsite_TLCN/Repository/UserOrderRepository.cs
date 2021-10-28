@@ -17,7 +17,7 @@ namespace WatchWebsite_TLCN.Repository
         }
         public IEnumerable<Order> GetByUser(int userid)
         {
-            var order = _context.Orders.Where(x => x.UserId == userid && x.DeliveryStatus == "received").AsQueryable();
+            var order = _context.Orders.Where(x => x.UserId == userid && x.DeliveryStatus == "Complete").AsQueryable();
             return order;
         }
 
