@@ -37,11 +37,13 @@ const brands = [
 function BrandCollection() {
     const windowDimensions = useWindowDimensions()
     const [resizeFlag, setResizeFlag] = useState(false);
+    
     useEffect(() => {
-        console.log(resizeFlag)
         setResizeFlag(windowDimensions.width > 750)
+        console.log(resizeFlag)
     }, [windowDimensions])
 
+    console.log("re-render")
     return (
         <section className='brandCollection'>
             <div className="heading">Brand Collection</div>
