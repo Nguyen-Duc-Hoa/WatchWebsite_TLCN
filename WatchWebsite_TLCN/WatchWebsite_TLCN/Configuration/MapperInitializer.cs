@@ -15,6 +15,8 @@ namespace WatchWebsite_TLCN.Configuration
             CreateMap<Product, ProductDTO>().ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image))).ReverseMap();
             CreateMap<Order, OrderDTO>().ReverseMap();
             CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Comment, CommentDTO>().ReverseMap();
+            CreateMap<User, UserCommentDTO>().ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => Convert.ToBase64String(src.Avatar))).ReverseMap();
         }
     }
 }

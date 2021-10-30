@@ -4,16 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Intefaces;
 
 namespace WatchWebsite_TLCN.Repository
 {
-    public class CommentsRepository
+    public class CommentsRepository : ICommentsRepository
     {
         private readonly MyDBContext _context;
-        public CommentsRepository(MyDBContext context) => _context = context;
-        //public async Task<List<Comment>> GetComments()
-        //{
-        //    return _context.Comments.Include(c => c.User).Include(c => c.ReplyComments).ThenInclude(r => r.UserId);
-        //}
+        public CommentsRepository(MyDBContext context)
+        {
+            _context = context;
+        }
+        public async Task<List<Comment>> GetAllComments()
+        {
+            return await _context.Comments.Include("User").ToListAsync();
+        }
     }
 }

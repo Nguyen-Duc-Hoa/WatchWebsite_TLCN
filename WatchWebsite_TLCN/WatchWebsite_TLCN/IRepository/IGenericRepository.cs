@@ -26,14 +26,6 @@ namespace WatchWebsite_TLCN.IRepository
             Expression<Func<T, bool>> expression = null,
             List<string> includes = null);
 
-        //Expression<Func<B, bool>> Or<B>(
-        //    this Expression<Func<B, bool>> expr1,
-        //    Expression<Func<B, bool>> expr2);
-
-        //Expression<Func<B, bool>> And<B>(
-        //    this Expression<Func<B, bool>> expr1,
-        //    Expression<Func<B, bool>> expr2);
-
         Task Insert(T entity);
         Task InsertRange(IEnumerable<T> entities);
         Task Delete<A>(A id);

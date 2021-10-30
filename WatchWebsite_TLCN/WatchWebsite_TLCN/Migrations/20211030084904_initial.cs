@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace WatchWebsite_TLCN.Migrations
 {
-    public partial class DbInit : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -165,8 +165,10 @@ namespace WatchWebsite_TLCN.Migrations
                     Id = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
                     Amount = table.Column<int>(nullable: false),
+                    Price = table.Column<float>(nullable: false),
                     Image = table.Column<byte[]>(nullable: true),
                     Description = table.Column<string>(nullable: true),
+                    Sold = table.Column<int>(nullable: false),
                     BrandId = table.Column<int>(nullable: false),
                     Gender = table.Column<int>(nullable: false),
                     MaterialId = table.Column<int>(nullable: false),
@@ -243,7 +245,10 @@ namespace WatchWebsite_TLCN.Migrations
                     UserId = table.Column<int>(nullable: false),
                     ProductId = table.Column<string>(nullable: false),
                     Content = table.Column<string>(nullable: false),
-                    Date = table.Column<DateTime>(nullable: false)
+                    Date = table.Column<DateTime>(nullable: false),
+                    TypeComment = table.Column<string>(nullable: false),
+                    ReplyFrom = table.Column<int>(nullable: true),
+                    RepyFrom = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -254,6 +259,12 @@ namespace WatchWebsite_TLCN.Migrations
                         principalTable: "Product",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comment_Comment_RepyFrom",
+                        column: x => x.RepyFrom,
+                        principalTable: "Comment",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Comment_User_UserId",
                         column: x => x.UserId,
@@ -289,28 +300,6 @@ namespace WatchWebsite_TLCN.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ReplyComment",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CommentId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
-                    Content = table.Column<string>(nullable: true),
-                    Date = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ReplyComment", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ReplyComment_Comment_CommentId",
-                        column: x => x.CommentId,
-                        principalTable: "Comment",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Brand_Name",
                 table: "Brand",
@@ -326,6 +315,11 @@ namespace WatchWebsite_TLCN.Migrations
                 name: "IX_Comment_ProductId",
                 table: "Comment",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comment_RepyFrom",
+                table: "Comment",
+                column: "RepyFrom");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comment_UserId",
@@ -386,11 +380,6 @@ namespace WatchWebsite_TLCN.Migrations
                 column: "WaterResistanceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReplyComment_CommentId",
-                table: "ReplyComment",
-                column: "CommentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Size_SizeValue",
                 table: "Size",
                 column: "SizeValue",
@@ -420,10 +409,10 @@ namespace WatchWebsite_TLCN.Migrations
                 name: "Cart");
 
             migrationBuilder.DropTable(
-                name: "OrderDetail");
+                name: "Comment");
 
             migrationBuilder.DropTable(
-                name: "ReplyComment");
+                name: "OrderDetail");
 
             migrationBuilder.DropTable(
                 name: "User_Role");
@@ -432,13 +421,10 @@ namespace WatchWebsite_TLCN.Migrations
                 name: "Order");
 
             migrationBuilder.DropTable(
-                name: "Comment");
+                name: "Product");
 
             migrationBuilder.DropTable(
                 name: "Role");
-
-            migrationBuilder.DropTable(
-                name: "Product");
 
             migrationBuilder.DropTable(
                 name: "User");

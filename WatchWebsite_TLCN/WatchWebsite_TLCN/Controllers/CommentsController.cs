@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
 
 namespace WatchWebsite_TLCN.Controllers
@@ -15,16 +18,23 @@ namespace WatchWebsite_TLCN.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
-        public CommentsController(IUnitOfWork unitOfWork)
+        private readonly ICommentsRepository _comments;
+        private readonly IMapper _mapper;
+        public CommentsController(IUnitOfWork unitOfWork, ICommentsRepository comments, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _comments = comments;
+            _mapper = mapper;
         }
 
         // GET: api/Comments
         [HttpGet]
-        public async Task<IEnumerable<Comment>> GetComments()
+        public async Task<IEnumerable<CommentDTO>> GetComments()
         {
-            return await _unitOfWork.Comments.GetAll(includes: new List<string> { "ReplyComments", "User" });
+            //var result = await _unitOfWork.Comments.GetAll(includes: new List<string> { "User", "Replies" });
+            var result = await _comments.GetAllComments();
+            var commentList = _mapper.Map<List<CommentDTO>>(result);
+            return commentList.Where(c => c.ReplyFrom == null).ToList();
         }
 
         // POST: api/Comments/AddComment
@@ -36,7 +46,8 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 await _unitOfWork.Comments.Insert(comment);
                 await _unitOfWork.Save();
-                return RedirectToAction(nameof(GetComments));
+                //return RedirectToAction(nameof(GetComments));
+                return Ok();
             }
             catch
             {
@@ -44,22 +55,7 @@ namespace WatchWebsite_TLCN.Controllers
             }
         }
 
-        // POST: api/Comments/Reply
-        [Route("Reply")]
-        [HttpPost]
-        public async Task<IActionResult> Reply(ReplyComment reply)
-        {
-            try
-            {
-                await _unitOfWork.ReplyComments.Insert(reply);
-                await _unitOfWork.Save();
-                return RedirectToAction(nameof(GetComments));
-            }            
-            catch
-            {
-                return StatusCode(500);
-            }
-        }
+       
 
         private Task<bool> CommentExists(int id)
         {

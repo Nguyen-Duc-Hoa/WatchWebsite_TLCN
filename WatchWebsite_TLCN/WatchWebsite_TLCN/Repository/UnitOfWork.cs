@@ -14,7 +14,6 @@ namespace WatchWebsite_TLCN.Repository
         private IGenericRepository<Brand> _brands;
         private IGenericRepository<Cart> _carts;
         private IGenericRepository<Comment> _comments;
-        private IGenericRepository<ReplyComment> _replyComments;
         private IGenericRepository<Energy> _energies;
         private IGenericRepository<Material> _materials;
         private IGenericRepository<OrderDetail> _orderDetails;
@@ -28,17 +27,6 @@ namespace WatchWebsite_TLCN.Repository
         public UnitOfWork(MyDBContext context)
         {
             _context = context;
-        }
-        public IGenericRepository<ReplyComment> ReplyComments
-        {
-            get
-            {
-                if(_replyComments == null)
-                {
-                    _replyComments = new GenericRepository<ReplyComment>(_context);
-                }
-                return _replyComments;
-            }
         }
         public IGenericRepository<Role> Roles
         {

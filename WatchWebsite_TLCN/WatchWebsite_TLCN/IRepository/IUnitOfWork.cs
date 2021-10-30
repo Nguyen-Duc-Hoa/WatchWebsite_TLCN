@@ -21,7 +21,6 @@ namespace WatchWebsite_TLCN.IRepository
         IGenericRepository<WaterResistance> WaterResistances { get; }
         IGenericRepository<Role> Roles { get; }
         IGenericRepository<User_Role> UserRole { get; }
-        IGenericRepository<ReplyComment> ReplyComments { get; }
         Task Save();
     }
 }
