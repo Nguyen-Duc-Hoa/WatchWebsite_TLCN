@@ -24,8 +24,8 @@ namespace WatchWebsite_TLCN.Entities
         [Required]
         public DateTime Date { get; set; }
 
-       /* [ForeignKey("UserId")]
-        public virtual User User { get; set; }*/
+        [ForeignKey("UserId")]
+        public virtual User User { get; set; }
 
         [ForeignKey("CommentId")]
         public virtual Comment Comment { get; set; }

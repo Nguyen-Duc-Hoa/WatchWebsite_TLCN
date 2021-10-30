@@ -120,7 +120,7 @@ namespace WatchWebsite_TLCN.Repository
                         {
                             Name = g.Key.name,
                             Year = g.Key.year.ToString(),
-                            Value = g.Sum(count => count.value)
+                            Value = (int)g.Sum(count => count.value)
 
                         }).ToList();
             return list;
