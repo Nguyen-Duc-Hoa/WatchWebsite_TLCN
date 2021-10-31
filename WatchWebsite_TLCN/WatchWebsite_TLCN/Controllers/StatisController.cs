@@ -57,7 +57,7 @@ namespace WatchWebsite_TLCN.Controllers
                 default:
                     return null;
             }
-            return null;
+
         }
     }
 }

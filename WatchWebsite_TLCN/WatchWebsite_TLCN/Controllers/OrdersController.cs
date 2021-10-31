@@ -212,5 +212,13 @@ namespace WatchWebsite_TLCN.Controllers
             return orderDetails;
         }
 
+        [HttpPut]
+        [Route("UpdateStatus/{orderid}")]
+        public Entities.Order UpdateStatus(int orderid)
+        {
+            var order = _userOrder.UpdateStatus(orderid);
+            return order;
+        }
+
     }
 }

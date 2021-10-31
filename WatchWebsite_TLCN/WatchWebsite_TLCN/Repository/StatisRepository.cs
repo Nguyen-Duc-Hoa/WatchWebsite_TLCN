@@ -6,11 +6,13 @@ using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.Models;
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Repository
 {
     public class StatisRepository : IStatis
     {
+
         private readonly MyDBContext _context;
         public StatisRepository(MyDBContext context)
         {
@@ -20,7 +22,7 @@ namespace WatchWebsite_TLCN.Repository
         //Flag = 1
         public IEnumerable<Chart1DTO> Statis1ByDate(Statis statis)
         {
-            
+
             var list = (from order in _context.Orders
                         where order.OrderDate >= statis.date[0] && order.OrderDate <= statis.date[1] && order.DeliveryStatus == "Complete"              
                         group order by order.OrderDate into g

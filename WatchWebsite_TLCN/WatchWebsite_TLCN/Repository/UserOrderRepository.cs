@@ -38,5 +38,58 @@ namespace WatchWebsite_TLCN.Repository
 
             return orderDetail;
         }
+
+        public Order UpdateStatus(int orderid)
+        {
+            var order = _context.Orders.Where(x => x.OrderId == orderid).FirstOrDefault();
+            string status = null;
+
+            if (order != null)
+            {
+                status = order.DeliveryStatus.ToString();
+                switch (status)
+                {
+                    case "Waiting":
+                        status = "Confirmed";
+                        break;
+                    case "Confirmed":
+                        status = "Delivering";
+                        break;
+                    case "Delivering":
+                        status = "Complete";
+                        break;
+                    case "Complete":
+                        status = null;
+                        break;
+                    default:
+                        status = null;
+                        break;                       
+                }
+
+                if (status != null)
+                {
+                    try
+                    {
+                        (from p in _context.Orders
+                         where p.OrderId == orderid
+                         select p).ToList()
+                                .ForEach(x => x.DeliveryStatus = status);
+
+                        _context.SaveChanges();
+                        
+                        
+                        return order;
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                    
+                }
+                
+            }
+            return null;
+
+        }
     }
 }

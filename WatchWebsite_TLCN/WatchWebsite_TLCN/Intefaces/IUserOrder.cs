@@ -10,7 +10,7 @@ namespace WatchWebsite_TLCN.Intefaces
     public interface IUserOrder
     {
         IEnumerable<Order> GetByUser(int userid);
-
         IEnumerable<OrderDetailDTO> GetOrderDetails(int orderid);
+        Order UpdateStatus(int orderid);
     }
 }
