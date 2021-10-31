@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Entities
 {
@@ -27,12 +27,18 @@ namespace WatchWebsite_TLCN.Entities
         [Required]
         public DateTime Date { get; set; }
 
+        [Required]
+        public string TypeComment { get; set; } = Constant.typeComment[0];
+
+        public int? ReplyFrom { get; set; }
+
+        [ForeignKey("ReplyFrom")]
+        public virtual ICollection<Comment> Replies { get; set; }
+
         [ForeignKey("UserId")]
         public virtual User User { get; set; }
 
         [ForeignKey("ProductId")]
         public virtual Product Product { get; set; }
-
-        public virtual ICollection<ReplyComment> ReplyComments { get; set; }
     }
 }

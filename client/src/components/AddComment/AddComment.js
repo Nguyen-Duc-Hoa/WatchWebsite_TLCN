@@ -1,19 +1,47 @@
 import React, { useState } from 'react'
-import { Form, Tooltip, Input, Button } from 'antd'
+import { Form, Tooltip, Input, Button, Tag } from 'antd'
 import Commenting from '../Comment/Comment'
 import moment from 'moment';
 
 const { TextArea } = Input;
 
-function AddComment({ replyUser }) {
+function AddComment({
+    setComments,
+    replyUserName,
+    replyCommentId,
+    productId,
+    setReplyCommentId,
+    setReplyUserName }) {
     const [value, setValue] = useState('')
     const [loading, setLoading] = useState(false)
+    const [form] = Form.useForm();
 
-    const handleSubmit = () => {
+    const handleSubmit = (value) => {
         if (!value) {
             return
         }
         setLoading(true)
+        const comment = {
+            userId: 4,
+            productId: productId,
+            content: value.content,
+            date: new Date(),
+            replyFrom: replyCommentId ? replyCommentId : null
+        }
+        fetch('https://localhost:44336/api/Comments/AddComment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(comment)
+        })
+            .then(response => response.json())
+            .then(result => {
+                setValue('')
+                setComments(result)
+                setLoading(false)
+                form.resetFields()
+            })
     }
 
     const handleChange = e => {
@@ -32,10 +60,14 @@ function AddComment({ replyUser }) {
             }
             content={
                 <Editor
-                    replyUser={replyUser}
+                    replyUserName={replyUserName}
+                    replyCommentId={replyCommentId}
                     handleSubmit={handleSubmit}
                     handleChange={handleChange}
+                    setReplyCommentId={setReplyCommentId}
+                    setReplyUserName={setReplyUserName}
                     loading={loading}
+                    form={form}
                     value={value} />
             } />
     )
@@ -43,12 +75,33 @@ function AddComment({ replyUser }) {
 
 export default AddComment
 
-function Editor({ handleSubmit, handleChange, loading, value, replyUser }) {
+function Editor({
+    handleSubmit,
+    handleChange,
+    loading,
+    value,
+    replyUserName,
+    setReplyCommentId,
+    setReplyUserName,
+    form }) {
+
+    const handleCancelReply = () => {
+        setReplyCommentId()
+        setReplyUserName()
+    }
+
+
     return (
         <Form
-            onSubmit={handleSubmit}
-            initialValues={{content: replyUser}}
+            onFinish={handleSubmit}
+            form={form}
         >
+            {
+                replyUserName &&
+                <Form.Item>
+                    <div>Reply from: <Tag color="success" closable onClose={handleCancelReply}>{replyUserName}</Tag></div>
+                </Form.Item>
+            }
             <Form.Item
                 name='content'
             >

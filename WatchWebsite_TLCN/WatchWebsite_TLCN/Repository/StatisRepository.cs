@@ -149,7 +149,6 @@ namespace WatchWebsite_TLCN.Repository
                             Quantity = g.Sum(count => count.count),
                             Value = g.Sum(g => g.price),
                             AveragePrice = (float)(g.Sum(g => g.price) / Convert.ToDouble(g.Sum(count => count.count)))
-
                         }).ToList();
 
             //Tính tổng tiền bán được theo mốc thời gian để tính % && gop cac san pham con laij thanh 1

@@ -25,5 +25,7 @@ namespace WatchWebsite_TLCN.Utilities
         public const string adminRole = "Admin";
         public const string employeeRole = "Employee";
         public const string customerRole = "Customer";
+
+        public static readonly string[] typeComment = { "Main", "Rep" };
     }
 }

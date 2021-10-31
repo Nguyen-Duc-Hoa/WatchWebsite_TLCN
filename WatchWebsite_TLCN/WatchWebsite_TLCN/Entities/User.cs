@@ -38,7 +38,7 @@ namespace WatchWebsite_TLCN.Entities
         public virtual ICollection<Comment> Comments { get; set; }
 
         //public virtual ICollection<ReplyComment> ReplyComments { get; set; }
-        
+
         public virtual ICollection<Cart> Carts { get; set; }
 
         public virtual ICollection<User_Role> UserRole { get; set; }

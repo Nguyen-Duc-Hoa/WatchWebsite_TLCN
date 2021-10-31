@@ -10,8 +10,8 @@ using WatchWebsite_TLCN.Entities;
 namespace WatchWebsite_TLCN.Migrations
 {
     [DbContext(typeof(MyDBContext))]
-    [Migration("20211013114948_DbInit")]
-    partial class DbInit
+    [Migration("20211030084904_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -80,12 +80,24 @@ namespace WatchWebsite_TLCN.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int?>("ReplyFrom")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RepyFrom")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TypeComment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("RepyFrom");
 
                     b.HasIndex("UserId");
 
@@ -226,7 +238,13 @@ namespace WatchWebsite_TLCN.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
                     b.Property<int>("SizeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Sold")
                         .HasColumnType("int");
 
                     b.Property<int>("WaterResistanceId")
@@ -248,32 +266,6 @@ namespace WatchWebsite_TLCN.Migrations
                     b.HasIndex("WaterResistanceId");
 
                     b.ToTable("Product");
-                });
-
-            modelBuilder.Entity("WatchWebsite_TLCN.Entities.ReplyComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CommentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommentId");
-
-                    b.ToTable("ReplyComment");
                 });
 
             modelBuilder.Entity("WatchWebsite_TLCN.Entities.Role", b =>
@@ -413,6 +405,10 @@ namespace WatchWebsite_TLCN.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WatchWebsite_TLCN.Entities.Comment", null)
+                        .WithMany("Replies")
+                        .HasForeignKey("RepyFrom");
+
                     b.HasOne("WatchWebsite_TLCN.Entities.User", "User")
                         .WithMany("Comments")
                         .HasForeignKey("UserId")
@@ -477,25 +473,16 @@ namespace WatchWebsite_TLCN.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WatchWebsite_TLCN.Entities.ReplyComment", b =>
-                {
-                    b.HasOne("WatchWebsite_TLCN.Entities.Comment", "Comment")
-                        .WithMany("ReplyComments")
-                        .HasForeignKey("CommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("WatchWebsite_TLCN.Entities.User_Role", b =>
                 {
                     b.HasOne("WatchWebsite_TLCN.Entities.Role", "Role")
-                        .WithMany("User_Roles")
+                        .WithMany("User_Role")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("WatchWebsite_TLCN.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("UserRole")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

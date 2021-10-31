@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Intefaces;
+using WatchWebsite_TLCN.IRepository;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -13,97 +17,47 @@ namespace WatchWebsite_TLCN.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private readonly MyDBContext _context;
-
-        public CommentsController(MyDBContext context)
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly ICommentsRepository _comments;
+        private readonly IMapper _mapper;
+        public CommentsController(IUnitOfWork unitOfWork, ICommentsRepository comments, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _comments = comments;
+            _mapper = mapper;
         }
 
         // GET: api/Comments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Comment>>> GetComments()
+        public async Task<IEnumerable<CommentDTO>> GetComments(string productId)
         {
-            return await _context.Comments.ToListAsync();
+            List<Comment> result = await _comments.GetAllComments(productId);
+            var commentList = _mapper.Map<List<CommentDTO>>(result);
+            return commentList.Where(c => c.ReplyFrom == null).ToList();
         }
 
-        // GET: api/Comments/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Comment>> GetComment(int id)
+        // POST: api/Comments/AddComment
+        [Route("AddComment")]
+        [HttpPost]
+        public async Task<IActionResult> AddComment(Comment comment)
         {
-            var comment = await _context.Comments.FindAsync(id);
-
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            return comment;
-        }
-
-        // PUT: api/Comments/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(int id, Comment comment)
-        {
-            if (id != comment.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(comment).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Comments.Insert(comment);
+                await _unitOfWork.Save();
+                return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });
             }
-            catch (DbUpdateConcurrencyException)
+            catch
             {
-                if (!CommentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500);
             }
-
-            return NoContent();
         }
 
-        // POST: api/Comments
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Comment>> PostComment(Comment comment)
+       
+
+        private Task<bool> CommentExists(int id)
         {
-            _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetComment", new { id = comment.Id }, comment);
-        }
-
-        // DELETE: api/Comments/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Comment>> DeleteComment(int id)
-        {
-            var comment = await _context.Comments.FindAsync(id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-
-            _context.Comments.Remove(comment);
-            await _context.SaveChangesAsync();
-
-            return comment;
-        }
-
-        private bool CommentExists(int id)
-        {
-            return _context.Comments.Any(e => e.Id == id);
+            return _unitOfWork.Comments.IsExist<int>(id);
         }
     }
 }
