@@ -13,11 +13,8 @@ namespace WatchWebsite_TLCN.Intefaces
         IEnumerable<Chart1DTO> Statis1ByMonth(Statis statis);
         IEnumerable<Chart1DTO> Statis1ByYear(Statis statis);
 
-        IEnumerable<Chart2DTO> Statis2ByDate(Statis statis);
         IEnumerable<Chart2DTO> Statis2ByMonth(Statis statis);
         IEnumerable<Chart2DTO> Statis2ByYear(Statis statis);
-
-        IEnumerable<Chart2DTO> StatisProduct();
 
     }
 }

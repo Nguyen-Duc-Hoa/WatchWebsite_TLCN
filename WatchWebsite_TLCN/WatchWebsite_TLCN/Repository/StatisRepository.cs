@@ -68,61 +68,121 @@ namespace WatchWebsite_TLCN.Repository
         }
 
 
-
-        public IEnumerable<Chart2DTO> Statis2ByDate(Statis statis)
+        public IEnumerable<Chart2DTO> Statis2ByMonth(Statis statis)
         {
+            float Total = 0;
+
             var list = (from x in (from o in _context.Orders
                                    join d in _context.OrderDetails on o.OrderId equals d.OrderId
                                    join p in _context.Products on d.ProductId equals p.Id
-                                   where o.OrderDate >= statis.date[0] && o.OrderDate <= statis.date[1] && o.DeliveryStatus == "Complete"
+                                   where o.OrderDate.Month == statis.date[0].Month && o.OrderDate.Year == statis.date[0].Year && o.DeliveryStatus == "Complete"
                                    select new
                                    {
                                        name = p.Name,
                                        count = d.Count,
-                                       date = o.OrderDate
+                                       price = d.Price,
                                    })
-                        group x by new { x.name, x.date.Year } into g
-                        orderby new { g.Key.Year, V = g.Sum(x => x.count) } ascending
+                        group x by new { x.name } into g
+                        orderby g.Sum(x => x.price) ascending
                         select new Chart2DTO
                         {
                             Name = g.Key.name,
-                            Year = g.Key.Year.ToString(),
-                            Value = g.Sum(count => count.count)
+                            Quantity = g.Sum(count => count.count),
+                            Value = g.Sum(g => g.price),
+                            AveragePrice = (float)(g.Sum(g => g.price) / Convert.ToDouble(g.Sum(count => count.count)))
 
                         }).ToList();
-            return list;
-        }
 
-        public IEnumerable<Chart2DTO> Statis2ByMonth(Statis statis)
-        {
-            throw new NotImplementedException();
+            //Tính tổng tiền bán được theo mốc thời gian để tính % && gop cac san pham con laij thanh 1
+            if (list != null)
+            {
+                int i = 0;
+                Chart2DTO newItem = new Chart2DTO();
+                
+                foreach (var item in list)
+                {
+                    Total += item.Value;
+                    
+                    //Lay 5 san pham dau
+                    if( i > 5)
+                    {
+                        newItem.Name = "Others product";
+                        newItem.Quantity += item.Quantity;
+                        newItem.Value += item.Value;
+                        newItem.AveragePrice = (float)(newItem.Value / Convert.ToDouble(newItem.Quantity));
+
+                        list.Remove(item);
+                    }
+                }
+
+                if(newItem.Name != null)
+                    list.Add(newItem);
+
+                foreach (var item in list)
+                {
+                    item.Percent = (float)Math.Round(item.Value / Total * 100, 2);
+                }
+            }
+
+            return list;
         }
 
         public IEnumerable<Chart2DTO> Statis2ByYear(Statis statis)
         {
-            throw new NotImplementedException();
-        }
-        public IEnumerable<Chart2DTO> StatisProduct()
-        {
+            float Total = 0;
+
             var list = (from x in (from o in _context.Orders
                                    join d in _context.OrderDetails on o.OrderId equals d.OrderId
                                    join p in _context.Products on d.ProductId equals p.Id
-                                   where o.DeliveryStatus == "Complete"
-                                   select new 
+                                   where o.OrderDate.Year == statis.date[0].Year && o.DeliveryStatus == "Complete"
+                                   select new
                                    {
                                        name = p.Name,
-                                       value = d.Count * d.Price,
-                                       year = o.OrderDate.Year
+                                       count = d.Count,
+                                       price = d.Price,
                                    })
-                        group x by new { x.name, x.year } into g
-                        orderby g.Key.year ascending , g.Sum(x => x.value) descending
+                        group x by new { x.name } into g
+                        orderby g.Sum(x => x.price) ascending
                         select new Chart2DTO
                         {
                             Name = g.Key.name,
-                            Year = g.Key.year.ToString(),
-                            Value = g.Sum(count => count.value)
+                            Quantity = g.Sum(count => count.count),
+                            Value = g.Sum(g => g.price),
+                            AveragePrice = (float)(g.Sum(g => g.price) / Convert.ToDouble(g.Sum(count => count.count)))
 
                         }).ToList();
+
+            //Tính tổng tiền bán được theo mốc thời gian để tính % && gop cac san pham con laij thanh 1
+            if (list != null)
+            {
+                int i = 0;
+                Chart2DTO newItem = new Chart2DTO();
+
+                foreach (var item in list)
+                {
+                    Total += item.Value;
+
+                    //Lay 5 san pham dau
+                    if (i > 5)
+                    {
+                        newItem.Name = "Others product";
+                        newItem.Quantity += item.Quantity;
+                        newItem.Value += item.Value;
+                        newItem.AveragePrice = (float)(newItem.Value / Convert.ToDouble(newItem.Quantity));
+
+                        list.Remove(item);
+                    }
+                }
+
+                if (newItem.Name != null)
+                    list.Add(newItem);
+
+                foreach (var item in list)
+                {
+                    item.Percent = (float)Math.Round(item.Value / Total * 100, 2);
+                }
+            }
+
             return list;
         }
 

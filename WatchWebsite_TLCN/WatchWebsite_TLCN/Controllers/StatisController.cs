@@ -49,9 +49,6 @@ namespace WatchWebsite_TLCN.Controllers
         {
             switch (statis.typeDate)
             {
-                case "day":
-                    //return _statis.Statis2ByDate(statis);
-                    return _statis.StatisProduct();
                 case "month":
                     return _statis.Statis2ByMonth(statis);
                 case "year":
