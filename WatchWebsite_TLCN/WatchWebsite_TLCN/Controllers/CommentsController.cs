@@ -29,10 +29,9 @@ namespace WatchWebsite_TLCN.Controllers
 
         // GET: api/Comments
         [HttpGet]
-        public async Task<IEnumerable<CommentDTO>> GetComments()
+        public async Task<IEnumerable<CommentDTO>> GetComments(string productId)
         {
-            //var result = await _unitOfWork.Comments.GetAll(includes: new List<string> { "User", "Replies" });
-            var result = await _comments.GetAllComments();
+            List<Comment> result = await _comments.GetAllComments(productId);
             var commentList = _mapper.Map<List<CommentDTO>>(result);
             return commentList.Where(c => c.ReplyFrom == null).ToList();
         }
@@ -46,8 +45,7 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 await _unitOfWork.Comments.Insert(comment);
                 await _unitOfWork.Save();
-                //return RedirectToAction(nameof(GetComments));
-                return Ok();
+                return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });
             }
             catch
             {

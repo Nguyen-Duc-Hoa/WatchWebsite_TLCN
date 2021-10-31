@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Breadcrumbing from '../../components/Breadcrumb/Breadcrumb'
 import { Button, Image, InputNumber, Space } from 'antd';
 import './Product.scss'
@@ -10,6 +10,7 @@ import { Tooltip, List } from 'antd';
 import moment from 'moment';
 import Commenting from '../../components/Comment/Comment';
 import AddComment from '../../components/AddComment/AddComment';
+import { useParams } from 'react-router';
 
 const { TabPane } = Tabs
 
@@ -55,6 +56,30 @@ const data = [
 ];
 
 function Product() {
+    const [comments, setComments] = useState([])
+    const [replyUserName, setReplyUserName] = useState()
+    const [replyCommentId, setReplyCommentId] = useState()
+    let { id } = useParams()
+
+    useEffect(() => {
+        fetchComments()
+    }, [])
+
+    const fetchComments = () => {
+        fetch(`https://localhost:44336/api/Comments?productId=${id}`, {
+            method: 'GET'
+        })
+            .then(response => response.json())
+            .then(result => {
+                setComments(result)
+            })
+    }
+
+    const handleReply = (id, author, replyFrom) => {
+        setReplyCommentId(replyFrom || id)
+        setReplyUserName(author)
+    }
+
     return (
         <section className='product'>
             <Breadcrumbing route={breadCrumbRoute} />
@@ -83,7 +108,7 @@ function Product() {
                     <span className='icon-social'><AiOutlineInstagram /></span>
                 </div>
             </div>
-            <div className="descriptionAndComments">
+            <section className="descriptionAndComments">
                 <Tabs defaultActiveKey="1" centered size='large'>
                     <TabPane tab="Description" key="1">
                         <Text strong>
@@ -96,25 +121,49 @@ function Product() {
                         {
                             <List
                                 className="comment-list"
-                                header={`${data.length} replies`}
+                                header={`5 replies`}
                                 itemLayout="horizontal"
-                                dataSource={data}
+                                dataSource={comments}
                                 renderItem={item => (
                                     <li>
                                         <Commenting
-                                            author={item.author}
-                                            avatar={item.avatar}
-                                            content={item.content}
-                                            datetime={item.datetime}
-                                        ></Commenting>
+                                            key={item.Id}
+                                            id={item.Id}
+                                            author={item.User.Name}
+                                            avatar={item.User.Avatar}
+                                            content={item.Content}
+                                            datetime={item.Date}
+                                            onReply={handleReply}
+                                        >
+                                            {item.Replies &&
+                                                item.Replies.map(rep =>
+                                                    <Commenting
+                                                        key={rep.Id}
+                                                        id={rep.Id}
+                                                        author={rep.User.Name}
+                                                        avatar={rep.User.Avatar}
+                                                        content={rep.Content}
+                                                        datetime={rep.Date}
+                                                        replyFrom={rep.ReplyFrom}
+                                                        onReply={handleReply}
+                                                    />)
+                                            }
+                                        </Commenting>
                                     </li>
                                 )}
                             />
                         }
-                        <AddComment />
+                        <AddComment
+                            setComments={setComments}
+                            replyUserName={replyUserName}
+                            replyCommentId={replyCommentId}
+                            productId={id}
+                            setReplyCommentId={setReplyCommentId}
+                            setReplyUserName={setReplyUserName}
+                        />
                     </TabPane>
                 </Tabs>
-            </div>
+            </section>
         </section>
     )
 }

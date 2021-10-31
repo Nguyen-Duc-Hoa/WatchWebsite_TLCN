@@ -8,6 +8,6 @@ namespace WatchWebsite_TLCN.Intefaces
 {
     public interface ICommentsRepository
     {
-        Task<List<Comment>> GetAllComments();
+        Task<List<Comment>> GetAllComments(string productId);
     }
 }
