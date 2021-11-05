@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -67,6 +69,8 @@ namespace WatchWebsite_TLCN.Controllers
 
         }
 
+
+        //post: api/account/login   {"Username": "Hoa", "Password":"123"} 
         [AllowAnonymous]
         [HttpPost]
         [Route("Login")]
@@ -75,7 +79,9 @@ namespace WatchWebsite_TLCN.Controllers
             string username = model.Username;
             string password = model.Password;
             int userid = 0;
-            int role = 0;
+
+            List<string> listRole = new List<string>();
+            List<int> listRoleId = new List<int>();
 
             User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
             if (user == null)
@@ -86,27 +92,120 @@ namespace WatchWebsite_TLCN.Controllers
             else
             {
                 userid = user.Id;
-                var user_role = _context.User_Roles.Where(x => x.UserId == userid).FirstOrDefault();
+                var user_role = (from u in _context.User_Roles
+                                 join r in _context.Roles on u.RoleId equals r.RoleId
+                                 where u.UserId == userid
+                                 select new
+                                 {
+                                     r.RoleId,
+                                     r.RoleName
+                                 }).ToList();
 
-                //role = user_role.RoleId;
+                foreach(var item in user_role)
+                {
+                    listRole.Add(item.RoleName);
+                    listRoleId.Add(item.RoleId);
+                }
 
-                role = 1;
             }
 
             //var token = _jwtAuthenticationManager.Authenticate(username, password);
 
-            var token = _jwtAuthenticationManager.Authenticate(userid, username, password, role);
+            var token = _jwtAuthenticationManager.Authenticate(userid, username, password, listRoleId);
 
             if (token == null)
             {
                 return Unauthorized();
             }
 
-            return Ok(token);
+            string avatar = null;
+            try
+            {
+                avatar = Convert.ToBase64String(user.Avatar);
+            }
+            catch { }
+
+            return Ok(new
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                Name = user.Name,
+                Address = user.Address,
+                Phone = user.Phone,
+                Birthday = user.Birthday,
+                Avatar = avatar,
+                Role = listRole,
+                Token = token.JwtToken
+            });
 
         }
 
+
+        //post: api/account/resetpassword?email=abc@gmail.com
         [AllowAnonymous]
+        [HttpPost]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(string email)
+        {
+
+            // query id tu email va password de kiem tra dang nhap
+
+            var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
+
+            if (user != null)
+            {
+                
+                string web_email = "laptrinhwebnhom9@gmail.com";
+                // Cau hinh thong tin gmail
+                var mail = new SmtpClient("smtp.gmail.com", 25)
+                {
+                    Credentials = new NetworkCredential(web_email, "123asd456qwe"),
+                    EnableSsl = true
+                };
+                // tao gmail
+                var message = new MailMessage();
+                message.From = new MailAddress(web_email);
+                message.ReplyToList.Add(web_email);
+                message.To.Add(new MailAddress(email));
+
+                // Create a random 6-digits number for verification code
+                Random random = new Random();
+                int code = random.Next(100000, 999999);
+                
+
+                message.Subject = "Reset Watch-Website Password";
+                message.Body = code + " is your account password.";
+
+                try
+                {
+                    //Update Password
+                    (from p in _context.Users
+                     where (p.Email == email)
+                     select p).ToList()
+                                        .ForEach(x => x.Password = code.ToString());
+
+                    _context.SaveChanges();
+
+                    // gui gmail    
+                    mail.Send(message);
+
+                    return Ok("Check your email");
+                }
+                catch(Exception e)
+                {
+                    return BadRequest(e.ToString());
+                }
+                
+            }
+            else
+            {
+                return NotFound();
+            }
+
+        }
+
+        /*[AllowAnonymous]
         [HttpPost]
         [Route("Refresh")]
         public IActionResult Refresh([FromBody] RefreshCred refreshCred)
@@ -119,6 +218,6 @@ namespace WatchWebsite_TLCN.Controllers
             }
 
             return Ok(token);
-        }
+        }*/
     }
 }

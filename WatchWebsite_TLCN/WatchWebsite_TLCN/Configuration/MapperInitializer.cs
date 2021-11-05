@@ -17,6 +17,12 @@ namespace WatchWebsite_TLCN.Configuration
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<Comment, CommentDTO>().ReverseMap();
             CreateMap<User, UserCommentDTO>().ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => Convert.ToBase64String(src.Avatar))).ReverseMap();
+            CreateMap<Energy, EnergyDTO>().ReverseMap();
+            CreateMap<Brand, BrandDTO>().ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image))).ReverseMap();
+            CreateMap<Material, MaterialDTO>().ReverseMap();
+            CreateMap<WaterResistance, WaterResistancesDTO>().ReverseMap();
+
+
         }
     }
 }

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -15,18 +18,57 @@ namespace WatchWebsite_TLCN.Controllers
     public class BrandsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public BrandsController(IUnitOfWork unitOfWork)
+        public BrandsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        // GET: api/Brands
+/*        // GET: api/Brands
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
         {
             return await _unitOfWork.Brands.GetAll();
+        }*/
+
+        // GET: api/Brands
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands(int currentPage)
+        {
+
+            var result = await _unitOfWork.Brands.GetAllWithPagination(
+                expression: null,
+                orderBy: x => x.OrderBy(a => a.BrandId),
+                pagination: new Pagination { CurrentPage = currentPage }
+                );
+            List<Brand> list = new List<Brand>();
+
+            foreach (var item in result.Item1)
+            {
+                list.Add(item);
+            }
+            var listBrandDTO = _mapper.Map<List<BrandDTO>>(list);
+
+            return Ok(new
+            {
+                Brands = listBrandDTO,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
         }
+
+        // GET: api/Brands/GetAll
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<IActionResult> GetBrands()
+        {
+            var result = await _unitOfWork.Brands.GetAll();
+            var listBrandDTO = _mapper.Map<List<BrandDTO>>(result);
+            return Ok(listBrandDTO);
+        }
+
 
         // GET: api/Brands/5
         [HttpGet("{id}")]
@@ -70,7 +112,7 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return NoContent();
+            return RedirectToAction(nameof(GetBrands), new { currentPage = 1 });
         }
 
         // POST: api/Brands
@@ -101,9 +143,40 @@ namespace WatchWebsite_TLCN.Controllers
             return brand;
         }
 
+        [HttpDelete()]
+        [Route("Delete")]
+        public async Task<ActionResult<Brand>> DeleteBrand(List<int> id)
+        {
+            foreach(int item in id)
+            {
+                try
+                {
+                    var brand = await _unitOfWork.Brands.Get(b => b.BrandId == item);
+                    if (brand == null)
+                    {
+                        return BadRequest("Something was wrong!");
+                    }
+
+                    await _unitOfWork.Brands.Delete(item);
+                    await _unitOfWork.Save();
+                }
+                catch(Exception e)
+                {
+                    return BadRequest(e.ToString()) ;
+                }
+                
+            }
+
+
+            return RedirectToAction(nameof(GetBrands), new { currentPage = 1 });
+        }
+
+
+
         private Task<bool> BrandExists(int id)
         {
             return _unitOfWork.Brands.IsExist<int>(id);
         }
+
     }
 }

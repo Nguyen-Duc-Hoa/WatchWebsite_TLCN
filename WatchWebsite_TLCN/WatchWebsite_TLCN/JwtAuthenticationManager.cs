@@ -29,7 +29,9 @@ namespace WatchWebsite_TLCN
             UsersRefreshTokens = new Dictionary<string, string>();
             //_context = context;
         }
-        public AuthenticationResponse Authenticate(string username, Claim[] claims)
+
+
+        /*public AuthenticationResponse Authenticate(string username, Claim[] claims)
         {
             var key = Encoding.ASCII.GetBytes(tokenKey);
 
@@ -42,9 +44,10 @@ namespace WatchWebsite_TLCN
                 );
 
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+
             var refreshToken = refreshTokenGenerator.GeneratorToken();
 
-            if(UsersRefreshTokens.ContainsKey(username))
+            if (UsersRefreshTokens.ContainsKey(username))
             {
                 UsersRefreshTokens[username] = refreshToken;
             }
@@ -52,17 +55,17 @@ namespace WatchWebsite_TLCN
             {
                 UsersRefreshTokens.Add(username, refreshToken);
             }
-            
+
             //return tokenHandler.WriteToken(token);
 
             return new AuthenticationResponse
             {
                 JwtToken = token,
-                RefreshToken = refreshToken
+                *//*RefreshToken = refreshToken*//*
             };
         }
-
-        public AuthenticationResponse Authenticate(int userid, string username, string password, int role)
+*/
+        public AuthenticationResponse Authenticate(int userid, string username, string password, List<int> role)
         {
             
             /*User user = Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
@@ -88,7 +91,6 @@ namespace WatchWebsite_TLCN
                     new Claim(ClaimTypes.Name, username),
                     new Claim(ClaimTypes.NameIdentifier, userid.ToString()),
                     new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, role.ToString())
                 }),
                 
                 Expires = DateTime.UtcNow.AddHours(1),
@@ -99,23 +101,24 @@ namespace WatchWebsite_TLCN
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
-            var refreshToken = refreshTokenGenerator.GeneratorToken();
+            
+            //var refreshToken = refreshTokenGenerator.GeneratorToken();
 
-            if (UsersRefreshTokens.ContainsKey(username))
+            /*if (UsersRefreshTokens.ContainsKey(username))
             {
                 UsersRefreshTokens[username] = refreshToken;
             }
             else
             {
                 UsersRefreshTokens.Add(username, refreshToken);
-            }
+            }*/
 
             //return tokenHandler.WriteToken(token);
 
             return new AuthenticationResponse
             {
                 JwtToken = tokenHandler.WriteToken(token),
-                RefreshToken = refreshToken
+                //RefreshToken = refreshToken
             };
         }
 

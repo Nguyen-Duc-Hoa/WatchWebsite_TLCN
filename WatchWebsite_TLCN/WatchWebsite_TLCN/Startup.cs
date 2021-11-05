@@ -64,6 +64,8 @@ namespace WatchWebsite_TLCN
             services.AddScoped<IUserOrder, UserOrderRepository>();
             services.AddScoped<IStatis, StatisRepository>();
             services.AddScoped<ICommentsRepository, CommentsRepository>();
+            services.AddScoped<IEnergy, EnergyRepository>();
+
 
             services.AddDbContext<MyDBContext>(option =>
             {

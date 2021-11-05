@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -13,25 +17,40 @@ namespace WatchWebsite_TLCN.Controllers
     [ApiController]
     public class WaterResistancesController : ControllerBase
     {
-        private readonly MyDBContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public WaterResistancesController(MyDBContext context)
+        public WaterResistancesController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         // GET: api/WaterResistances
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<WaterResistance>>> GetWaterResistances()
+        public async Task<IActionResult> GetWaterResistances(int currentPage)
         {
-            return await _context.WaterResistances.ToListAsync();
+            var result = await _unitOfWork.WaterResistances.GetAllWithPagination(
+                expression: null,
+                orderBy: x => x.OrderBy(a => a.WaterId),
+                pagination: new Pagination { CurrentPage = currentPage }
+                );
+           
+            var listWaterDTO = _mapper.Map<List<WaterResistancesDTO>>(result.Item1);
+
+            return Ok(new
+            {
+                Energies = listWaterDTO,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
         }
 
         // GET: api/WaterResistances/5
         [HttpGet("{id}")]
         public async Task<ActionResult<WaterResistance>> GetWaterResistance(int id)
         {
-            var waterResistance = await _context.WaterResistances.FindAsync(id);
+            var waterResistance = await _unitOfWork.WaterResistances.Get(x => x.WaterId == id);
 
             if (waterResistance == null)
             {
@@ -52,15 +71,15 @@ namespace WatchWebsite_TLCN.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(waterResistance).State = EntityState.Modified;
+            _unitOfWork.WaterResistances.Update(waterResistance);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!WaterResistanceExists(id))
+                if (!await WaterResistanceExists(id))
                 {
                     return NotFound();
                 }
@@ -79,8 +98,8 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<WaterResistance>> PostWaterResistance(WaterResistance waterResistance)
         {
-            _context.WaterResistances.Add(waterResistance);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.WaterResistances.Insert(waterResistance);
+            await _unitOfWork.Save();
 
             return CreatedAtAction("GetWaterResistance", new { id = waterResistance.WaterId }, waterResistance);
         }
@@ -89,21 +108,21 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<WaterResistance>> DeleteWaterResistance(int id)
         {
-            var waterResistance = await _context.WaterResistances.FindAsync(id);
+            var waterResistance = await _unitOfWork.WaterResistances.Get(x => x.WaterId == id);
             if (waterResistance == null)
             {
                 return NotFound();
             }
 
-            _context.WaterResistances.Remove(waterResistance);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.WaterResistances.Delete(id);
+            await _unitOfWork.Save();
 
             return waterResistance;
         }
 
-        private bool WaterResistanceExists(int id)
+        private Task<bool> WaterResistanceExists(int id)
         {
-            return _context.WaterResistances.Any(e => e.WaterId == id);
+            return _unitOfWork.WaterResistances.IsExist<int>(id);
         }
     }
 }

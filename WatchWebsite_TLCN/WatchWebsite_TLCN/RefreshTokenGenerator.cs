@@ -8,7 +8,7 @@ namespace WatchWebsite_TLCN
 {
     public class RefreshTokenGenerator : IRefreshTokenGenerator
     {
-        public string GeneratorToken()
+        /*public string GeneratorToken()
         {
             var randomNumber = new byte[32];
             using (var randomNumberGenerator = RandomNumberGenerator.Create())
@@ -16,6 +16,6 @@ namespace WatchWebsite_TLCN
                 randomNumberGenerator.GetBytes(randomNumber);
                 return Convert.ToBase64String(randomNumber);
             }
-        }
+        }*/
     }
 }

@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.Intefaces;
+using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -13,25 +18,47 @@ namespace WatchWebsite_TLCN.Controllers
     [ApiController]
     public class EnergiesController : ControllerBase
     {
-        private readonly MyDBContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+        private readonly IEnergy _energy;
 
-        public EnergiesController(MyDBContext context)
+        public EnergiesController(IUnitOfWork unitOfWork, IMapper mapper, IEnergy energy)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _energy = energy;
         }
 
-        // GET: api/Energies
+        // GET: api/Energies?currentPage=1
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Energy>>> GetEnegies()
+        public async Task<IActionResult> GetEnegies(int currentPage)
         {
-            return await _context.Enegies.ToListAsync();
+            var result = await _unitOfWork.Energies.GetAllWithPagination(
+                expression: null,
+                orderBy: x=>x.OrderBy(a=>a.EnergyId),
+                pagination: new Pagination { CurrentPage = currentPage }
+                );
+            List<Energy> list = new List<Energy>();
+            
+            foreach( var item in result.Item1)
+            {
+                list.Add(item);
+            }
+            var listEnergyDTO = _mapper.Map<List<EnergyDTO>>(list);
+
+            return Ok(new
+            {
+                Energies = listEnergyDTO,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
         }
 
         // GET: api/Energies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Energy>> GetEnergy(int id)
         {
-            var energy = await _context.Enegies.FindAsync(id);
+            var energy = await _unitOfWork.Energies.Get(x=>x.EnergyId == id);
 
             if (energy == null)
             {
@@ -52,15 +79,15 @@ namespace WatchWebsite_TLCN.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(energy).State = EntityState.Modified;
+            _unitOfWork.Energies.Update(energy);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EnergyExists(id))
+                if (!await EnergyExists(id))
                 {
                     return NotFound();
                 }
@@ -79,8 +106,8 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Energy>> PostEnergy(Energy energy)
         {
-            _context.Enegies.Add(energy);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Energies.Insert(energy);
+            await _unitOfWork.Save();
 
             return CreatedAtAction("GetEnergy", new { id = energy.EnergyId }, energy);
         }
@@ -89,21 +116,35 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Energy>> DeleteEnergy(int id)
         {
-            var energy = await _context.Enegies.FindAsync(id);
+            var energy = await _unitOfWork.Energies.Get(x=>x.EnergyId==id);
             if (energy == null)
             {
                 return NotFound();
             }
 
-            _context.Enegies.Remove(energy);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Energies.Delete(energy);
+            await _unitOfWork.Save();
 
             return energy;
         }
 
-        private bool EnergyExists(int id)
+        private Task<bool> EnergyExists(int id)
         {
-            return _context.Enegies.Any(e => e.EnergyId == id);
+            return _unitOfWork.Energies.IsExist<int>(id);
+        }
+
+        [HttpDelete]
+        [Route("Delete")]
+        public IActionResult Delete(List<int> id)
+        {
+            foreach (int item in id)
+            {
+                if(!_energy.DeleteEnergy(item))
+                {
+                    return BadRequest("Something was wrong");
+                }
+            }
+            return RedirectToAction(nameof(GetEnegies), new { currentPage = 1});
         }
     }
 }

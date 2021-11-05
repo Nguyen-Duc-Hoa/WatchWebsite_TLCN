@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WatchWebsite_TLCN
+namespace WatchWebsite_TLCN.Intefaces
 {
-    public interface IRefreshTokenGenerator
+    public interface IEnergy
     {
-        /*string GeneratorToken();*/
+        bool DeleteEnergy(int idEnergy);
     }
 }

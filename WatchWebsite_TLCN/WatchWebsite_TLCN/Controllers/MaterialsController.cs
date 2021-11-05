@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WatchWebsite_TLCN.Entities;
+using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -13,25 +16,40 @@ namespace WatchWebsite_TLCN.Controllers
     [ApiController]
     public class MaterialsController : ControllerBase
     {
-        private readonly MyDBContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public MaterialsController(MyDBContext context)
+        public MaterialsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         // GET: api/Materials
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Material>>> GetMaterials()
+        public async Task<IActionResult> GetMaterials(int currentPage)
         {
-            return await _context.Materials.ToListAsync();
+            var result = await _unitOfWork.Brands.GetAllWithPagination(
+                expression: null,
+                orderBy: x => x.OrderBy(a => a.BrandId),
+                pagination: new Pagination { CurrentPage = currentPage }
+                );
+
+            var listMaterialDTO = _mapper.Map<List<Material>>(result.Item1);
+
+            return Ok(new
+            {
+                Materials = listMaterialDTO,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
         }
 
         // GET: api/Materials/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Material>> GetMaterial(int id)
         {
-            var material = await _context.Materials.FindAsync(id);
+            var material = await _unitOfWork.Materials.Get( x=>x.MaterialId == id);
 
             if (material == null)
             {
@@ -52,15 +70,15 @@ namespace WatchWebsite_TLCN.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(material).State = EntityState.Modified;
+            _unitOfWork.Materials.Update(material);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MaterialExists(id))
+                if (!await MaterialExists(id))
                 {
                     return NotFound();
                 }
@@ -79,8 +97,8 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Material>> PostMaterial(Material material)
         {
-            _context.Materials.Add(material);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Materials.Insert(material);
+            await _unitOfWork.Save();
 
             return CreatedAtAction("GetMaterial", new { id = material.MaterialId }, material);
         }
@@ -89,21 +107,50 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Material>> DeleteMaterial(int id)
         {
-            var material = await _context.Materials.FindAsync(id);
+            var material = await _unitOfWork.Materials.Get(x=> x.MaterialId == id);
             if (material == null)
             {
                 return NotFound();
             }
 
-            _context.Materials.Remove(material);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Materials.Delete(material);
+            await _unitOfWork.Save();
 
             return material;
         }
 
-        private bool MaterialExists(int id)
+        [HttpDelete()]
+        [Route("Delete")]
+        public async Task<ActionResult<Brand>> DeleteMaterial(List<int> id)
         {
-            return _context.Materials.Any(e => e.MaterialId == id);
+            foreach (int item in id)
+            {
+                try
+                {
+                    var brand = await _unitOfWork.Materials.Get(b => b.MaterialId == item);
+                    if (brand == null)
+                    {
+                        return BadRequest("Something was wrong!");
+                    }
+
+                    await _unitOfWork.Materials.Delete(item);
+                    await _unitOfWork.Save();
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.ToString());
+                }
+
+            }
+
+
+            return RedirectToAction(nameof(GetMaterials), new { currentPage = 1 });
+        }
+
+
+        private Task<bool> MaterialExists(int id)
+        {
+            return _unitOfWork.Materials.IsExist<int>(id);
         }
     }
 }

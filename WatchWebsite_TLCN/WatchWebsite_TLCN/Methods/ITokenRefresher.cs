@@ -4,6 +4,6 @@ namespace WatchWebsite_TLCN.Methods
 {
     public interface ITokenRefresher
     {
-        AuthenticationResponse Refresh(RefreshCred refreshCred);
+        //AuthenticationResponse Refresh(RefreshCred refreshCred);
     }
 }

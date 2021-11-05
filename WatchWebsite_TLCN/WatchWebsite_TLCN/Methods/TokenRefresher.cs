@@ -18,7 +18,7 @@ namespace WatchWebsite_TLCN.Methods
             this.key = key;
             this.jwtAuthenticationManager = jwtAuthenticationManager;
         }
-        public AuthenticationResponse Refresh(RefreshCred refreshCred)
+        /*public AuthenticationResponse Refresh(RefreshCred refreshCred)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken validatedToken;
@@ -45,6 +45,6 @@ namespace WatchWebsite_TLCN.Methods
             }
 
             return jwtAuthenticationManager.Authenticate(userName, pricipal.Claims.ToArray());
-        }
+        }*/
     }
 }
