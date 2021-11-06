@@ -55,7 +55,7 @@ namespace WatchWebsite_TLCN.Controllers
 
 
         //reply comment
-        [Route("AddComment")]
+        [Route("ReplyComment")]
         [HttpPost]
         public async Task<IActionResult> Reply(int commentid, Comment comment)
         {
@@ -88,6 +88,39 @@ namespace WatchWebsite_TLCN.Controllers
 
         }
 
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Comment>> DeleteComment(int id)
+        {
+            var comment = await _unitOfWork.Comments.Get(b => b.Id == id);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                if(comment.ReplyFrom == null)
+                {
+                    // Comment cha
+                    //Xoa tat ca cac comment con
+                    List<Comment> repComment = await _comments.GetAllRepComments(id);
+
+
+                    if (repComment != null)
+                    {
+                        foreach(Comment item in repComment)
+                        {
+                            await _unitOfWork.Comments.Delete(item.Id);
+                            await _unitOfWork.Save();
+                        }
+                    }
+                }
+            }
+
+            await _unitOfWork.Comments.Delete(id);
+            await _unitOfWork.Save();
+
+            return Ok();
+        }
 
 
 

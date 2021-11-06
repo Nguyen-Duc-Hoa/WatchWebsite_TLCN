@@ -19,5 +19,10 @@ namespace WatchWebsite_TLCN.Repository
         {
             return await _context.Comments.Where(c => c.ProductId == productId).Include("User").ToListAsync();
         }
+
+        public async Task<List<Comment>> GetAllRepComments(int replyFrom)
+        {
+            return await _context.Comments.Where(c => c.ReplyFrom == replyFrom).Include("User").ToListAsync();
+        }
     }
 }
