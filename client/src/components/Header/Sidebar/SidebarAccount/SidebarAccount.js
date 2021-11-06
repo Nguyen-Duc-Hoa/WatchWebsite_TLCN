@@ -1,32 +1,35 @@
-import React from 'react'
-import './SidebarAccount.scss'
-import { Button } from 'antd'
-import CustomButton from '../../../CustomButton/CustomButton'
+import React from "react";
+import "./SidebarAccount.scss";
+import { Button, Space } from "antd";
+import { Link } from "react-router-dom";
 
-function SidebarAccount() {
-    return (
-        <div className='sidebar__account'>
-            <div className="heading">My Account</div>
-            <CustomButton 
-                block={true}
-                height='45px'
-                fontSize='16px'
-                backgroundColor='black'
-                color='white'
+function SidebarAccount({ isAuth }) {
+  return (
+    <div className="sidebar__account">
+      <div className="heading">My Account</div>
+      <Space direction="vertical" style={{ width: "100%" }}>
+        {isAuth ? (
+          <Button style={{ height: "46px" }} size="large" block>
+            Logout
+          </Button>
+        ) : (
+          <>
+            <Button
+              style={{ height: "46px" }}
+              size="large"
+              type="primary"
+              block
             >
-                Log in
-            </CustomButton>
-            <CustomButton 
-                block={true}
-                height='45px'
-                fontSize='16px'
-                borderColor='#000'
-                style={{marginTop: '8px'}}
-            >
-                Register
-            </CustomButton>
-        </div>
-    )
+              <Link to="/login">Login</Link>
+            </Button>
+            <Button style={{ height: "46px" }} size="large" block>
+              <Link to="/register">Register</Link>
+            </Button>
+          </>
+        )}
+      </Space>
+    </div>
+  );
 }
 
-export default SidebarAccount
+export default SidebarAccount;

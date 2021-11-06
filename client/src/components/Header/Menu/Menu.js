@@ -3,7 +3,7 @@ import './Menu.scss'
 import { BiChevronDown } from 'react-icons/bi'
 import { GiHamburgerMenu } from 'react-icons/gi'
 import { connect } from 'react-redux'
-import * as actionTypes from '../../../store/actionTypes'
+import * as actionTypes from '../../../store/actions/actionTypes'
 
 function Menu({ onOpenSidebar, onOpenOverlay }) {
     const openSidebarHandler = () => {

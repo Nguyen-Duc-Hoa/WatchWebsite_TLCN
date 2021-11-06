@@ -37,36 +37,26 @@ namespace WatchWebsite_TLCN.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] Register model)
         {
-            //Kiem tra confirm password
-            if (model.Password == model.ConfirmPass)
+            var user = new User { Username = model.Username, Password = model.Password, Phone = model.Phone, Email = model.Email, State = true };
+            try
             {
-                var user = new User { Username = model.Username, Password = model.Password, Phone = model.Phone, Email = model.Email, State = true };
-                try
+                _context.Users.Add(user);
+                var result = await _context.SaveChangesAsync();
+
+
+                if (result.Equals(1))
                 {
-                    _context.Users.Add(user);
-                    var result = await _context.SaveChangesAsync();
-
-
-                    if (result.Equals(1))
-                    {
-                        return Ok();
-                    }
-                    else
-                    {
-                        return BadRequest("Dang ki khong thanh cong");
-                    }
+                    return Ok();
                 }
-                catch
+                else
                 {
-                    return BadRequest();
+                    return BadRequest("Dang ki khong thanh cong");
                 }
-
             }
-
-            return BadRequest("Xac nhan mat khau sai!");
-
-
-
+            catch
+            {
+                return BadRequest();
+            }
         }
 
 
@@ -201,9 +191,8 @@ namespace WatchWebsite_TLCN.Controllers
             }
             else
             {
-                return NotFound();
+                return StatusCode(500);
             }
-
         }
 
         /*[AllowAnonymous]
