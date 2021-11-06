@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Methods;
 using WatchWebsite_TLCN.Models;
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -35,8 +36,21 @@ namespace WatchWebsite_TLCN.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
+        //POST: api/account/register
+        /*JSON
+            {
+                "Username":"username",
+                "Email": "abc@gmail.com",
+                "Phone": "123456789",
+                "Password": "123",
+                "ConfirmPass": "123"
+            }
+
+         */
         public async Task<IActionResult> Register([FromBody] Register model)
         {
+            string rolename = "Customer";
+
             //Kiem tra confirm password
             if (model.Password == model.ConfirmPass)
             {
@@ -46,10 +60,12 @@ namespace WatchWebsite_TLCN.Controllers
                     _context.Users.Add(user);
                     var result = await _context.SaveChangesAsync();
 
-
                     if (result.Equals(1))
                     {
-                        return Ok();
+                        //them User_Role
+                        if(AddUser_Role(rolename, model.Username))
+                            return Ok();
+                        return BadRequest("Role user have trouble");
                     }
                     else
                     {
@@ -84,7 +100,7 @@ namespace WatchWebsite_TLCN.Controllers
             List<int> listRoleId = new List<int>();
 
             User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
-           
+
             if (user == null)
             {
                 username = null;
@@ -102,7 +118,7 @@ namespace WatchWebsite_TLCN.Controllers
                                      r.RoleName
                                  }).ToList();
 
-                foreach(var item in user_role)
+                foreach (var item in user_role)
                 {
                     listRole.Add(item.RoleName);
                     listRoleId.Add(item.RoleId);
@@ -156,7 +172,7 @@ namespace WatchWebsite_TLCN.Controllers
 
             if (user != null)
             {
-                
+
                 string web_email = "laptrinhwebnhom9@gmail.com";
                 // Cau hinh thong tin gmail
                 var mail = new SmtpClient("smtp.gmail.com", 25)
@@ -173,13 +189,16 @@ namespace WatchWebsite_TLCN.Controllers
                 // Create a random 6-digits number for verification code
                 Random random = new Random();
                 int code = random.Next(100000, 999999);
-                
+
 
                 message.Subject = "Reset Watch-Website Password";
                 message.Body = code + " is your account password.";
 
                 try
                 {
+                    // gui gmail    
+                    mail.Send(message);
+
                     //Update Password
                     (from p in _context.Users
                      where (p.Email == email)
@@ -188,16 +207,13 @@ namespace WatchWebsite_TLCN.Controllers
 
                     _context.SaveChanges();
 
-                    // gui gmail    
-                    mail.Send(message);
-
                     return Ok("Check your email");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     return BadRequest(e.ToString());
                 }
-                
+
             }
             else
             {
@@ -220,5 +236,55 @@ namespace WatchWebsite_TLCN.Controllers
 
             return Ok(token);
         }*/
+
+
+        public bool AddUser_Role(string rolename, string username)
+        {
+
+            User_Role user_Role = new User_Role();
+            var user = _context.Users.Where(x => x.Username == username).FirstOrDefault();
+            if(user == null)
+            {
+                return false;
+            }
+
+            user_Role.UserId = user.Id;
+
+            int roleid = 0;
+            if (rolename == Constant.customerRole || rolename == Constant.employeeRole || rolename == Constant.adminRole)
+            {
+                roleid = GetRoleId(rolename);
+            }
+            
+            // ton tai 
+            if (roleid!=0)
+            {
+                user_Role.RoleId = roleid;
+
+                try
+                {
+                    //Save User_Role
+                    _context.User_Roles.Add(user_Role);
+                    _context.SaveChanges();
+                        
+                    return true;
+                }
+                catch
+                {
+                }
+                    
+            }
+            
+            return false;
+        }
+
+        //get role id 
+        public int GetRoleId(string rolename)
+        {
+            var role = _context.Roles.Where(x => x.RoleName == rolename).FirstOrDefault();
+            if (role != null)
+                return role.RoleId;
+            return 0;
+        }
     }
 }
