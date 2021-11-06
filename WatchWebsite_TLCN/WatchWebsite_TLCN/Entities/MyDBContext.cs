@@ -69,8 +69,12 @@ namespace WatchWebsite_TLCN.Entities
             .OnDelete(DeleteBehavior.Cascade);*/
 
             //Username, email is unique
-            modelBuilder.Entity<User>().HasIndex(u => new { u.Username, u.Email})
+            modelBuilder.Entity<User>().HasIndex(u => new { u.Username})
             .IsUnique(true);
+
+            modelBuilder.Entity<User>().HasIndex(u => new { u.Email })
+            .IsUnique(true);
+
 
             //BrandName is unique
             modelBuilder.Entity<Brand>().HasIndex(u => new { u.Name })
