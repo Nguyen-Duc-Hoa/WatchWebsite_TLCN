@@ -55,7 +55,7 @@ namespace WatchWebsite_TLCN.Controllers
 
 
         //reply comment
-        [Route("ReplyComment")]
+        [Route("ReplyComment/{commentid}")]
         [HttpPost]
         public async Task<IActionResult> Reply(int commentid, Comment comment)
         {
@@ -109,8 +109,16 @@ namespace WatchWebsite_TLCN.Controllers
                     {
                         foreach(Comment item in repComment)
                         {
-                            await _unitOfWork.Comments.Delete(item.Id);
-                            await _unitOfWork.Save();
+                            try
+                            {
+                                await _unitOfWork.Comments.Delete(item.Id);
+                                await _unitOfWork.Save();
+                            }
+                            catch
+                            {
+                                return BadRequest("Cant not delete");
+                            }
+                            
                         }
                     }
                 }
@@ -122,6 +130,34 @@ namespace WatchWebsite_TLCN.Controllers
             return Ok();
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutComment(int id, Comment comment)
+        {
+            if (id != comment.Id)
+            {
+                return BadRequest();
+            }
+
+            _unitOfWork.Comments.Update(comment);
+
+            try
+            {
+                await _unitOfWork.Save();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!(await CommentExists(id)))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });
+        }
 
 
         private Task<bool> CommentExists(int id)
