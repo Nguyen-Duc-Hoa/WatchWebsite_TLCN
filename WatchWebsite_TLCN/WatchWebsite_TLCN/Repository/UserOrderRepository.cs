@@ -25,12 +25,14 @@ namespace WatchWebsite_TLCN.Repository
         {
             var orderDetail = (from o in _context.OrderDetails
                                join p in _context.Products on o.ProductId equals p.Id
+                               join b in _context.Brands on p.BrandId equals b.BrandId
                                where o.OrderId == orderid
                                select new OrderDetailDTO
                                {
                                    OrderId = o.OrderId,
                                    ProductId = o.ProductId,
                                    ProductName = o.ProductName,
+                                   Brand = b.Name,
                                    Count = o.Count,
                                    Price = o.Price,
                                    Image = p.Image

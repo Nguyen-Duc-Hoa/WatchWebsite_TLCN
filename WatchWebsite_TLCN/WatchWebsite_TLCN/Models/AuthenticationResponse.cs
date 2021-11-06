@@ -8,6 +8,6 @@ namespace WatchWebsite_TLCN.Models
     public class AuthenticationResponse
     {
         public string JwtToken { get; set; }
-        public string RefreshToken { get; set; }
+        //public string RefreshToken { get; set; }
     }
 }

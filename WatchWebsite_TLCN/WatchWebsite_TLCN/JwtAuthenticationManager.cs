@@ -14,10 +14,10 @@ namespace WatchWebsite_TLCN
     public class JwtAuthenticationManager : IJwtAuthenticationManager
     {
         //private readonly MyDBContext _context;
-        public readonly string tokenKey;
-        private readonly IRefreshTokenGenerator refreshTokenGenerator;
-
+        //private readonly IRefreshTokenGenerator refreshTokenGenerator;
         //public IDictionary<string, string> UsersRefreshTokens = new Dictionary<string, string>();
+        
+        public readonly string tokenKey;
 
         public IDictionary<string, string> UsersRefreshTokens { get; set; }
 
@@ -25,8 +25,9 @@ namespace WatchWebsite_TLCN
         public JwtAuthenticationManager(string tokenKey, IRefreshTokenGenerator refreshTokenGenerator)
         {
             this.tokenKey = tokenKey;
-            this.refreshTokenGenerator = refreshTokenGenerator;
             UsersRefreshTokens = new Dictionary<string, string>();
+
+            //this.refreshTokenGenerator = refreshTokenGenerator;
             //_context = context;
         }
 
@@ -68,11 +69,6 @@ namespace WatchWebsite_TLCN
         public AuthenticationResponse Authenticate(int userid, string username, string password, List<int> role)
         {
             
-            /*User user = Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
-            if(user == null)
-            {
-                return null;
-            }*/
             if(username == null || password == null)
             {
                 return null;

@@ -142,7 +142,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             if (_cart.AddToCart(cart))
                 return Ok();
-            return BadRequest();
+            return BadRequest("Something was wrong");
         }
 
         // Click button (+)
@@ -152,7 +152,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             if (_cart.IncreaseQuantity(cart))
                 return Ok();
-            return BadRequest("Something was wrong");
+            return BadRequest("Can not increase quantity");
         }
 
         // Click button (-)
@@ -162,7 +162,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             if (_cart.DecreaseQuantity(cart))
                 return Ok();
-            return BadRequest("Something was wrong");
+            return BadRequest("Can not decrease quantity");
         }
 
         [HttpDelete]

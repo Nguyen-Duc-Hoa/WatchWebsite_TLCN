@@ -21,6 +21,7 @@ namespace WatchWebsite_TLCN.Configuration
             CreateMap<Brand, BrandDTO>().ForMember(dest => dest.Image, opt => opt.MapFrom(src => Convert.ToBase64String(src.Image))).ReverseMap();
             CreateMap<Material, MaterialDTO>().ReverseMap();
             CreateMap<WaterResistance, WaterResistancesDTO>().ReverseMap();
+            CreateMap<Order, ListOrderDTO>().ReverseMap();
 
 
         }

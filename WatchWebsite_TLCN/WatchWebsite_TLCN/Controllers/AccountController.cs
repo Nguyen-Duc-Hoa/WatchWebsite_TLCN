@@ -84,6 +84,7 @@ namespace WatchWebsite_TLCN.Controllers
             List<int> listRoleId = new List<int>();
 
             User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
+           
             if (user == null)
             {
                 username = null;

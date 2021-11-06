@@ -53,7 +53,43 @@ namespace WatchWebsite_TLCN.Controllers
             }
         }
 
-       
+
+        //reply comment
+        [Route("AddComment")]
+        [HttpPost]
+        public async Task<IActionResult> Reply(int commentid, Comment comment)
+        {
+            var userComment = await _unitOfWork.Comments.Get(x => x.Id == commentid);
+            if(userComment != null)
+            {
+                int? ReplyFrom = userComment.ReplyFrom;
+                if(ReplyFrom == null)
+                {
+                    comment.ReplyFrom = userComment.Id;
+                }
+                else
+                {
+                    comment.ReplyFrom = userComment.ReplyFrom;
+                }
+
+                try
+                {
+                    await _unitOfWork.Comments.Insert(comment);
+                    await _unitOfWork.Save();
+                    return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });
+                }
+                catch
+                {
+                    return StatusCode(500);
+                }
+            }
+
+            return StatusCode(500);
+
+        }
+
+
+
 
         private Task<bool> CommentExists(int id)
         {

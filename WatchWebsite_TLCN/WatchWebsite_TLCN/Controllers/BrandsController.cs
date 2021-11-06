@@ -35,7 +35,7 @@ namespace WatchWebsite_TLCN.Controllers
 
         // GET: api/Brands
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands(int currentPage)
+        public async Task<ActionResult> GetBrands(int currentPage)
         {
 
             var result = await _unitOfWork.Brands.GetAllWithPagination(

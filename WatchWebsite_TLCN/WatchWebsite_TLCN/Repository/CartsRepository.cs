@@ -80,7 +80,7 @@ namespace WatchWebsite_TLCN.Repository
             }
 
             //So luong --1;
-            cart.Count += 1;
+            cart.Count -= 1;
             //_context.Carts.Update(cart);
             //return Save();
 

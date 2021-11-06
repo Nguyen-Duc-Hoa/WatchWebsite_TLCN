@@ -204,13 +204,72 @@ namespace WatchWebsite_TLCN.Controllers
             return order;
         }
 
+
+        // Lich su mua hang tren trang user
+        // Get: api/orders/history?currentPage=1&userid=1
         [HttpGet]
+        [Route("History")]
+        public async Task<IActionResult> GetHistory(int currentPage, int userid)
+        {
+
+            var result = await _unitOfWork.Orders.GetAllWithPagination(
+                expression: p=>p.UserId == userid && p.DeliveryStatus == "Complete",
+                orderBy: x => x.OrderBy(a => a.OrderDate),
+                pagination: new Pagination { CurrentPage = currentPage }
+                );
+
+
+            var listHistories = _mapper.Map<List<ListOrderDTO>>(result.Item1);
+
+            return Ok(new
+            {
+                Histories = listHistories,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
+        }
+
+
+        // get: api/orders/getorderdetail
+        /*[HttpGet]
         [Route("GetOrderDetail/{orderid}")]
-        public IEnumerable<OrderDetailDTO> GetOrderDetailr(int orderid)
+        public IEnumerable<OrderDetailDTO> GetOrderDetail(int orderid)
         {
             var orderDetails = _userOrder.GetOrderDetails(orderid);
             return orderDetails;
+        }*/
+
+
+
+        // xem detail don hang tren trang user
+        // get: api/orders/getorderdetail?orderid=1&userid=1
+        [HttpGet]
+        [Route("GetOrderDetail")]
+        public async Task<IActionResult> GetOrderDetail(int orderid, int userid)
+        {
+            // Thong tin cua order
+            var order = await _unitOfWork.Orders.Get(x => x.OrderId == orderid && x.UserId == userid);
+
+            if(order != null)
+            {
+                
+                //Lay danh sach cac san pham trong order
+                var orderDetails = _userOrder.GetOrderDetails(orderid);
+                return Ok(new 
+                { 
+                    OrderId = order.OrderId,
+                    Address = order.Address,
+                    Phone = order.Phone,
+                    
+
+                });
+            }
+
+            return NotFound();
+            
         }
+
+
 
         [HttpPut]
         [Route("UpdateStatus/{orderid}")]
