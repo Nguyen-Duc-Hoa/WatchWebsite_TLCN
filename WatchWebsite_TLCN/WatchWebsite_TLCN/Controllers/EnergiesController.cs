@@ -71,23 +71,19 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/Energies/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnergy(int id, Energy energy)
+        [HttpPut]
+        public async Task<IActionResult> PutEnergy(Energy energy)
         {
-            if (id != energy.EnergyId)
-            {
-                return BadRequest();
-            }
-
             _unitOfWork.Energies.Update(energy);
 
             try
             {
                 await _unitOfWork.Save();
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await EnergyExists(id))
+                if (!await EnergyExists(energy.EnergyId))
                 {
                     return NotFound();
                 }
@@ -96,20 +92,22 @@ namespace WatchWebsite_TLCN.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
         }
 
         // POST: api/Energies
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<Energy>> PostEnergy(Energy energy)
         {
-            await _unitOfWork.Energies.Insert(energy);
-            await _unitOfWork.Save();
-
-            return CreatedAtAction("GetEnergy", new { id = energy.EnergyId }, energy);
+            try
+            {
+                await _unitOfWork.Energies.Insert(energy);
+                await _unitOfWork.Save();
+                return Ok();
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
 
         // DELETE: api/Energies/5
@@ -144,7 +142,7 @@ namespace WatchWebsite_TLCN.Controllers
                     return BadRequest("Something was wrong");
                 }
             }
-            return RedirectToAction(nameof(GetEnegies), new { currentPage = 1});
+            return Ok();
         }
     }
 }

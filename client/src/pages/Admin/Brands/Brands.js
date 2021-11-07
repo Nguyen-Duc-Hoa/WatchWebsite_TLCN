@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Table, Button, Space, Image, Spin } from "antd";
 import Pagination from "../../../components/Pagination/Pagination";
 import { AiOutlineAppstoreAdd, AiTwotoneDelete } from "react-icons/ai";
@@ -9,7 +9,7 @@ import { notify } from "../../../helper/notify";
 
 function Brands({ brands, loading, onFetchBrands, totalPage, onDeleteBrands }) {
   const [currentPage, setCurrentPage] = useState(1);
-  let deletiveArray = [];
+  const deletiveArray = useRef([])
 
   useEffect(() => {
     onFetchBrands(currentPage, notify);
@@ -51,15 +51,11 @@ function Brands({ brands, loading, onFetchBrands, totalPage, onDeleteBrands }) {
     onChange: (_, selectedRows) => {
       deletiveArray = selectedRows.map((ele) => ele.key);
     },
-    // getCheckboxProps: (record) => ({
-    //   // Column configuration not to be checked
-    //   name: record.name,
-    // }),
   };
 
   const deleteHandler = () => {
-    if (!deletiveArray) return;
-    onDeleteBrands(deletiveArray, notify);
+    if (deletiveArray.current.length === 0) return;
+    onDeleteBrands(deletiveArray.current, notify);
   };
 
   return (
