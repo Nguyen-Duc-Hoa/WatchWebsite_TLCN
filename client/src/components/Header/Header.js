@@ -8,9 +8,10 @@ import "./Header.scss";
 import { useState } from "react";
 import { connect } from "react-redux";
 import * as actionTyes from "../../store/actions/actionTypes";
+import * as actions from "../../store/actions/index";
 import { Link } from "react-router-dom";
 
-function Header({ onOpenCart, onOpenOverlay, isAuth }) {
+function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout }) {
   const [showSearchArea, setShowSearchArea] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
@@ -31,9 +32,12 @@ function Header({ onOpenCart, onOpenOverlay, isAuth }) {
           <span>
             <FaRegUser />
           </span>
-          <div className="dropdown-account" style={{bottom: isAuth ? '-40%' : '-90%'}}>
+          <div
+            className="dropdown-account"
+            style={{ bottom: isAuth ? "-40%" : "-90%" }}
+          >
             {isAuth ? (
-              <div>Logout</div>
+              <div onClick={onLogout}>Logout</div>
             ) : (
               <>
                 <div>
@@ -93,6 +97,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onOpenCart: () => dispatch({ type: actionTyes.OPEN_CART }),
     onOpenOverlay: () => dispatch({ type: actionTyes.OPEN_OVERLAY }),
+    onLogout: () => dispatch(actions.logout()),
   };
 };
 

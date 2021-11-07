@@ -37,7 +37,7 @@ export const login = (notify, loginInfo, history) => {
         }, 3500);
       })
       .catch(() => {
-        dispatch(handleError());
+        dispatch(stopLoading());
         notify("LOGIN FAILED", "Please try again!!!", "error");
       });
   };
@@ -47,12 +47,6 @@ const loginSuccess = (userInfo) => {
   return {
     type: actionTypes.LOGIN_SUCCESS,
     payload: userInfo,
-  };
-};
-
-const handleError = () => {
-  return {
-    type: actionTypes.AUTH_ERROR,
   };
 };
 
@@ -81,7 +75,7 @@ export const logout = () => {
 
 const stopLoading = () => {
   return {
-    type: actionTypes.STOP_LOADING,
+    type: actionTypes.AUTH_STOP_LOADING,
   };
 };
 
@@ -111,7 +105,7 @@ export const register = (notify, { confirm, ...registerInfo }, history) => {
         }
       })
       .catch(() => {
-        dispatch(handleError());
+        dispatch(stopLoading());
         notify("REGISTER FAILED", "Please try again!!!", "error");
       });
   };
@@ -140,7 +134,7 @@ export const reset = (notify, email) => {
         }
       })
       .catch(() => {
-        dispatch(handleError());
+        dispatch(stopLoading());
         notify(
           "RESET FAILED",
           "Something went wrong :( Please try again.",

@@ -26,14 +26,15 @@ namespace WatchWebsite_TLCN.Controllers
             _mapper = mapper;
         }
 
-/*        // GET: api/Brands
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
-        {
-            return await _unitOfWork.Brands.GetAll();
-        }*/
+        /*        // GET: api/Brands
+                [HttpGet]
+                public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
+                {
+                    return await _unitOfWork.Brands.GetAll();
+                }*/
 
         // GET: api/Brands
+        [Route("GetBrandsWithPagination")]
         [HttpGet]
         public async Task<ActionResult> GetBrands(int currentPage)
         {
@@ -70,8 +71,8 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
 
-        // GET: api/Brands/5
-        [HttpGet("{id}")]
+        // GET: api/Brands?id=5
+        [HttpGet]
         public async Task<ActionResult<Brand>> GetBrand(int id)
         {
             var brand = await _unitOfWork.Brands.Get(b => b.BrandId == id);
@@ -86,14 +87,9 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/Brands/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBrand(int id, Brand brand)
+        [HttpPut]
+        public async Task<IActionResult> PutBrand(Brand brand)
         {
-            if (id != brand.BrandId)
-            {
-                return BadRequest();
-            }
-
             _unitOfWork.Brands.Update(brand);
 
             try
@@ -102,7 +98,7 @@ namespace WatchWebsite_TLCN.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!(await BrandExists(id)))
+                if (!(await BrandExists(brand.BrandId)))
                 {
                     return NotFound();
                 }
@@ -111,8 +107,7 @@ namespace WatchWebsite_TLCN.Controllers
                     throw;
                 }
             }
-
-            return RedirectToAction(nameof(GetBrands), new { currentPage = 1 });
+            return Ok();
         }
 
         // POST: api/Brands
@@ -121,10 +116,17 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {
-            await _unitOfWork.Brands.Insert(brand);
-            await _unitOfWork.Save();
+            try
+            {
+                await _unitOfWork.Brands.Insert(brand);
+                await _unitOfWork.Save();
 
-            return CreatedAtAction("GetBrand", new { id = brand.BrandId }, brand);
+                return Ok();
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
 
         // DELETE: api/Brands/5
@@ -143,11 +145,11 @@ namespace WatchWebsite_TLCN.Controllers
             return brand;
         }
 
-        [HttpDelete()]
+        [HttpDelete ]
         [Route("Delete")]
         public async Task<ActionResult<Brand>> DeleteBrand(List<int> id)
         {
-            foreach(int item in id)
+            foreach (int item in id)
             {
                 try
                 {
@@ -160,15 +162,14 @@ namespace WatchWebsite_TLCN.Controllers
                     await _unitOfWork.Brands.Delete(item);
                     await _unitOfWork.Save();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    return BadRequest(e.ToString()) ;
+                    return BadRequest(e.ToString());
                 }
-                
+
             }
 
-
-            return RedirectToAction(nameof(GetBrands), new { currentPage = 1 });
+            return Ok();
         }
 
 

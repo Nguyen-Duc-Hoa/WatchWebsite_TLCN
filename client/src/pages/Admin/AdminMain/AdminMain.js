@@ -105,7 +105,13 @@ function AdminMain() {
             <PublicRoute
                 exact={true}
                 component={UpdateBrand}
-                path='/admin/Brand/:id'
+                path='/admin/Brands/AddBrand'
+                layout={AdminLayout}
+            />
+            <PublicRoute
+                exact={true}
+                component={UpdateBrand}
+                path='/admin/Brands/:id'
                 layout={AdminLayout}
             />
             <PublicRoute

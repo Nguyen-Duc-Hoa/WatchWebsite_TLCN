@@ -26,12 +26,7 @@ const authReducer = (state = initialState, action) => {
         ...state,
         ...action.payload
       };
-    case actionTypes.STOP_LOADING:
-      return {
-        ...state,
-        loading: false,
-      };
-    case actionTypes.AUTH_ERROR:
+    case actionTypes.AUTH_STOP_LOADING:
       return {
         ...state,
         loading: false,

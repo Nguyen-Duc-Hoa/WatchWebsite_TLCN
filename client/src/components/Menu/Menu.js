@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Menu } from 'antd';
-import { useHistory, useRouteMatch } from 'react-router';
+import { useHistory } from 'react-router';
 import './Menu.scss'
 import { GrUserAdmin } from 'react-icons/gr'
 import { RiBook2Line } from 'react-icons/ri'
@@ -10,7 +10,6 @@ const { SubMenu } = Menu;
 
 function AdminMenu() {
     const history = useHistory();
-    const { path, url } = useRouteMatch()
 
     useEffect(() => {
         clickMenuHandler('/admin/Home')

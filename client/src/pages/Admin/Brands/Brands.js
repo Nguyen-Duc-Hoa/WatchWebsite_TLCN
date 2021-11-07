@@ -1,110 +1,122 @@
-import React from 'react'
-import { Table, Button, Space, Image } from 'antd'
-import Pagination from '../../../components/Pagination/Pagination'
-import { AiOutlineAppstoreAdd, AiTwotoneDelete } from 'react-icons/ai'
+import React, { useEffect, useState } from "react";
+import { Table, Button, Space, Image, Spin } from "antd";
+import Pagination from "../../../components/Pagination/Pagination";
+import { AiOutlineAppstoreAdd, AiTwotoneDelete } from "react-icons/ai";
+import { Link } from "react-router-dom";
+import * as actions from "../../../store/actions/index";
+import { connect } from "react-redux";
+import { notify } from "../../../helper/notify";
 
-const columns = [
-    {
-        title: 'ID',
-        dataIndex: 'id',
-        key: 'id',
-        sorter: (a, b) => a.id > b.id,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        sorter: (a, b) => a.name > b.name,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Image',
-        dataIndex: 'image',
-        key: 'image',
-        align: 'center',
-        render: source => <Image width={160} src={source}/>
-    },
-    {
-        title: 'Action',
-        dataIndex: 'edit',
-        key: 'edit',
-        render: () => <a>Edit</a>
-    }
-]
+function Brands({ brands, loading, onFetchBrands, totalPage, onDeleteBrands }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  let deletiveArray = [];
 
-const originData = [
-    {
-        key: 1,
-        id: 1,
-        name: 'Piaget',
-        image: 'https://d1rkccsb0jf1bk.cloudfront.net/logos/OliviaBurtonLogo.svg'
-    },
-    {
-        key: 2,
-        id: 2,
-        name: 'Piaget',
-        image: 'https://d1rkccsb0jf1bk.cloudfront.net/logos/OliviaBurtonLogo.svg'
-    },
-    {
-        key: 3,
-        id: 3,
-        name: 'Piaget',
-        image: 'https://d1rkccsb0jf1bk.cloudfront.net/logos/OliviaBurtonLogo.svg'
-    },
-    {
-        key: 4,
-        id: 4,
-        name: 'Piaget',
-        image: 'https://d1rkccsb0jf1bk.cloudfront.net/logos/OliviaBurtonLogo.svg'
-    },
-    {
-        key: 5,
-        id: 5,
-        name: 'Piaget',
-        image: 'https://d1rkccsb0jf1bk.cloudfront.net/logos/OliviaBurtonLogo.svg'
-    },
-]
+  useEffect(() => {
+    onFetchBrands(currentPage, notify);
+  }, [currentPage]);
 
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id > b.id,
+      sortDirections: ["descend"],
     },
-    getCheckboxProps: (record) => ({
-        // Column configuration not to be checked
-        name: record.name,
-    }),
-};
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name > b.name,
+      sortDirections: ["descend"],
+    },
+    {
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      align: "center",
+      render: (source) => (
+        <Image width={160} src={`data:image/svg+xml;base64,${source}`} />
+      ),
+    },
+    {
+      title: "Action",
+      dataIndex: "edit",
+      key: "edit",
+      render: (_, record) => <Link to={`/admin/Brands/${record.key}`}>Edit</Link>,
+    },
+  ];
 
-function Brands() {
-    return (
-        <section className='admin'>
-            <div className="heading">Brands</div>
-            <div className="buttonLayout">
-                <Space>
-                    <Button size='large' type='primary'><AiOutlineAppstoreAdd className='icon' /> Add</Button>
-                    <Button size='large' type='danger'><AiTwotoneDelete className='icon' /> Delete</Button>
-                </Space>
-            </div>
-            <Table
-                columns={columns}
-                dataSource={originData}
-                bordered={true}
-                rowSelection={{
-                    type: 'checkbox',
-                    ...rowSelection,
-                }}
-                pagination={{ position: ['none', 'none'] }}
-                footer={() => (
-                    <Pagination
-                        currentPage={3}
-                        noPadding={true}
-                        totalPage={5}
-                    />
-                )}
+  const rowSelection = {
+    onChange: (_, selectedRows) => {
+      deletiveArray = selectedRows.map((ele) => ele.key);
+    },
+    // getCheckboxProps: (record) => ({
+    //   // Column configuration not to be checked
+    //   name: record.name,
+    // }),
+  };
+
+  const deleteHandler = () => {
+    if (!deletiveArray) return;
+    onDeleteBrands(deletiveArray, notify);
+  };
+
+  return (
+    <section className="admin">
+      <div className="heading">Brands</div>
+      <div className="buttonLayout">
+        <Space>
+          <Link to="/admin/Brands/AddBrand">
+            <Button size="large" type="primary">
+              <AiOutlineAppstoreAdd className="icon" />
+              Add
+            </Button>
+          </Link>
+          <Button size="large" type="danger" onClick={deleteHandler}>
+            <AiTwotoneDelete className="icon" /> Delete
+          </Button>
+        </Space>
+      </div>
+      <Spin spinning={loading}>
+        <Table
+          columns={columns}
+          dataSource={brands}
+          bordered={true}
+          rowSelection={{
+            type: "checkbox",
+            ...rowSelection,
+          }}
+          pagination={{ position: ["none", "none"] }}
+          footer={() => (
+            <Pagination
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              noPadding={true}
+              totalPage={totalPage}
             />
-        </section>
-    )
+          )}
+        />
+      </Spin>
+    </section>
+  );
 }
 
-export default Brands
+const mapStateToProps = (state) => {
+  return {
+    loading: state.brand.loading,
+    brands: state.brand.brands,
+    totalPage: state.brand.totalPage,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onFetchBrands: (currentPage, notify) =>
+      dispatch(actions.fetchBrands(currentPage, notify)),
+    onDeleteBrands: (deletiveArray, notify) =>
+      dispatch(actions.deleteBrands(deletiveArray, notify)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Brands);

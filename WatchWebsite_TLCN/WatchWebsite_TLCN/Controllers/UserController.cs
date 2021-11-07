@@ -174,7 +174,7 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return RedirectToAction(nameof(SearchEmployee), new { currentPage = currentPage, searchKey = searchKey });
+            return Ok();
         }
 
         // POST: api/User/UpdateStateCustomer?currentPage=1&searchKey=123

@@ -8,13 +8,18 @@ import { Provider } from "react-redux";
 import thunk from "redux-thunk";
 import cartAndSidebar from "./store/reducers/cartAndSidebar";
 import authReducer from "./store/reducers/auth";
+import brandReducer from "./store/reducers/brand";
 
 const composeEnhancers =
   (process.env.NODE_ENV === "development"
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     : null) || compose;
 
-const rootReducer = combineReducers({ ui: cartAndSidebar, auth: authReducer });
+const rootReducer = combineReducers({
+  ui: cartAndSidebar,
+  auth: authReducer,
+  brand: brandReducer,
+});
 
 const store = createStore(
   rootReducer,

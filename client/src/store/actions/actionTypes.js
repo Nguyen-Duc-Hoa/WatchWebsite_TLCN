@@ -10,7 +10,11 @@ export const OPEN_CART = "OPEN_CART";
 export const CLOSE_CART = "CLOSE_CART";
 
 export const AUTH_WAITING = "AUTH_WAITING";
-export const AUTH_ERROR = "AUTH_ERROR";
 export const AUTH_LOGOUT = "AUTH_LOGOUT";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-export const STOP_LOADING = "STOP_LOADING";
+export const AUTH_STOP_LOADING = "AUTH_STOP_LOADING";
+
+export const BRAND_WAITING = "BRAND_WAITING";
+export const BRAND_SUCCESS = "BRAND_SUCCESS";
+export const BRAND_STOP_LOADING = "BRAND_STOP_LOADING";
+export const BRAND_FETCH_SUCCESS = "BRAND_FETCH_SUCCESS";

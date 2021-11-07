@@ -5,6 +5,7 @@ import { IoMdClose } from "react-icons/io";
 import SidebarItem from "./SidebarItem/SidebarItem";
 import SidebarAccount from "./SidebarAccount/SidebarAccount";
 import * as actionTypes from "../../../store/actions/actionTypes";
+import * as actions from "../../../store/actions/index";
 
 const brands = [
   "Casio",
@@ -17,7 +18,13 @@ const brands = [
 ];
 const menu = ["Home", "Brands", "Ladies", "Mens"];
 
-function Sidebar({ showSidebar, onCloseSidebar, onCloseOverlay, isAuth }) {
+function Sidebar({
+  showSidebar,
+  onCloseSidebar,
+  onCloseOverlay,
+  isAuth,
+  onLogout,
+}) {
   const closeSidebarHandler = () => {
     onCloseSidebar();
     onCloseOverlay();
@@ -37,7 +44,7 @@ function Sidebar({ showSidebar, onCloseSidebar, onCloseOverlay, isAuth }) {
           />
         ))}
       </ul>
-      <SidebarAccount isAuth={isAuth} />
+      <SidebarAccount isAuth={isAuth} onLogout={onLogout} />
     </div>
   );
 }
@@ -53,6 +60,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onCloseSidebar: () => dispatch({ type: actionTypes.CLOSE_SIDEBAR }),
     onCloseOverlay: () => dispatch({ type: actionTypes.CLOSE_OVERLAY }),
+    onLogout: () => dispatch(actions.logout()),
   };
 };
 

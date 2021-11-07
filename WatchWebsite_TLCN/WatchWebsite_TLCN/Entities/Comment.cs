@@ -27,9 +27,6 @@ namespace WatchWebsite_TLCN.Entities
         [Required]
         public DateTime Date { get; set; }
 
-        [Required]
-        public string TypeComment { get; set; } = Constant.typeComment[0];
-
         public int? ReplyFrom { get; set; }
 
         [ForeignKey("ReplyFrom")]
