@@ -18,6 +18,16 @@ import { useFetchData } from "../../../hook/useFetchData";
 import { useEditTable } from "../../../hook/useEditTable";
 
 function WaterResistence() {
+  const updateData = (result) => {
+    const dataArray = result.WaterRes.map((element) => {
+      return {
+        key: element["WaterId"],
+        id: element["WaterId"],
+        value: element["WaterValue"],
+      };
+    });
+    return dataArray;
+  };
 
   const [
     editingKey,
@@ -29,7 +39,7 @@ function WaterResistence() {
     cancel,
   ] = useEditTable();
 
-  const [
+  const {
     data,
     currentPage,
     setCurrentPage,
@@ -38,29 +48,34 @@ function WaterResistence() {
     spinning,
     updateReq,
     deleteReq,
-    deletiveArray
-  ] = useFetchData(
-    `${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances`,
+    deletiveArray,
+  } = useFetchData(
     {
-      id: "WaterId",
-      value: "WaterValue",
-      name: "WaterRes",
+      get: `${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances`,
+      post: `${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances`,
+      delete: `${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances/Delete`,
     },
-    setEditingKey
+    setEditingKey,
+    updateData
   );
 
   const isEditing = (record) => record.key === editingKey;
 
   const addWaterResHandler = (values) => {
-    updateReq("POST", values.value);
+    updateReq("POST", { WaterId: 0, WaterValue: values.value });
   };
-
 
   const save = async (key) => {
     const row = await form.validateFields();
     const newData = [...data];
     const index = newData.findIndex((item) => item.key === key);
-    updateReq("PUT", row.value, key, { row, index, newData });
+    updateReq("PUT", { WaterId: key, WaterValue: row.value }, () => {
+      newData.splice(index, 1, {
+        ...newData[index],
+        ...row,
+      });
+      return newData;
+    });
   };
 
   const deleteHandler = () => {

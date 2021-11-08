@@ -18,6 +18,17 @@ import { useFetchData } from "../../../hook/useFetchData";
 import { useEditTable } from "../../../hook/useEditTable";
 
 function Sizes() {
+  const updateData = (result) => {
+    const dataArray = result.Sizes.map((element) => {
+      return {
+        key: element["SizeId"],
+        id: element["SizeId"],
+        value: element["SizeValue"],
+      };
+    });
+    return dataArray;
+  };
+
   const [
     editingKey,
     setEditingKey,
@@ -28,7 +39,7 @@ function Sizes() {
     cancel,
   ] = useEditTable();
 
-  const [
+  const {
     data,
     currentPage,
     setCurrentPage,
@@ -37,25 +48,30 @@ function Sizes() {
     spinning,
     updateReq,
     deleteReq,
-    deletiveArray
-  ] = useFetchData(
-    `${process.env.REACT_APP_HOST_DOMAIN}/api/Sizes`,
+    deletiveArray,
+  } = useFetchData(
     {
-      id: "SizeId",
-      value: "SizeValue",
-      name: "Sizes",
+      get: `${process.env.REACT_APP_HOST_DOMAIN}/api/Sizes`,
+      post: `${process.env.REACT_APP_HOST_DOMAIN}/api/Sizes`,
+      delete: `${process.env.REACT_APP_HOST_DOMAIN}/api/Sizes/Delete`,
     },
-    setEditingKey
+    setEditingKey,
+    updateData
   );
 
   const isEditing = (record) => record.key === editingKey;
-
 
   const save = async (key) => {
     const row = await form.validateFields();
     const newData = [...data];
     const index = newData.findIndex((item) => item.key === key);
-    updateReq("PUT", row.value, key, { row, index, newData });
+    updateReq("PUT", { SizeId: key, SizeValue: row.value }, () => {
+      newData.splice(index, 1, {
+        ...newData[index],
+        ...row,
+      });
+      return newData;
+    });
   };
 
   const deleteHandler = () => {
@@ -64,7 +80,7 @@ function Sizes() {
   };
 
   const addSizeHandler = (values) => {
-    updateReq("POST", values.value);
+    updateReq("POST", { SizeId: 0, SizeValue: values.value });
   };
 
   const rowSelection = {

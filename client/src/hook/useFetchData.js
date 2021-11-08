@@ -2,8 +2,9 @@ import { useEffect, useState, useRef } from "react";
 import { useForceUpdate } from "./useForceUpdate";
 import { notify } from "../helper/notify";
 
-export const useFetchData = (url = "", keyParam, setEditingKey) => {
+export const useFetchData = (route, setEditingKey, updateData) => {
   const [data, setData] = useState([]);
+  const [searchKey, setSearchKey] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -13,24 +14,18 @@ export const useFetchData = (url = "", keyParam, setEditingKey) => {
 
   useEffect(() => {
     fetchData();
-  }, [currentPage, shouldUpdate]);
+  }, [currentPage, shouldUpdate, searchKey]);
 
   const fetchData = () => {
     setSpinning(true);
-    fetch(`${url}?currentPage=${currentPage}`, {
+    fetch(`${route.get}?currentPage=${currentPage}&searchKey=${searchKey}`, {
       method: "GET",
     })
       .then((response) => {
         return response.json();
       })
       .then((result) => {
-        const dataArray = result[keyParam.name].map((element) => {
-          return {
-            key: element[keyParam.id],
-            id: element[keyParam.id],
-            value: element[keyParam.value],
-          };
-        });
+        const dataArray = updateData(result);
         setData(dataArray);
         setTotalPage(result.TotalPage);
         setSpinning(false);
@@ -45,17 +40,14 @@ export const useFetchData = (url = "", keyParam, setEditingKey) => {
       });
   };
 
-  const updateReq = (type, value, id = 0, extra) => {
-    const dataReq = {};
-    dataReq[keyParam.id] = id;
-    dataReq[keyParam.value] = value;
+  const updateReq = (type, objData, update) => {
     setLoading(true);
-    fetch(url, {
+    fetch(route.post, {
       method: type,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataReq),
+      body: JSON.stringify(objData),
     })
       .then((response) => {
         if (response.ok && type === "POST") {
@@ -69,12 +61,9 @@ export const useFetchData = (url = "", keyParam, setEditingKey) => {
           setLoading(false);
           forceUpdate();
         } else if (response.ok && type === "PUT") {
-          extra.newData.splice(extra.index, 1, {
-            ...extra.newData[extra.index],
-            ...extra.row,
-          });
-          setData(extra.newData);
-          setEditingKey("");
+          const updateData = update()
+          setData(updateData);
+          setEditingKey && setEditingKey("");
           setLoading(false);
         } else {
           return new Promise.reject();
@@ -92,7 +81,7 @@ export const useFetchData = (url = "", keyParam, setEditingKey) => {
 
   const deleteReq = () => {
     setSpinning(true);
-    fetch(`${url}/Delete`, {
+    fetch(route.delete, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -123,7 +112,7 @@ export const useFetchData = (url = "", keyParam, setEditingKey) => {
       });
   };
 
-  return [
+  return {
     data,
     currentPage,
     setCurrentPage,
@@ -132,6 +121,9 @@ export const useFetchData = (url = "", keyParam, setEditingKey) => {
     spinning,
     updateReq,
     deleteReq,
-    deletiveArray
-  ];
+    deletiveArray,
+    searchKey,
+    setSearchKey,
+    forceUpdate,
+  };
 };

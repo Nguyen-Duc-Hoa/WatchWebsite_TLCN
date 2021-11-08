@@ -7,7 +7,7 @@ function SearchBox({ onSubmit }) {
         <Form layout='inline' onFinish={onSubmit}>
             <Form.Item
                 name='search'>
-                <Input size='large' />
+                <Input size='large'  />
             </Form.Item>
             <Form.Item>
                 <Button shape='round' size='large' type='primary' htmlType='submit' icon={<BiSearch />} />

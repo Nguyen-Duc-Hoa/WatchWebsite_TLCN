@@ -18,6 +18,17 @@ import { useFetchData } from "../../../hook/useFetchData";
 import { useEditTable } from "../../../hook/useEditTable";
 
 function Materials() {
+  const updateData = (result) => {
+    const dataArray = result.Materials.map((element) => {
+      return {
+        key: element["MaterialId"],
+        id: element["MaterialId"],
+        value: element["MaterialValue"],
+      };
+    });
+    return dataArray;
+  };
+
   const [
     editingKey,
     setEditingKey,
@@ -28,7 +39,7 @@ function Materials() {
     cancel,
   ] = useEditTable();
 
-  const [
+  const {
     data,
     currentPage,
     setCurrentPage,
@@ -37,29 +48,34 @@ function Materials() {
     spinning,
     updateReq,
     deleteReq,
-    deletiveArray
-  ] = useFetchData(
-    `${process.env.REACT_APP_HOST_DOMAIN}/api/Materials`,
+    deletiveArray,
+  } = useFetchData(
     {
-      id: "MaterialId",
-      value: "MaterialValue",
-      name: "Materials",
+      get: `${process.env.REACT_APP_HOST_DOMAIN}/api/Materials`,
+      post: `${process.env.REACT_APP_HOST_DOMAIN}/api/Materials`,
+      delete: `${process.env.REACT_APP_HOST_DOMAIN}/api/Materials/Delete`,
     },
-    setEditingKey
+    setEditingKey,
+    updateData
   );
 
   const isEditing = (record) => record.key === editingKey;
 
-
   const addMaterialHandler = (values) => {
-    updateReq("POST", values.value);
+    updateReq("POST", { MaterialId: 0, MaterialValue: values.value });
   };
 
   const save = async (key) => {
     const row = await form.validateFields();
     const newData = [...data];
     const index = newData.findIndex((item) => item.key === key);
-    updateReq("PUT", row.value, key, { row, index, newData });
+    updateReq("PUT", { MaterialId: key, MaterialValue: row.value }, () => {
+      newData.splice(index, 1, {
+        ...newData[index],
+        ...row,
+      });
+      return newData;
+    });
   };
 
   const deleteHandler = () => {

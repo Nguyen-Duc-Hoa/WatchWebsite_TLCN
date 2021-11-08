@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import {
   Table,
   Popover,
@@ -18,6 +18,17 @@ import { useFetchData } from "../../../hook/useFetchData";
 import { useEditTable } from "../../../hook/useEditTable";
 
 function Energy() {
+  const updateData = (result) => {
+    const dataArray = result.Energies.map((element) => {
+      return {
+        key: element["EnergyId"],
+        id: element["EnergyId"],
+        value: element["EnergyValue"],
+      };
+    });
+    return dataArray;
+  };
+
   const [
     editingKey,
     setEditingKey,
@@ -28,7 +39,7 @@ function Energy() {
     cancel,
   ] = useEditTable();
 
-  const [
+  const {
     data,
     currentPage,
     setCurrentPage,
@@ -37,28 +48,34 @@ function Energy() {
     spinning,
     updateReq,
     deleteReq,
-    deletiveArray
-  ] = useFetchData(
-    `${process.env.REACT_APP_HOST_DOMAIN}/api/Energies`,
+    deletiveArray,
+  } = useFetchData(
     {
-      id: "EnergyId",
-      value: "EnergyValue",
-      name: "Energies",
+      get: `${process.env.REACT_APP_HOST_DOMAIN}/api/Energies`,
+      post: `${process.env.REACT_APP_HOST_DOMAIN}/api/Energies`,
+      delete: `${process.env.REACT_APP_HOST_DOMAIN}/api/Energies/Delete`,
     },
-    setEditingKey
+    setEditingKey,
+    updateData
   );
 
   const isEditing = (record) => record.key === editingKey;
 
   const addEnergyHandler = (values) => {
-    updateReq("POST", values.value);
+    updateReq("POST", { EnergyId: 0, EnergyValue: values.value });
   };
 
   const save = async (key) => {
     const row = await form.validateFields();
     const newData = [...data];
     const index = newData.findIndex((item) => item.key === key);
-    updateReq("PUT", row.value, key, { row, index, newData });
+    updateReq("PUT", { EnergyId: key, EnergyValue: row.value }, () => {
+      newData.splice(index, 1, {
+        ...newData[index],
+        ...row,
+      });
+      return newData;
+    });
   };
 
   const deleteHandler = () => {
@@ -68,9 +85,7 @@ function Energy() {
 
   const rowSelection = {
     onChange: (_, selectedRows) => {
-      console.log(selectedRows);
       deletiveArray.current = selectedRows.map((ele) => ele.key);
-      console.log(deletiveArray.current);
     },
   };
 
