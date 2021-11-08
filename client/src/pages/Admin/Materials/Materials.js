@@ -148,7 +148,6 @@ function Materials() {
   };
 
   const handleVisibleChange = (visible) => {
-    console.log(visible);
     setVisible(visible);
   };
 
@@ -179,7 +178,6 @@ function Materials() {
   const rowSelection = {
     onChange: (_, selectedRows) => {
       deletiveArray.current = selectedRows.map((ele) => ele.key);
-      console.log(deletiveArray.current);
     },
   };
 
