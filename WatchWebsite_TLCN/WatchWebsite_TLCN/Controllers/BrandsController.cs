@@ -26,14 +26,14 @@ namespace WatchWebsite_TLCN.Controllers
             _mapper = mapper;
         }
 
-/*        // GET: api/Brands
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
-        {
-            return await _unitOfWork.Brands.GetAll();
-        }*/
+        /*        // GET: api/Brands
+                [HttpGet]
+                public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
+                {
+                    return await _unitOfWork.Brands.GetAll();
+                }*/
 
-        // GET: api/Brands
+        // GET: api/brands?currentPage=1
         [HttpGet]
         public async Task<ActionResult> GetBrands(int currentPage)
         {
@@ -59,6 +59,7 @@ namespace WatchWebsite_TLCN.Controllers
             });
         }
 
+        
         // GET: api/Brands/GetAll
         [HttpGet]
         [Route("GetAll")]
@@ -121,10 +122,19 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {
-            await _unitOfWork.Brands.Insert(brand);
-            await _unitOfWork.Save();
+            try
+            {
+                await _unitOfWork.Brands.Insert(brand);
+                await _unitOfWork.Save();
+                return Ok();
+            }
+            catch
+            {
 
-            return CreatedAtAction("GetBrand", new { id = brand.BrandId }, brand);
+            }
+
+            return BadRequest();
+            //return CreatedAtAction("GetBrand", new { id = brand.BrandId }, brand);
         }
 
         // DELETE: api/Brands/5
@@ -143,6 +153,12 @@ namespace WatchWebsite_TLCN.Controllers
             return brand;
         }
 
+
+        // Delete nhieu san pham
+        // DELETE: api/brands/delete
+        /* JSON
+           [6,7]
+        */
         [HttpDelete()]
         [Route("Delete")]
         public async Task<ActionResult<Brand>> DeleteBrand(List<int> id)

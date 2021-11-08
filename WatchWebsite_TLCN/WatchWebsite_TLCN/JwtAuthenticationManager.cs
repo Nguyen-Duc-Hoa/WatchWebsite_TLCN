@@ -13,22 +13,16 @@ namespace WatchWebsite_TLCN
 {
     public class JwtAuthenticationManager : IJwtAuthenticationManager
     {
-        //private readonly MyDBContext _context;
-        //private readonly IRefreshTokenGenerator refreshTokenGenerator;
-        //public IDictionary<string, string> UsersRefreshTokens = new Dictionary<string, string>();
+
         
         public readonly string tokenKey;
 
-        public IDictionary<string, string> UsersRefreshTokens { get; set; }
+        //public IDictionary<string, string> UsersRefreshTokens { get; set; }
 
         //tokenKey is private key to encode
-        public JwtAuthenticationManager(string tokenKey, IRefreshTokenGenerator refreshTokenGenerator)
+        public JwtAuthenticationManager(string tokenKey)
         {
             this.tokenKey = tokenKey;
-            UsersRefreshTokens = new Dictionary<string, string>();
-
-            //this.refreshTokenGenerator = refreshTokenGenerator;
-            //_context = context;
         }
 
 
@@ -114,7 +108,6 @@ namespace WatchWebsite_TLCN
             return new AuthenticationResponse
             {
                 JwtToken = tokenHandler.WriteToken(token),
-                //RefreshToken = refreshToken
             };
         }
 

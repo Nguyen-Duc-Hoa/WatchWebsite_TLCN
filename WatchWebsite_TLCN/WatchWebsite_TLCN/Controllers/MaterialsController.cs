@@ -75,6 +75,8 @@ namespace WatchWebsite_TLCN.Controllers
             try
             {
                 await _unitOfWork.Save();
+                
+                return RedirectToAction(nameof(GetMaterials), new { currentPage = 1 });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -88,7 +90,7 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return NoContent();
+            //return NoContent();
         }
 
         // POST: api/Materials
@@ -97,10 +99,18 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Material>> PostMaterial(Material material)
         {
-            await _unitOfWork.Materials.Insert(material);
-            await _unitOfWork.Save();
+            try
+            {
+                await _unitOfWork.Materials.Insert(material);
+                await _unitOfWork.Save();
 
-            return CreatedAtAction("GetMaterial", new { id = material.MaterialId }, material);
+                return Ok();
+            }
+            catch { }
+
+
+            return BadRequest();
+            //return CreatedAtAction("GetMaterial", new { id = material.MaterialId }, material);
         }
 
         // DELETE: api/Materials/5
@@ -119,8 +129,14 @@ namespace WatchWebsite_TLCN.Controllers
             return material;
         }
 
+
         [HttpDelete()]
         [Route("Delete")]
+        // Delete nhieu 
+        // DELETE: api/Materials/delete
+        /* JSON
+           [6,7]
+        */
         public async Task<ActionResult<Brand>> DeleteMaterial(List<int> id)
         {
             foreach (int item in id)

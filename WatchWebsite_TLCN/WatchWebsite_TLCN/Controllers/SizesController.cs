@@ -40,7 +40,7 @@ namespace WatchWebsite_TLCN.Controllers
 
             return Ok(new
             {
-                Materials = listSizeDTO,
+                Sizes = listSizeDTO,
                 CurrentPage = result.Item2.CurrentPage,
                 TotalPage = result.Item2.TotalPage
             });
@@ -76,6 +76,7 @@ namespace WatchWebsite_TLCN.Controllers
             try
             {
                 await _unitOfWork.Save();
+                return RedirectToAction(nameof(GetSizes), new { currentPage = 1 });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -89,7 +90,7 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return NoContent();
+            //return NoContent();
         }
 
         // POST: api/Sizes
@@ -98,10 +99,18 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Size>> PostSize(Size size)
         {
-            await _unitOfWork.Sizes.Insert(size);
-            await _unitOfWork.Save();
+            try
+            {
+                await _unitOfWork.Sizes.Insert(size);
+                await _unitOfWork.Save();
 
-            return CreatedAtAction("GetSize", new { id = size.SizeId }, size);
+                return Ok();
+            }
+            catch
+            { }
+
+            return BadRequest();
+            //return CreatedAtAction("GetSize", new { id = size.SizeId }, size);
         }
 
         // DELETE: api/Sizes/5
@@ -120,7 +129,7 @@ namespace WatchWebsite_TLCN.Controllers
             return size;
         }
 
-        [HttpDelete()]
+        [HttpDelete]
         [Route("Delete")]
         public async Task<ActionResult<Brand>> DeleteSize(List<int> id)
         {

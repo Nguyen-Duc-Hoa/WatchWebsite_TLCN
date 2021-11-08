@@ -76,6 +76,7 @@ namespace WatchWebsite_TLCN.Controllers
             try
             {
                 await _unitOfWork.Save();
+                return RedirectToAction(nameof(GetWaterResistances), new { currentPage = 1 });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -89,7 +90,7 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return NoContent();
+            //return NoContent();
         }
 
         // POST: api/WaterResistances
@@ -98,10 +99,17 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<WaterResistance>> PostWaterResistance(WaterResistance waterResistance)
         {
-            await _unitOfWork.WaterResistances.Insert(waterResistance);
-            await _unitOfWork.Save();
+            try
+            {
+                await _unitOfWork.WaterResistances.Insert(waterResistance);
+                await _unitOfWork.Save();
 
-            return CreatedAtAction("GetWaterResistance", new { id = waterResistance.WaterId }, waterResistance);
+                return Ok();
+            }
+            catch { }
+
+            return BadRequest();
+            //return CreatedAtAction("GetWaterResistance", new { id = waterResistance.WaterId }, waterResistance);
         }
 
         // DELETE: api/WaterResistances/5
@@ -118,6 +126,34 @@ namespace WatchWebsite_TLCN.Controllers
             await _unitOfWork.Save();
 
             return waterResistance;
+        }
+
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<ActionResult<Brand>> Delete(List<int> id)
+        {
+            foreach (int item in id)
+            {
+                try
+                {
+                    var water = await _unitOfWork.WaterResistances.Get(b => b.WaterId == item);
+                    if (water == null)
+                    {
+                        return BadRequest("Something was wrong!");
+                    }
+
+                    await _unitOfWork.Sizes.Delete(item);
+                    await _unitOfWork.Save();
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.ToString());
+                }
+
+            }
+
+
+            return RedirectToAction(nameof(GetWaterResistances), new { currentPage = 1 });
         }
 
         private Task<bool> WaterResistanceExists(int id)

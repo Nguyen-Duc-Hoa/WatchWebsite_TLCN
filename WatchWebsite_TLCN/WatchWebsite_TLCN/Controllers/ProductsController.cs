@@ -146,7 +146,7 @@ namespace WatchWebsite_TLCN.Controllers
             return _product.GetProductDetail(id);
         }
 
-        // GET: /api/Products/SearchProducts&currentPage=1&searchKey=abc
+        // GET: api/Products/Search&currentPage=1&searchKey=abc
         [HttpGet]
         [Route("Search")]
         public async Task<IActionResult> SearchProducts(int currentPage, string searchKey)

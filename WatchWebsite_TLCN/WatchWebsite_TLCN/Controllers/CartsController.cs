@@ -129,6 +129,8 @@ namespace WatchWebsite_TLCN.Controllers
             return _unitOfWork.Carts.IsExist<int>(id);
         }
 
+
+        //GET: api/carts/GetCart/8
         [HttpGet]
         [Route("GetCart/{userId}")]
         public IEnumerable<CartDTO> GetByUser(int userId)
@@ -136,6 +138,15 @@ namespace WatchWebsite_TLCN.Controllers
             return _cart.GetCart(userId);
         }
 
+
+        //POST: api/carts/AddToCart
+        /* JSON
+         * {
+                "UserId": 8,
+                "ProductId": "aaa111",
+                "Count": 3
+            }
+         */
         [HttpPost]
         [Route("AddToCart")]
         public ActionResult AddToCart([FromBody] Cart cart)
@@ -146,24 +157,37 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // Click button (+)
+        //PUT: api/carts/IncQuantity
+
         [HttpPut]
         [Route("IncQuantity")]
         public IActionResult IncreaseQuantity(Cart cart)
         {
             if (_cart.IncreaseQuantity(cart))
-                return Ok();
+            {
+                return Ok(cart);
+            }
             return BadRequest("Can not increase quantity");
         }
 
         // Click button (-)
         [HttpPut]
         [Route("DecQuantity")]
+        //PUT: api/carts/DecQuantity
+        /* JSON
+         * {
+                "UserId": 8,
+                "ProductId": "aaa111",
+                "Count": 3
+            }
+         */
         public IActionResult DecreaseQuantity(Cart cart)
         {
             if (_cart.DecreaseQuantity(cart))
-                return Ok();
+                return Ok(cart);
             return BadRequest("Can not decrease quantity");
         }
+
 
         [HttpDelete]
         public IActionResult DeleteFromCart(Cart cart)

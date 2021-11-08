@@ -23,13 +23,11 @@ namespace WatchWebsite_TLCN.Controllers
     {
         private readonly MyDBContext _context;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
-        private readonly ITokenRefresher _tokenRefresher;
 
-        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, ITokenRefresher tokenRefresher, MyDBContext context)
+        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, MyDBContext context)
         {
             _context = context;
             _jwtAuthenticationManager = jwtAuthenticationManager;
-            _tokenRefresher = tokenRefresher;
         }
 
 
@@ -49,7 +47,7 @@ namespace WatchWebsite_TLCN.Controllers
          */
         public async Task<IActionResult> Register([FromBody] Register model)
         {
-            string rolename = "Customer";
+            string rolename = Constant.customerRole;
 
             //Kiem tra confirm password
             if (model.Password == model.ConfirmPass)
@@ -62,6 +60,7 @@ namespace WatchWebsite_TLCN.Controllers
 
                     if (result.Equals(1))
                     {
+
                         //them User_Role
                         if(AddUser_Role(rolename, model.Username))
                             return Ok();
@@ -100,6 +99,8 @@ namespace WatchWebsite_TLCN.Controllers
             List<int> listRoleId = new List<int>();
 
             User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
+            
+
 
             if (user == null)
             {
@@ -108,6 +109,11 @@ namespace WatchWebsite_TLCN.Controllers
             }
             else
             {
+                if (user.State is false)
+                {
+                    return BadRequest("UnAuthorize");
+                }
+
                 userid = user.Id;
                 var user_role = (from u in _context.User_Roles
                                  join r in _context.Roles on u.RoleId equals r.RoleId
@@ -170,7 +176,7 @@ namespace WatchWebsite_TLCN.Controllers
 
             var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
 
-            if (user != null)
+            if (user != null && user.State is true)
             {
 
                 string web_email = "laptrinhwebnhom9@gmail.com";
@@ -221,21 +227,6 @@ namespace WatchWebsite_TLCN.Controllers
             }
 
         }
-
-        /*[AllowAnonymous]
-        [HttpPost]
-        [Route("Refresh")]
-        public IActionResult Refresh([FromBody] RefreshCred refreshCred)
-        {
-            var token = _tokenRefresher.Refresh(refreshCred);
-
-            if(token == null)
-            {
-                return Unauthorized();
-            }
-
-            return Ok(token);
-        }*/
 
 
         public bool AddUser_Role(string rolename, string username)

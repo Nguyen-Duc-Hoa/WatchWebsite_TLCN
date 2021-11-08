@@ -25,6 +25,7 @@ namespace WatchWebsite_TLCN.Repository
         {
 
             var cartItem = (from p in _context.Products
+                            join b in _context.Brands on p.BrandId equals b.BrandId
                             join c in _context.Carts on p.Id equals c.ProductId
                             where c.UserId == userId
                             select new CartDTO()
@@ -32,7 +33,8 @@ namespace WatchWebsite_TLCN.Repository
                                 Id = p.Id,
                                 Name = p.Name,
                                 Image = p.Image,
-                                Price = c.Count * p.Price,
+                                Price = p.Price,
+                                Brand = b.Name,
                                 Quantity = c.Count
                             }).ToList();
                               
@@ -70,25 +72,34 @@ namespace WatchWebsite_TLCN.Repository
 
         public bool DecreaseQuantity(Cart cart)
         {
-            //var product = _context.Products.FindAsync(cart.ProductId);
+            //Kiem tra cart co ton tai ko
+            var cart1 = _context.Carts.Where(x => x.UserId == cart.UserId && x.ProductId == cart.ProductId && x.Count == cart.Count);
 
-            if(cart.Count == 1)
+            User user = _context.Users.Where(x => x.Id == cart.UserId).FirstOrDefault();
+            if( cart1.Count() != 1)
+            {
+                return false;
+            }
+            
+            if (cart.Count == 1 )
             {
                 //Xoa san pham khoi gio hang
                 _context.Carts.Remove(cart);
+                cart.Count = 0;
                 return Save();
             }
 
             //So luong --1;
             cart.Count -= 1;
-            //_context.Carts.Update(cart);
-            //return Save();
 
-            (from p in _context.Carts
+            _context.Carts.Update(cart);
+            return Save();
+
+/*            (from p in _context.Carts
              where (p.UserId == cart.UserId) && (p.ProductId == cart.ProductId)
              select p).ToList()
-                                .ForEach(x => x.Count = cart.Count);
-            return Save();
+                                .ForEach(x => x.Count = cart.Count);*/
+
 
         }
 
@@ -102,16 +113,20 @@ namespace WatchWebsite_TLCN.Repository
         public bool IncreaseQuantity(Cart cart)
         {
             Product product = _context.Products.Where(x => x.Id == cart.ProductId).FirstOrDefault();
+
+            //Kiem tra cart co ton tai ko
+            var cart1 = _context.Carts.Where(x => x.UserId == cart.UserId && x.ProductId == cart.ProductId && x.Count == cart.Count);
+
+
             int count = cart.Count + 1;
-            if(count > product.Amount)
+            if(count > product.Amount || cart1.Count() != 1)
             {
                 return false;
             }
 
-            (from p in _context.Carts
-             where (p.UserId == cart.UserId) && (p.ProductId == cart.ProductId)
-             select p).ToList()
-                                .ForEach(x => x.Count = count);
+            cart.Count = count;
+            _context.Carts.Update(cart);
+
             return Save();
 
         }

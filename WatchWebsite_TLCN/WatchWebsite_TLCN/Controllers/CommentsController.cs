@@ -55,6 +55,17 @@ namespace WatchWebsite_TLCN.Controllers
 
 
         //reply comment
+        // 
+        /* POST: api/comments/replycomment/1
+            {
+                "UserId": 11,
+                "ProductId": "aaa111",
+                "Content": "Cảm ơn bạn",
+                "Date":"1-11-2000",
+                "TypeComment": "type",
+                "ReplyFrom": null
+            }
+         */
         [Route("ReplyComment/{commentid}")]
         [HttpPost]
         public async Task<IActionResult> Reply(int commentid, Comment comment)
@@ -62,6 +73,7 @@ namespace WatchWebsite_TLCN.Controllers
             var userComment = await _unitOfWork.Comments.Get(x => x.Id == commentid);
             if(userComment != null)
             {
+                comment.Date = DateTime.Now;
                 int? ReplyFrom = userComment.ReplyFrom;
                 if(ReplyFrom == null)
                 {
@@ -88,6 +100,8 @@ namespace WatchWebsite_TLCN.Controllers
 
         }
 
+        
+        // DELETE: api/comments/1
         [HttpDelete("{id}")]
         public async Task<ActionResult<Comment>> DeleteComment(int id)
         {
@@ -127,17 +141,31 @@ namespace WatchWebsite_TLCN.Controllers
             await _unitOfWork.Comments.Delete(id);
             await _unitOfWork.Save();
 
-            return Ok();
+            return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutComment(int id, Comment comment)
+
+        /* PUt: api/comments?id=1&userid=8
+           {
+                "Id": 1,
+               "UserId": 11,
+               "ProductId": "aaa111",
+               "Content": "Update content",
+               "Date":"1-11-2000",
+               "TypeComment": "type",
+               "ReplyFrom": null
+           }
+        */
+        [HttpPut]
+        public async Task<IActionResult> PutComment(int id, int userid, Comment comment)
         {
-            if (id != comment.Id)
+            if (id != comment.Id || userid != comment.UserId)
             {
                 return BadRequest();
             }
 
+            comment.Date = DateTime.Now;
+            comment.TypeComment = "Edited";
             _unitOfWork.Comments.Update(comment);
 
             try

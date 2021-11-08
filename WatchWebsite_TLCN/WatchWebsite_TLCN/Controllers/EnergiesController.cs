@@ -97,7 +97,8 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return NoContent();
+            return RedirectToAction(nameof(GetEnegies), new { currentPage = 1 });
+            //return NoContent();
         }
 
         // POST: api/Energies
@@ -106,10 +107,18 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<Energy>> PostEnergy(Energy energy)
         {
-            await _unitOfWork.Energies.Insert(energy);
-            await _unitOfWork.Save();
+            try
+            {
+                await _unitOfWork.Energies.Insert(energy);
+                await _unitOfWork.Save();
 
-            return CreatedAtAction("GetEnergy", new { id = energy.EnergyId }, energy);
+                return Ok();
+            }
+            catch
+            { }
+
+            return BadRequest();
+            //return CreatedAtAction("GetEnergy", new { id = energy.EnergyId }, energy);
         }
 
         // DELETE: api/Energies/5
@@ -128,23 +137,32 @@ namespace WatchWebsite_TLCN.Controllers
             return energy;
         }
 
+
+        [HttpDelete]
+        [Route("Delete")]
+        // Delete nhieu san pham
+        // 
+        /* DELETE: api/Energies/delete
+         * JSON
+           [6,7]
+            */
+        public IActionResult Delete(List<int> id)
+        {
+            foreach (int item in id)
+            {
+                if (!_energy.DeleteEnergy(item))
+                {
+                    return BadRequest("Something was wrong");
+                }
+            }
+            return RedirectToAction(nameof(GetEnegies), new { currentPage = 1 });
+        }
+
         private Task<bool> EnergyExists(int id)
         {
             return _unitOfWork.Energies.IsExist<int>(id);
         }
 
-        [HttpDelete]
-        [Route("Delete")]
-        public IActionResult Delete(List<int> id)
-        {
-            foreach (int item in id)
-            {
-                if(!_energy.DeleteEnergy(item))
-                {
-                    return BadRequest("Something was wrong");
-                }
-            }
-            return RedirectToAction(nameof(GetEnegies), new { currentPage = 1});
-        }
+        
     }
 }
