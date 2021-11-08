@@ -131,9 +131,10 @@ namespace WatchWebsite_TLCN.Controllers
             return _unitOfWork.Products.IsExist<string>(id);
         }
 
+        //GET: api/products/PopularProduct
         [HttpGet]
         [Route("PopularProduct")]
-        public IEnumerable<Product> GetPopularProducts()
+        public IEnumerable<Product1DTO> GetPopularProducts()
         {
             return _product.GetPopularProduct().ToList();
         }

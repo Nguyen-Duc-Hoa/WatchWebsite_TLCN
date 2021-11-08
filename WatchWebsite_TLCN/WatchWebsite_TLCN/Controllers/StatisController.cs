@@ -20,6 +20,14 @@ namespace WatchWebsite_TLCN.Controllers
         {
             _statis = statis;
         }
+
+        //GET: api/statis/chart1
+        /*JSON
+         * {
+            "date":["2020-1-1","2021-12-1"],
+            "typeDate":"day"
+        }
+         */
         [HttpGet]
         [Route("Chart1")]
         public IEnumerable<Chart1DTO> GetChart1([FromBody]Statis statis)
@@ -43,6 +51,12 @@ namespace WatchWebsite_TLCN.Controllers
 
         }
 
+
+        //GET: api/statis/chart2
+        /* {
+            "date":["2021-9-1"],
+            "typeDate":"month"
+        }*/
         [HttpGet]
         [Route("Chart2")]
         public IEnumerable<Chart2DTO> GetChart2([FromBody] Statis statis)

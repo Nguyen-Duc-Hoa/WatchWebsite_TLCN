@@ -11,6 +11,6 @@ namespace WatchWebsite_TLCN.Intefaces
     {
         IEnumerable<Order> GetByUser(int userid);
         IEnumerable<OrderDetailDTO> GetOrderDetails(int orderid);
-        Order UpdateStatus(int orderid);
+        Order UpdateStatus(int orderid, string status);
     }
 }

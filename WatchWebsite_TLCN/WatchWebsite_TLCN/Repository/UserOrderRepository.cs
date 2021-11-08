@@ -41,41 +41,42 @@ namespace WatchWebsite_TLCN.Repository
             return orderDetail;
         }
 
-        public Order UpdateStatus(int orderid)
+        public Order UpdateStatus(int orderid, string status)
         {
             var order = _context.Orders.Where(x => x.OrderId == orderid).FirstOrDefault();
-            string status = null;
+            string status1 = null;
 
             if (order != null)
             {
-                status = order.DeliveryStatus.ToString();
-                switch (status)
+                status1 = order.DeliveryStatus.ToString();
+                switch (status1)
                 {
                     case "Waiting":
-                        status = "Confirmed";
+                        status1 = "Confirmed";
                         break;
                     case "Confirmed":
-                        status = "Delivering";
+                        status1 = "Delivering";
                         break;
                     case "Delivering":
-                        status = "Complete";
+                        status1 = "Complete";
                         break;
                     case "Complete":
-                        status = null;
+                        status1 = null;
                         break;
                     default:
-                        status = null;
+                        status1 = null;
                         break;                       
                 }
 
-                if (status != null)
+                if (status1 != status)
+                    status1 = null;
+
+                if (status1 != null)
                 {
                     try
                     {
-                        (from p in _context.Orders
-                         where p.OrderId == orderid
-                         select p).ToList()
-                                .ForEach(x => x.DeliveryStatus = status);
+                        order.DeliveryStatus = status1;
+                        _context.Orders.Update(order);
 
                         _context.SaveChanges();
                         

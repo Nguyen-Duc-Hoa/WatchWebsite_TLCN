@@ -10,6 +10,7 @@ using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -86,6 +87,7 @@ namespace WatchWebsite_TLCN.Controllers
 
                 try
                 {
+                    comment.TypeComment = Constant.typeComment[1];
                     await _unitOfWork.Comments.Insert(comment);
                     await _unitOfWork.Save();
                     return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });

@@ -196,6 +196,8 @@ namespace WatchWebsite_TLCN.Controllers
             return total*100;
         }
 
+
+        //GET: api/orders/getbyuser
         [HttpGet]
         [Route("GetByUser/{userid}")]
         public IEnumerable<Entities.Order> GetByUser(int userid)
@@ -229,18 +231,6 @@ namespace WatchWebsite_TLCN.Controllers
             });
         }
 
-
-        // get: api/orders/getorderdetail
-        /*[HttpGet]
-        [Route("GetOrderDetail/{orderid}")]
-        public IEnumerable<OrderDetailDTO> GetOrderDetail(int orderid)
-        {
-            var orderDetails = _userOrder.GetOrderDetails(orderid);
-            return orderDetails;
-        }*/
-
-
-
         // xem detail don hang tren trang user
         // get: api/orders/getorderdetail?orderid=1&userid=1
         [HttpGet]
@@ -249,6 +239,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             // Thong tin cua order
             var order = await _unitOfWork.Orders.Get(x => x.OrderId == orderid && x.UserId == userid);
+            var user = await _unitOfWork.Users.Get(x => x.Id == userid);
 
             if(order != null)
             {
@@ -260,8 +251,8 @@ namespace WatchWebsite_TLCN.Controllers
                     OrderId = order.OrderId,
                     Address = order.Address,
                     Phone = order.Phone,
-                    
-
+                    Email = user.Email,
+                    Products = orderDetails
                 });
             }
 
@@ -270,12 +261,12 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
 
-
+        //PUT: api/orders/UpdateStatus?orderid=1&status=Confirmed
         [HttpPut]
-        [Route("UpdateStatus/{orderid}")]
-        public Entities.Order UpdateStatus(int orderid)
+        [Route("UpdateStatus")]
+        public Entities.Order UpdateStatus(int orderid, string status)
         {
-            var order = _userOrder.UpdateStatus(orderid);
+            var order = _userOrder.UpdateStatus(orderid, status);
             return order;
         }
 

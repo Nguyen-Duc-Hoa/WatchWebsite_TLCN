@@ -132,8 +132,6 @@ namespace WatchWebsite_TLCN.Controllers
 
             }
 
-            //var token = _jwtAuthenticationManager.Authenticate(username, password);
-
             var token = _jwtAuthenticationManager.Authenticate(userid, username, password, listRoleId);
 
             if (token == null)

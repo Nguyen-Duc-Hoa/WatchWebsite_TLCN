@@ -75,7 +75,6 @@ namespace WatchWebsite_TLCN.Repository
             //Kiem tra cart co ton tai ko
             var cart1 = _context.Carts.Where(x => x.UserId == cart.UserId && x.ProductId == cart.ProductId && x.Count == cart.Count);
 
-            User user = _context.Users.Where(x => x.Id == cart.UserId).FirstOrDefault();
             if( cart1.Count() != 1)
             {
                 return false;
