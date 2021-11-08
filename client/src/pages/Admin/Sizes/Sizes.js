@@ -14,166 +14,57 @@ import Pagination from "../../../components/Pagination/Pagination";
 import { AiOutlineAppstoreAdd, AiTwotoneDelete } from "react-icons/ai";
 import EditTableCell from "../../../components/EditTableCell/EditTableCell";
 import { useMergedColumns } from "../../../hook/useMergedColums";
-import { notify } from "../../../helper/notify";
-import { useForceUpdate } from "../../../hook/useForceUpdate";
-
+import { useFetchData } from "../../../hook/useFetchData";
+import { useEditTable } from "../../../hook/useEditTable";
 
 function Sizes() {
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
-  const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState("");
-  const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [spinning, setSpinning] = useState(false);
-  const [shouldUpdate, forceUpdate] = useForceUpdate();
-  const deletiveArray = useRef([]);
+  const [
+    editingKey,
+    setEditingKey,
+    visible,
+    form,
+    handleVisibleChange,
+    edit,
+    cancel,
+  ] = useEditTable();
+
+  const [
+    data,
+    currentPage,
+    setCurrentPage,
+    totalPage,
+    loading,
+    spinning,
+    updateReq,
+    deleteReq,
+    deletiveArray
+  ] = useFetchData(
+    `${process.env.REACT_APP_HOST_DOMAIN}/api/Sizes`,
+    {
+      id: "SizeId",
+      value: "SizeValue",
+      name: "Sizes",
+    },
+    setEditingKey
+  );
 
   const isEditing = (record) => record.key === editingKey;
 
-  useEffect(() => {
-    fetchSizes();
-  }, [currentPage, shouldUpdate]);
-
-  const fetchSizes = () => {
-    setSpinning(true);
-    fetch(
-      `${process.env.REACT_APP_HOST_DOMAIN}/api/Sizes?currentPage=${currentPage}`,
-      {
-        method: "GET",
-      }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        const sizeArray = result.Sizes.map((element) => {
-          return {
-            key: element.SizeId,
-            id: element.SizeId,
-            value: element.SizeValue,
-          };
-        });
-        setData(sizeArray);
-        setTotalPage(result.TotalPage);
-        setSpinning(false);
-      })
-      .catch(() => {
-        setSpinning(false);
-        notify(
-          "LOAD FAILED",
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
-
-  const updateSizeReq = (type, value, id = 0, extra) => {
-    setLoading(true);
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Sizes`, {
-      method: type,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ sizeId: id, sizeValue: value }),
-    })
-      .then((response) => {
-        if (response.ok && type === "POST") {
-          notify(
-            `${type === "POST" ? "ADD" : "EDIT"} SUCCESS`,
-            `You have already ${type === "POST" ? "added" : "edited"} a ${
-              type === "POST" && "new"
-            } size.`,
-            "success"
-          );
-          setLoading(false);
-          forceUpdate();
-        } else if (response.ok && type === "PUT") {
-          extra.newData.splice(extra.index, 1, {
-            ...extra.newData[extra.index],
-            ...extra.row,
-          });
-          setData(extra.newData);
-          setEditingKey("");
-          setLoading(false);
-        } else {
-          return new Promise.reject();
-        }
-      })
-      .catch(() => {
-        setLoading(false);
-        notify(
-          `${type === "POST" ? "ADD" : "EDIT"} FAILED`,
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
-
-  const deleteSizesReq = () => {
-    setSpinning(true);
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Sizes/Delete`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(deletiveArray.current),
-    })
-      .then((response) => {
-        if (response.ok) {
-          notify(
-            "DELETE SUCCESS",
-            "You have already deleted sizes.",
-            "success"
-          );
-          setSpinning(false);
-          setCurrentPage(1);
-          forceUpdate();
-        } else {
-          return Promise.reject();
-        }
-      })
-      .catch(() => {
-        setSpinning(false);
-        notify(
-          "DELETE FAILED",
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
-
-  const addSizeHandler = (values) => {
-    updateSizeReq("POST", values.value);
-  };
-
-  const handleVisibleChange = (visible) => {
-    setVisible(visible);
-  };
-
-  const edit = (record) => {
-    form.setFieldsValue({
-      value: "",
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    setEditingKey("");
-  };
 
   const save = async (key) => {
     const row = await form.validateFields();
     const newData = [...data];
     const index = newData.findIndex((item) => item.key === key);
-    updateSizeReq("PUT", row.value, key, { row, index, newData });
+    updateReq("PUT", row.value, key, { row, index, newData });
   };
 
   const deleteHandler = () => {
     if (deletiveArray.current.length === 0) return;
-    deleteSizesReq();
+    deleteReq();
+  };
+
+  const addSizeHandler = (values) => {
+    updateReq("POST", values.value);
   };
 
   const rowSelection = {

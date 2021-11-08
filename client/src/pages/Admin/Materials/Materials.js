@@ -14,165 +14,57 @@ import Pagination from "../../../components/Pagination/Pagination";
 import { AiOutlineAppstoreAdd, AiTwotoneDelete } from "react-icons/ai";
 import EditTableCell from "../../../components/EditTableCell/EditTableCell";
 import { useMergedColumns } from "../../../hook/useMergedColums";
-import { notify } from "../../../helper/notify";
-import { useForceUpdate } from "../../../hook/useForceUpdate";
+import { useFetchData } from "../../../hook/useFetchData";
+import { useEditTable } from "../../../hook/useEditTable";
 
 function Materials() {
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
-  const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState("");
-  const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [spinning, setSpinning] = useState(false);
-  const [shouldUpdate, forceUpdate] = useForceUpdate();
-  const deletiveArray = useRef([]);
+  const [
+    editingKey,
+    setEditingKey,
+    visible,
+    form,
+    handleVisibleChange,
+    edit,
+    cancel,
+  ] = useEditTable();
+
+  const [
+    data,
+    currentPage,
+    setCurrentPage,
+    totalPage,
+    loading,
+    spinning,
+    updateReq,
+    deleteReq,
+    deletiveArray
+  ] = useFetchData(
+    `${process.env.REACT_APP_HOST_DOMAIN}/api/Materials`,
+    {
+      id: "MaterialId",
+      value: "MaterialValue",
+      name: "Materials",
+    },
+    setEditingKey
+  );
 
   const isEditing = (record) => record.key === editingKey;
 
-  useEffect(() => {
-    fetchMaterial();
-  }, [currentPage, shouldUpdate]);
-
-  const fetchMaterial = () => {
-    setSpinning(true);
-    fetch(
-      `${process.env.REACT_APP_HOST_DOMAIN}/api/Materials?currentPage=${currentPage}`,
-      {
-        method: "GET",
-      }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        const materialArray = result.Materials.map((element) => {
-          return {
-            key: element.MaterialId,
-            id: element.MaterialId,
-            name: element.MaterialValue,
-          };
-        });
-        setData(materialArray);
-        setTotalPage(result.TotalPage);
-        setSpinning(false);
-      })
-      .catch(() => {
-        setSpinning(false);
-        notify(
-          "LOAD FAILED",
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
-
-  const updateMaterialReq = (type, name, id = 0, extra) => {
-    setLoading(true);
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Materials`, {
-      method: type,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ materialId: id, materialValue: name }),
-    })
-      .then((response) => {
-        if (response.ok && type === "POST") {
-          notify(
-            `${type === "POST" ? "ADD" : "EDIT"} SUCCESS`,
-            `You have already ${type === "POST" ? "added" : "edited"} a ${
-              type === "POST" && "new"
-            } material.`,
-            "success"
-          );
-          setLoading(false);
-          forceUpdate();
-        } else if (response.ok && type === "PUT") {
-          extra.newData.splice(extra.index, 1, {
-            ...extra.newData[extra.index],
-            ...extra.row,
-          });
-          setData(extra.newData);
-          setEditingKey("");
-          setLoading(false);
-        } else {
-          return new Promise.reject();
-        }
-      })
-      .catch(() => {
-        setLoading(false);
-        notify(
-          `${type === "POST" ? "ADD" : "EDIT"} FAILED`,
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
-
-  const deleteMaterialReq = () => {
-    setSpinning(true);
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Materials/Delete`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(deletiveArray.current),
-    })
-      .then((response) => {
-        if (response.ok) {
-          notify(
-            "DELETE SUCCESS",
-            "You have already deleted materials.",
-            "success"
-          );
-          setSpinning(false);
-          setCurrentPage(1);
-          forceUpdate();
-        } else {
-          return Promise.reject();
-        }
-      })
-      .catch(() => {
-        setSpinning(false);
-        notify(
-          "DELETE FAILED",
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
 
   const addMaterialHandler = (values) => {
-    updateMaterialReq("POST", values.name);
-  };
-
-  const handleVisibleChange = (visible) => {
-    setVisible(visible);
-  };
-
-  const edit = (record) => {
-    form.setFieldsValue({
-      name: "",
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    setEditingKey("");
+    updateReq("POST", values.value);
   };
 
   const save = async (key) => {
     const row = await form.validateFields();
     const newData = [...data];
     const index = newData.findIndex((item) => item.key === key);
-    updateMaterialReq("PUT", row.name, key, { row, index, newData });
+    updateReq("PUT", row.value, key, { row, index, newData });
   };
 
   const deleteHandler = () => {
     if (deletiveArray.current.length === 0) return;
-    deleteMaterialReq();
+    deleteReq();
   };
 
   const rowSelection = {
@@ -191,9 +83,9 @@ function Materials() {
     },
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name > b.name,
+      dataIndex: "value",
+      key: "value",
+      sorter: (a, b) => a.value > b.value,
       sortDirections: ["descend"],
       editable: true,
     },
@@ -239,7 +131,7 @@ function Materials() {
           <Popover
             content={
               <Form onFinish={addMaterialHandler}>
-                <Form.Item name="name" rules={[{ required: true }]}>
+                <Form.Item name="value" rules={[{ required: true }]}>
                   <Input placeholder="Material name" />
                 </Form.Item>
                 <Form.Item>

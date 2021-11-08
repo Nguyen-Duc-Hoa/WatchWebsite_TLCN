@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import {
   Table,
   Popover,
@@ -14,165 +14,58 @@ import Pagination from "../../../components/Pagination/Pagination";
 import { AiOutlineAppstoreAdd, AiTwotoneDelete } from "react-icons/ai";
 import EditTableCell from "../../../components/EditTableCell/EditTableCell";
 import { useMergedColumns } from "../../../hook/useMergedColums";
-import { notify } from "../../../helper/notify";
-import { useForceUpdate } from "../../../hook/useForceUpdate";
+import { useFetchData } from "../../../hook/useFetchData";
+import { useEditTable } from "../../../hook/useEditTable";
 
 function WaterResistence() {
-  const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
-  const [form] = Form.useForm();
-  const [editingKey, setEditingKey] = useState("");
-  const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [spinning, setSpinning] = useState(false);
-  const [shouldUpdate, forceUpdate] = useForceUpdate();
-  const deletiveArray = useRef([]);
+
+  const [
+    editingKey,
+    setEditingKey,
+    visible,
+    form,
+    handleVisibleChange,
+    edit,
+    cancel,
+  ] = useEditTable();
+
+  const [
+    data,
+    currentPage,
+    setCurrentPage,
+    totalPage,
+    loading,
+    spinning,
+    updateReq,
+    deleteReq,
+    deletiveArray
+  ] = useFetchData(
+    `${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances`,
+    {
+      id: "WaterId",
+      value: "WaterValue",
+      name: "WaterRes",
+    },
+    setEditingKey
+  );
 
   const isEditing = (record) => record.key === editingKey;
 
-  useEffect(() => {
-    fetchWaterRes();
-  }, [currentPage, shouldUpdate]);
-
-  const fetchWaterRes = () => {
-    setSpinning(true);
-    fetch(
-      `${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances?currentPage=${currentPage}`,
-      {
-        method: "GET",
-      }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        const waterResArray = result.WaterRes.map((element) => {
-          return {
-            key: element.WaterId,
-            id: element.WaterId,
-            value: element.WaterValue,
-          };
-        });
-        setData(waterResArray);
-        setTotalPage(result.TotalPage);
-        setSpinning(false);
-      })
-      .catch(() => {
-        setSpinning(false);
-        notify(
-          "LOAD FAILED",
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
-
-  const updateWaterResReq = (type, value, id = 0, extra) => {
-    setLoading(true);
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances`, {
-      method: type,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ waterId: id, waterValue: value }),
-    })
-      .then((response) => {
-        if (response.ok && type === "POST") {
-          notify(
-            `${type === "POST" ? "ADD" : "EDIT"} SUCCESS`,
-            `You have already ${type === "POST" ? "added" : "edited"} a ${
-              type === "POST" && "new"
-            } water resistance.`,
-            "success"
-          );
-          setLoading(false);
-          forceUpdate();
-        } else if (response.ok && type === "PUT") {
-          extra.newData.splice(extra.index, 1, {
-            ...extra.newData[extra.index],
-            ...extra.row,
-          });
-          setData(extra.newData);
-          setEditingKey("");
-          setLoading(false);
-        } else {
-          return new Promise.reject();
-        }
-      })
-      .catch(() => {
-        setLoading(false);
-        notify(
-          `${type === "POST" ? "ADD" : "EDIT"} FAILED`,
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
-
-  const deleteWaterResReq = () => {
-    setSpinning(true);
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances/Delete`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(deletiveArray.current),
-    })
-      .then((response) => {
-        if (response.ok) {
-          notify(
-            "DELETE SUCCESS",
-            "You have already deleted water resistances.",
-            "success"
-          );
-          setSpinning(false);
-          setCurrentPage(1);
-          forceUpdate();
-        } else {
-          return Promise.reject();
-        }
-      })
-      .catch(() => {
-        setSpinning(false);
-        notify(
-          "DELETE FAILED",
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  };
-
   const addWaterResHandler = (values) => {
-    updateWaterResReq("POST", values.value);
+    updateReq("POST", values.value);
   };
 
-  const handleVisibleChange = (visible) => {
-    setVisible(visible);
-  };
-
-  const edit = (record) => {
-    form.setFieldsValue({
-      name: "",
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    setEditingKey("");
-  };
 
   const save = async (key) => {
     const row = await form.validateFields();
     const newData = [...data];
     const index = newData.findIndex((item) => item.key === key);
-    updateWaterResReq("PUT", row.value, key, { row, index, newData });
+    updateReq("PUT", row.value, key, { row, index, newData });
   };
 
   const deleteHandler = () => {
     if (deletiveArray.current.length === 0) return;
-    deleteWaterResReq();
+    deleteReq();
   };
 
   const rowSelection = {
