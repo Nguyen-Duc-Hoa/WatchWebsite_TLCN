@@ -133,16 +133,21 @@ namespace WatchWebsite_TLCN.Controllers
 
         [HttpDelete]
         [Route("Delete")]
-        public IActionResult Delete(List<int> id)
+        public async Task<IActionResult> Delete(List<int> id)
         {
-            foreach (int item in id)
+            try
             {
-                if(!_energy.DeleteEnergy(item))
+                foreach (int item in id)
                 {
-                    return BadRequest("Something was wrong");
+                    await _unitOfWork.Energies.Delete<int>(item);
                 }
+                await _unitOfWork.Save();
+                return Ok();
             }
-            return Ok();
+            catch
+            {
+                return BadRequest("Something was wrong");
+            }
         }
     }
 }

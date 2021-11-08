@@ -15,6 +15,7 @@ import { AiOutlineAppstoreAdd, AiTwotoneDelete } from "react-icons/ai";
 import EditTableCell from "../../../components/EditTableCell/EditTableCell";
 import { useMergedColumns } from "../../../hook/useMergedColums";
 import { notify } from "../../../helper/notify";
+import { useForceUpdate } from "../../../hook/useForceUpdate";
 
 function Energy() {
   const [data, setData] = useState([]);
@@ -25,13 +26,14 @@ function Energy() {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [spinning, setSpinning] = useState(false);
-  const deletiveArray = useRef([])
+  const [shouldUpdate, forceUpdate] = useForceUpdate();
+  const deletiveArray = useRef([]);
 
   const isEditing = (record) => record.key === editingKey;
 
   useEffect(() => {
     fetchEnergy();
-  }, [currentPage]);
+  }, [currentPage, shouldUpdate]);
 
   const fetchEnergy = () => {
     setSpinning(true);
@@ -65,7 +67,6 @@ function Energy() {
   };
 
   const updateEnergyReq = (type, name, id = 0, extra) => {
-    console.log({ energyId: id, energyValue: name });
     setLoading(true);
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Energies`, {
       method: type,
@@ -76,52 +77,31 @@ function Energy() {
     })
       .then((response) => {
         if (response.ok && type === "POST") {
-          return fetch(
-            `${process.env.REACT_APP_HOST_DOMAIN}/api/Energies?currentPage=${currentPage}`,
-            {
-              method: "GET",
-            }
+          notify(
+            `${type === "POST" ? "ADD" : "EDIT"} SUCCESS`,
+            `You have already ${type === "POST" ? "added" : "edited"} a ${
+              type === "POST" && "new"
+            } energy.`,
+            "success"
           );
+          setLoading(false);
+          forceUpdate();
         } else if (response.ok && type === "PUT") {
-          console.log("edit success");
           extra.newData.splice(extra.index, 1, {
             ...extra.newData[extra.index],
             ...extra.row,
           });
           setData(extra.newData);
           setEditingKey("");
+          setLoading(false);
         } else {
-          console.log("promise reject");
           return new Promise.reject();
         }
       })
-      .then((response) => {
-        if (response) {
-          return response.json();
-        }
-      })
-      .then((result) => {
-        if (result) {
-          const energyArray = result.Energies.map((element) => {
-            return {
-              key: element.EnergyId,
-              id: element.EnergyId,
-              name: element.EnergyValue,
-            };
-          });
-          setData(energyArray);
-          setTotalPage(result.TotalPage);
-        }
+      .catch(() => {
         setLoading(false);
         notify(
-          "ADD SUCCESS",
-          "You have already added a new energy.",
-          "success"
-        );
-      })
-      .catch(() => {
-        notify(
-          "ADD FAILED",
+          `${type === "POST" ? "ADD" : "EDIT"} FAILED`,
           "Something went wrong :( Please try again.",
           "error"
         );
@@ -129,7 +109,6 @@ function Energy() {
   };
 
   const deleteEnergyReq = () => {
-    console.log(deletiveArray.current)
     setSpinning(true);
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Energies/Delete`, {
       method: "DELETE",
@@ -139,32 +118,19 @@ function Energy() {
       body: JSON.stringify(deletiveArray.current),
     })
       .then((response) => {
-        console.log("respones", response);
         if (response.ok) {
-          return fetch(
-            `${process.env.REACT_APP_HOST_DOMAIN}/api/Energies?currentPage=1`,
-            {
-              method: "GET",
-            }
+          notify(
+            "DELETE SUCCESS",
+            "You have already deleted energy.",
+            "success"
           );
+          setSpinning(false);
+          setCurrentPage(1);
+          forceUpdate();
         }
-        return Promise.reject();
-      })
-      .then((response) => {
-        return response.json();
-      })
-      .then((result) => {
-        const energyArray = result.Energies.map((element) => {
-          return {
-            key: element.EnergyId,
-            id: element.EnergyId,
-            name: element.EnergyValue,
-          };
-        });
-        setData(energyArray);
-        setTotalPage(result.TotalPage);
-        setSpinning(false);
-        notify("DELETE SUCCESS", "You have already deleted energy.", "success");
+        else {
+          return Promise.reject();
+        }
       })
       .catch(() => {
         setSpinning(false);
@@ -184,18 +150,15 @@ function Energy() {
     const row = await form.validateFields();
     const newData = [...data];
     const index = newData.findIndex((item) => item.key === key);
-    console.log(row);
     updateEnergyReq("PUT", row.name, key, { row, index, newData });
   };
 
   const deleteHandler = () => {
-    console.log(deletiveArray.current)
     if (deletiveArray.current.length === 0) return;
     deleteEnergyReq();
   };
 
   const handleVisibleChange = (visible) => {
-    console.log(visible);
     setVisible(visible);
   };
 
@@ -213,9 +176,9 @@ function Energy() {
 
   const rowSelection = {
     onChange: (_, selectedRows) => {
-      console.log(selectedRows)
+      console.log(selectedRows);
       deletiveArray.current = selectedRows.map((ele) => ele.key);
-      console.log(deletiveArray.current)
+      console.log(deletiveArray.current);
     },
   };
 
