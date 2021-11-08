@@ -17,28 +17,6 @@ import { useMergedColumns } from "../../../hook/useMergedColums";
 import { notify } from "../../../helper/notify";
 import { useForceUpdate } from "../../../hook/useForceUpdate";
 
-const originData = [
-  {
-    key: "1",
-    id: 1,
-    value: 38,
-  },
-  {
-    key: "2",
-    id: 2,
-    value: 40,
-  },
-  {
-    key: "3",
-    id: 3,
-    value: 42,
-  },
-  {
-    key: "4",
-    id: 4,
-    value: 46,
-  },
-];
 
 function Sizes() {
   const [data, setData] = useState([]);
