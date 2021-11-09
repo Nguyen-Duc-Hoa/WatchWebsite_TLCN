@@ -7,12 +7,12 @@ import * as actions from "../../../store/actions/index";
 import { connect } from "react-redux";
 import { notify } from "../../../helper/notify";
 
-function Brands({ brands, loading, onFetchBrands, totalPage, onDeleteBrands }) {
+function Brands({ brands, loading, onFetchBrands, totalPage, onDeleteBrands, token }) {
   const [currentPage, setCurrentPage] = useState(1);
   const deletiveArray = useRef([])
 
   useEffect(() => {
-    onFetchBrands(currentPage, notify);
+    onFetchBrands(currentPage, notify, token);
   }, [currentPage]);
 
   const columns = [
@@ -55,7 +55,7 @@ function Brands({ brands, loading, onFetchBrands, totalPage, onDeleteBrands }) {
 
   const deleteHandler = () => {
     if (deletiveArray.current.length === 0) return;
-    onDeleteBrands(deletiveArray.current, notify);
+    onDeleteBrands(deletiveArray.current, notify, token);
   };
 
   return (
@@ -103,15 +103,16 @@ const mapStateToProps = (state) => {
     loading: state.brand.loading,
     brands: state.brand.brands,
     totalPage: state.brand.totalPage,
+    token: state.auth.token,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchBrands: (currentPage, notify) =>
-      dispatch(actions.fetchBrands(currentPage, notify)),
-    onDeleteBrands: (deletiveArray, notify) =>
-      dispatch(actions.deleteBrands(deletiveArray, notify)),
+    onFetchBrands: (currentPage, notify, token) =>
+      dispatch(actions.fetchBrands(currentPage, notify, token)),
+    onDeleteBrands: (deletiveArray, notify, token) =>
+      dispatch(actions.deleteBrands(deletiveArray, notify, token)),
   };
 };
 

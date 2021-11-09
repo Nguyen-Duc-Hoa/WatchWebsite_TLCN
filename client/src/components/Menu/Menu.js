@@ -12,6 +12,7 @@ function AdminMenu() {
     const history = useHistory();
 
     useEffect(() => {
+        console.log('abc')
         clickMenuHandler('/admin/Home')
     }, [])
 

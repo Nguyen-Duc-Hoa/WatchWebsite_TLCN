@@ -1,12 +1,13 @@
 import * as actionTypes from "./actionTypes";
 
-export const updateBrand = (brandInfo, isAdd, notify) => {
+export const updateBrand = (brandInfo, isAdd, notify, token) => {
   console.log(brandInfo);
   return (dispatch) => {
     dispatch(wating());
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/brands/`, {
       method: isAdd ? "POST" : "PUT",
       headers: {
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(brandInfo),
@@ -36,13 +37,16 @@ export const updateBrand = (brandInfo, isAdd, notify) => {
   };
 };
 
-export const fetchBrands = (currentPage, notify) => {
+export const fetchBrands = (currentPage, notify, token) => {
   return (dispatch) => {
     dispatch(wating());
     fetch(
       `${process.env.REACT_APP_HOST_DOMAIN}/api/brands/GetBrandsWithPagination?currentPage=${currentPage}`,
       {
         method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     )
       .then((response) => response.json())
@@ -61,13 +65,14 @@ export const fetchBrands = (currentPage, notify) => {
   };
 };
 
-export const deleteBrands = (deletiveArray, notify) => {
+export const deleteBrands = (deletiveArray, notify, token) => {
   return (dispatch) => {
     dispatch(wating());
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/brands/delete`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(deletiveArray),
     })
@@ -103,6 +108,7 @@ export const deleteBrands = (deletiveArray, notify) => {
 };
 
 const fetchBrandsSuccess = (result) => {
+  console.log(result)
   return {
     type: actionTypes.BRAND_FETCH_SUCCESS,
     payload: result,
@@ -118,5 +124,25 @@ const stopLoading = () => {
 const wating = () => {
   return {
     type: actionTypes.BRAND_WAITING,
+  };
+};
+
+export const fetchAllBrands = () => {
+  return (dispatch) => {
+    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/brands/GetAll`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if(result) {
+          dispatch(fetchBrandsSuccess(result));
+        }
+        else {
+          throw Error
+        }
+      })
+      .catch((err) => {
+        console.log("fetch all brands error", err);
+      });
   };
 };

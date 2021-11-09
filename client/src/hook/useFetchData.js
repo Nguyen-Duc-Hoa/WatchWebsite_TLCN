@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useForceUpdate } from "./useForceUpdate";
 import { notify } from "../helper/notify";
 
-export const useFetchData = (route, setEditingKey, updateData) => {
+export const useFetchData = (route, setEditingKey, updateData, token) => {
   const [data, setData] = useState([]);
   const [searchKey, setSearchKey] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,6 +20,9 @@ export const useFetchData = (route, setEditingKey, updateData) => {
     setSpinning(true);
     fetch(`${route.get}?currentPage=${currentPage}&searchKey=${searchKey}`, {
       method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
     })
       .then((response) => {
         return response.json();
@@ -46,6 +49,7 @@ export const useFetchData = (route, setEditingKey, updateData) => {
       method: type,
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify(objData),
     })
@@ -61,7 +65,7 @@ export const useFetchData = (route, setEditingKey, updateData) => {
           setLoading(false);
           forceUpdate();
         } else if (response.ok && type === "PUT") {
-          const updateData = update()
+          const updateData = update();
           setData(updateData);
           setEditingKey && setEditingKey("");
           setLoading(false);
@@ -84,6 +88,7 @@ export const useFetchData = (route, setEditingKey, updateData) => {
     fetch(route.delete, {
       method: "DELETE",
       headers: {
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(deletiveArray.current),

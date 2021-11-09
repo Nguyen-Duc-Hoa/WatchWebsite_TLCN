@@ -22,7 +22,6 @@ function UploadImage({ imageBase64, setImageBase64, setImageByteArray }) {
         for (const a of array) {
           byteArray.push(a);
         }
-        console.log(byteArray)
         setImageByteArray(byteArray);
       }
     };

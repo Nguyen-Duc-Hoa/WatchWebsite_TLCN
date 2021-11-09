@@ -6,8 +6,10 @@ import { AiOutlineAppstoreAdd } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import SearchBox from "../../../components/SearchBox/SearchBox";
 import { useFetchData } from "../../../hook/useFetchData";
+import { connect } from "react-redux";
 
-function Employee() {
+function Employee({ token }) {
+  
   const updateData = (result) => {
     const dataArray = result.Users.map((element) => {
       return {
@@ -27,7 +29,6 @@ function Employee() {
     currentPage,
     setCurrentPage,
     totalPage,
-    loading,
     spinning,
     updateReq,
     setSearchKey,
@@ -38,7 +39,8 @@ function Employee() {
       post: `${process.env.REACT_APP_HOST_DOMAIN}/api/User/UpdateStateEmployee`,
     },
     null,
-    updateData
+    updateData,
+    token
   );
 
   const changeStateHandler = (row) => {
@@ -50,7 +52,7 @@ function Employee() {
 
   const searchHandler = (values) => {
     setSearchKey(values.search);
-    setCurrentPage(1)
+    setCurrentPage(1);
   };
 
   const columns = [
@@ -135,4 +137,10 @@ function Employee() {
   );
 }
 
-export default Employee;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps, null)(Employee);

@@ -1,14 +1,57 @@
-import React, { useState, useEffect } from "react";
-import { Table } from "antd";
+import React from "react";
+import { Spin, Table } from "antd";
 import { FaLock, FaUnlockAlt } from "react-icons/fa";
 import Pagination from "../../../components/Pagination/Pagination";
 import SearchBox from "../../../components/SearchBox/SearchBox";
+import { useFetchData } from "../../../hook/useFetchData";
+import { connect } from "react-redux";
 
-function ManageAccount() {
-  const [data, setData] = useState([]);
-  const [searchKey, setSearchKey] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
+function ManageAccount({ token }) {
+  console.log(token);
+  const updateData = (result) => {
+    const dataArray = result.Users.map((element) => {
+      return {
+        key: element["Id"],
+        id: element["Id"],
+        name: element["Name"],
+        phone: element["Phone"],
+        address: element["Address"],
+        state: element["State"],
+      };
+    });
+    return dataArray;
+  };
+
+  const {
+    data,
+    currentPage,
+    setCurrentPage,
+    totalPage,
+    spinning,
+    updateReq,
+    setSearchKey,
+    forceUpdate,
+  } = useFetchData(
+    {
+      get: `${process.env.REACT_APP_HOST_DOMAIN}/api/User/SearchCustomer`,
+      post: `${process.env.REACT_APP_HOST_DOMAIN}/api/User/UpdateStateEmployee`,
+    },
+    null,
+    updateData,
+    token
+  );
+
+  const changeStateHandler = (row) => {
+    updateReq("PUT", row, () => {
+      forceUpdate();
+      return data;
+    });
+  };
+
+  const searchHandler = (values) => {
+    setSearchKey(values.search);
+    setCurrentPage(1);
+  };
 
   const columns = [
     {
@@ -61,89 +104,36 @@ function ManageAccount() {
     },
   ];
 
-  useEffect(() => {
-    fetchCustomerList();
-    console.log(data);
-  }, [currentPage, searchKey]);
-
-  const updateState = (res) => {
-    const customerList = [];
-    res.Users.map((ele) =>
-      customerList.push({
-        key: ele.Id,
-        name: ele.Name,
-        phone: ele.Phone,
-        address: ele.Address,
-        state: ele.State,
-      })
-    );
-    setData(customerList);
-    setCurrentPage(res.CurrentPage);
-    setTotalPage(res.TotalPage);
-  };
-
-  const fetchCustomerList = () => {
-    fetch(
-      `https://localhost:44336/api/User/SearchCustomer?currentPage=${currentPage}&searchKey=${searchKey}`,
-      {
-        method: "GET",
-      }
-    )
-      .then((response) => response.json())
-      .then((res) => updateState(res))
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const changeStateHandler = (record) => {
-    console.log('change state')
-    fetch(
-      `https://localhost:44336/api/User/UpdateStateCustomer?currentPage=${currentPage}&searchKey=${searchKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: record.key,
-      }
-    )
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((res) => updateState(res))
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const searchHandler = (values) => {
-    setSearchKey(values.search);
-  };
-
   return (
     <section className="admin">
       <div className="heading">Customer Account</div>
       <div className="buttonLayout">
         <SearchBox onSubmit={searchHandler} />
       </div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        pagination={{ position: ["none", "none"] }}
-        footer={() => (
-          <Pagination
-            setCurrentPage={setCurrentPage}
-            currentPage={currentPage}
-            noPadding={true}
-            totalPage={totalPage}
-          />
-        )}
-        bordered={true}
-      />
+      <Spin spinning={spinning}>
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={{ position: ["none", "none"] }}
+          footer={() => (
+            <Pagination
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              noPadding={true}
+              totalPage={totalPage}
+            />
+          )}
+          bordered={true}
+        />
+      </Spin>
     </section>
   );
 }
 
-export default ManageAccount;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps, null)(ManageAccount);

@@ -40,7 +40,9 @@ function Login({ onLogin, isAuth, loading, onReset }) {
   }, []);
 
   const loginHandler = (values) => {
-    onLogin(notify, values, history);
+    onLogin(notify, values, () => {
+      history.push('/')
+    });
   };
 
   const resetHandler = (values) => {
@@ -156,8 +158,8 @@ function Login({ onLogin, isAuth, loading, onReset }) {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onLogin: (notify, loginInfo, history) =>
-      dispatch(actions.login(notify, loginInfo, history)),
+    onLogin: (notify, loginInfo, redirect) =>
+      dispatch(actions.login(notify, loginInfo, redirect)),
     onReset: (notify, email) => dispatch(actions.reset(notify, email)),
   };
 };

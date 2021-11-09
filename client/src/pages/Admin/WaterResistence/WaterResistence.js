@@ -16,8 +16,9 @@ import EditTableCell from "../../../components/EditTableCell/EditTableCell";
 import { useMergedColumns } from "../../../hook/useMergedColums";
 import { useFetchData } from "../../../hook/useFetchData";
 import { useEditTable } from "../../../hook/useEditTable";
+import { connect } from "react-redux";
 
-function WaterResistence() {
+function WaterResistence({token}) {
   const updateData = (result) => {
     const dataArray = result.WaterRes.map((element) => {
       return {
@@ -56,7 +57,8 @@ function WaterResistence() {
       delete: `${process.env.REACT_APP_HOST_DOMAIN}/api/WaterResistances/Delete`,
     },
     setEditingKey,
-    updateData
+    updateData,
+    token
   );
 
   const isEditing = (record) => record.key === editingKey;
@@ -204,4 +206,10 @@ function WaterResistence() {
   );
 }
 
-export default WaterResistence;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps, null)(WaterResistence);

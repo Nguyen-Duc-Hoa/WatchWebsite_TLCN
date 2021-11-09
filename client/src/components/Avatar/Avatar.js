@@ -1,29 +1,46 @@
-import React from 'react'
-import { Avatar, Menu, Dropdown } from 'antd'
-import { DownOutlined } from '@ant-design/icons';
-import './Avatar.scss'
-import { RiLogoutCircleRLine } from 'react-icons/ri'
-import { AiOutlineProfile, AiOutlineKey } from 'react-icons/ai'
+import React from "react";
+import { Avatar, Menu, Dropdown } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import "./Avatar.scss";
+import { RiLogoutCircleRLine } from "react-icons/ri";
+import { AiOutlineProfile, AiOutlineKey } from "react-icons/ai";
+import { Link } from "react-router-dom";
+import * as actions from "../../store/actions/index";
+import { connect } from "react-redux";
 
-const menu = (
+const MenuAvatar = ({ onLogout }) => {
+  return (
     <Menu>
+      <Link to="/admin/Profile">
         <Menu.Item icon={<AiOutlineProfile />}>Profile</Menu.Item>
+      </Link>
+      <Link to="/admin/ChangePassword">
         <Menu.Item icon={<AiOutlineKey />}>Password</Menu.Item>
-        <Menu.Item danger icon={<RiLogoutCircleRLine />}>Log out</Menu.Item>
+      </Link>
+      <Menu.Item danger icon={<RiLogoutCircleRLine />} onClick={onLogout}>
+        Log out
+      </Menu.Item>
     </Menu>
-);
+  );
+};
 
-function AvatarUser() {
-    return (
-        <div className='avatar'>
-            <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-            <Dropdown overlay={menu}>
-                <div className="userName">
-                    Henry <DownOutlined />
-                </div>
-            </Dropdown>
+function AvatarUser({ onLogout }) {
+  return (
+    <div className="avatar">
+      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+      <Dropdown overlay={() => <MenuAvatar onLogout={onLogout} />}>
+        <div className="userName">
+          Henry <DownOutlined />
         </div>
-    )
+      </Dropdown>
+    </div>
+  );
 }
 
-export default AvatarUser
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onLogout: () => dispatch(actions.logout),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(AvatarUser);

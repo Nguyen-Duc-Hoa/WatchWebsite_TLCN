@@ -12,7 +12,7 @@ const layout = {
   wrapperCol: { span: 24 },
 };
 
-function UpdateBrand({ onUpdateBrand, loading }) {
+function UpdateBrand({ onUpdateBrand, loading, token }) {
   const [imageBase64, setImageBase64] = useState("");
   const [imageByteArray, setImageByteArray] = useState([]);
   const [form] = Form.useForm();
@@ -26,6 +26,9 @@ function UpdateBrand({ onUpdateBrand, loading }) {
     if (!id) return;
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/brands?id=${id}`, {
       method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      }
     })
       .then((response) => response.json())
       .then((result) => {
@@ -48,12 +51,14 @@ function UpdateBrand({ onUpdateBrand, loading }) {
       ? onUpdateBrand(
           { brandId: id, name: values.name, image: imageByteArray },
           isAdd,
-          notify
+          notify,
+          token
         )
       : onUpdateBrand(
           { name: values.name, image: imageByteArray },
           isAdd,
-          notify
+          notify,
+          token
         );
   };
   return (
@@ -101,13 +106,14 @@ function UpdateBrand({ onUpdateBrand, loading }) {
 const mapStateToProps = (state) => {
   return {
     loading: state.brand.lading,
+    token: state.auth.token
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onUpdateBrand: (brandInfo, isAdd, notify) =>
-      dispatch(actions.updateBrand(brandInfo, isAdd, notify)),
+    onUpdateBrand: (brandInfo, isAdd, notify, token) =>
+      dispatch(actions.updateBrand(brandInfo, isAdd, notify, token)),
   };
 };
 

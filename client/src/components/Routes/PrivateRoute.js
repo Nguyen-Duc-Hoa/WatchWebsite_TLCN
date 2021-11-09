@@ -1,24 +1,39 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
+import { connect } from "react-redux";
 
-function PrivateRoute({ children, isAuthenticated, role, ...rest }) {
+function PrivateRoute({
+  component: Component,
+  path,
+  exact,
+  layout: Layout,
+  isAuth,
+  roles,
+  onlyAdmin
+}) {
   return (
     <Route
-      {...rest}
-      render={(location) =>
-        !isAuthenticated ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/",
-              state: { from: location },
-            }}
-          />
-        )
-      }
+      path={path}
+      exact={exact}
+      render={(props) => {
+        if(isAuth && onlyAdmin && roles.includes("Admin")) {
+          return <Component {...props} />;
+        }
+        if (isAuth && !onlyAdmin && (roles.includes("Admin") || roles.includes("Employee"))) {
+          return <Component {...props} />;
+        } else {
+          return <Redirect to="/" />;
+        }
+      }}
     />
   );
 }
 
-export default PrivateRoute;
+const mapStateToProps = (state) => {
+  return {
+    isAuth: state.auth.token !== null,
+    roles: state.auth.roles,
+  };
+};
+
+export default connect(mapStateToProps)(PrivateRoute);
