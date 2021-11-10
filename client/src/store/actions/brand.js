@@ -108,7 +108,6 @@ export const deleteBrands = (deletiveArray, notify, token) => {
 };
 
 const fetchBrandsSuccess = (result) => {
-  console.log(result)
   return {
     type: actionTypes.BRAND_FETCH_SUCCESS,
     payload: result,

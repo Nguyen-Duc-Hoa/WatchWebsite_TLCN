@@ -6,17 +6,8 @@ import SidebarItem from "./SidebarItem/SidebarItem";
 import SidebarAccount from "./SidebarAccount/SidebarAccount";
 import * as actionTypes from "../../../store/actions/actionTypes";
 import * as actions from "../../../store/actions/index";
+import { Link } from "react-router-dom";
 
-const brands = [
-  "Casio",
-  "Amani",
-  "BOSS",
-  "Bulvova",
-  "HUGO",
-  "Citizen",
-  "Tissot",
-];
-const menu = ["Home", "Brands", "Ladies", "Mens"];
 
 function Sidebar({
   showSidebar,
@@ -24,6 +15,7 @@ function Sidebar({
   onCloseOverlay,
   isAuth,
   onLogout,
+  brands,
 }) {
   const closeSidebarHandler = () => {
     onCloseSidebar();
@@ -36,13 +28,16 @@ function Sidebar({
         <IoMdClose />
       </div>
       <ul className="sidebar__menu">
-        {menu.map((ele, index) => (
-          <SidebarItem
-            key={index}
-            content={ele}
-            submenu={ele !== "Brands" ? brands : false}
-          />
-        ))}
+        <Link to="/">
+          <SidebarItem key={0} content="Home" submenu={[]} />
+        </Link>
+        <SidebarItem key={1} content="Brands" submenu={brands} />
+        <Link to="/products">
+          <SidebarItem key={2} content="Mens" submenu={[]} />
+        </Link>
+        <Link to="/products">
+          <SidebarItem key={3} content="Ladies" submenu={[]} />
+        </Link>
       </ul>
       <SidebarAccount isAuth={isAuth} onLogout={onLogout} />
     </div>
@@ -53,6 +48,7 @@ const mapStateToProps = (state) => {
   return {
     showSidebar: state.ui.showSidebar,
     isAuth: state.auth.token !== null,
+    brands: state.brand.brands,
   };
 };
 

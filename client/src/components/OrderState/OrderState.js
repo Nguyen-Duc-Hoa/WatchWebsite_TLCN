@@ -17,7 +17,7 @@ const state = [
     },
     {
         key: 3,
-        value: 'WaitCompleteding'
+        value: 'Completed'
     },
     {
         key: 4,
@@ -25,11 +25,12 @@ const state = [
     },
 ]
 function OrderState({ currentStep, setCurrentStep }) {
+    const currState = state.find(ele => ele.value === currentStep)
     return (
-        <Steps current={currentStep} direction='vertical'>
+        <Steps current={currState.key} direction='vertical'>
             {
                 state.map(({ key, value }) => (
-                    <Step title={value} key={key} onClick={() => setCurrentStep && setCurrentStep(key)} />
+                    <Step title={value} key={key} onClick={() => setCurrentStep && setCurrentStep(value)} />
                 ))
             }
         </Steps>

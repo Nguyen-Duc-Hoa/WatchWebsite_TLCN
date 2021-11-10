@@ -179,7 +179,7 @@ function Product({ brands, onFetchAllBrands }) {
   };
 
   const fetchProduct = () => {
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Products?id=${id}`, {
+    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Products?id=1`, {
       method: "GET",
     })
       .then((response) => response.json())

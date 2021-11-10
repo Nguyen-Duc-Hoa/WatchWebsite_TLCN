@@ -11,10 +11,10 @@ const { SubMenu } = Menu;
 function AdminMenu() {
     const history = useHistory();
 
-    useEffect(() => {
-        console.log('abc')
-        clickMenuHandler('/admin/Home')
-    }, [])
+    // useEffect(() => {
+    //     console.log('abc')
+    //     clickMenuHandler('/admin/Home')
+    // }, [])
 
     const clickMenuHandler = value => {
         history.push(value)

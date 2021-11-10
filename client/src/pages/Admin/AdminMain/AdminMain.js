@@ -27,13 +27,13 @@ function AdminMain() {
   return (
     <AdminLayout>
       <Switch>
-        <PublicRoute
+        <PrivateRoute
           exact={true}
           component={AdminResult}
           path="/admin/Home"
           // layout={AdminLayout}
         />
-        <PublicRoute
+        <PrivateRoute
           exact={true}
           component={ManageAccount}
           path="/admin/ManageAccount"
@@ -45,31 +45,31 @@ function AdminMain() {
           path="/admin/Order"
           // layout={AdminLayout}
         />
-        <PublicRoute
+        <PrivateRoute
           exact={true}
           component={OrderDetail}
           path="/admin/Order/:id"
           // layout={AdminLayout}
         />
-        <PublicRoute
+        <PrivateRoute
           exact={true}
           component={Products}
           path="/admin/Products"
           // layout={AdminLayout}
         />
-        <PublicRoute
+        <PrivateRoute
           exact={true}
           component={Product}
           path="/admin/Product/AddProduct"
           // layout={AdminLayout}
         />
-        <PublicRoute
+        <PrivateRoute
           exact={true}
           component={Product}
           path="/admin/Product/:id"
           // layout={AdminLayout}
         />
-        <PublicRoute
+        <PrivateRoute
           exact={true}
           component={Comments}
           path="/admin/Comments"

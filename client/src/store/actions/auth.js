@@ -168,9 +168,7 @@ export const authCheckState = () => {
       console.log("token null");
       dispatch(logout());
     } else {
-      console.log("token not null");
       const expirationDate = new Date(localStorage.getItem("expire"));
-      console.log(expirationDate);
       if (expirationDate > new Date()) {
         const userId = localStorage.getItem("idUser");
         const username = localStorage.getItem("userName");
@@ -191,7 +189,7 @@ export const authCheckState = () => {
             phone: phone,
             birthday: birthday,
             avatar: avatar,
-            roles: roles,
+            roles: JSON.parse(roles),
             token: token,
           })
         );

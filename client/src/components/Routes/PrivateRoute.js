@@ -9,19 +9,28 @@ function PrivateRoute({
   layout: Layout,
   isAuth,
   roles,
-  onlyAdmin
+  onlyAdmin,
 }) {
   return (
     <Route
       path={path}
       exact={exact}
       render={(props) => {
-        if(isAuth && onlyAdmin && roles.includes("Admin")) {
+        console.log("isAuth", isAuth);
+        console.log("onlyAdmin", onlyAdmin);
+        console.log("roles", roles);
+        if (isAuth && onlyAdmin && roles.includes("Admin")) {
+          console.log('route only admin')
           return <Component {...props} />;
-        }
-        if (isAuth && !onlyAdmin && (roles.includes("Admin") || roles.includes("Employee"))) {
+        } else if (
+          isAuth &&
+          !onlyAdmin &&
+          (roles.includes("Admin") || roles.includes("Employee"))
+        ) {
+          console.log('route employee admin')
           return <Component {...props} />;
         } else {
+          console.log('route redirect')
           return <Redirect to="/" />;
         }
       }}
@@ -30,6 +39,7 @@ function PrivateRoute({
 }
 
 const mapStateToProps = (state) => {
+  console.log(state)
   return {
     isAuth: state.auth.token !== null,
     roles: state.auth.roles,

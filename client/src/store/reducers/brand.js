@@ -20,7 +20,6 @@ const brandReducer = (state = initialState, action) => {
         loading: false,
       };
     case actionTypes.BRAND_FETCH_SUCCESS:
-      // console.log(action.payload.Brands);
       const brandsArray = [];
       action.payload.Brands.forEach((brand) => {
         brandsArray.push({

@@ -1,105 +1,197 @@
-import React, { useState } from 'react'
-import { Button, Divider, Table, Space } from 'antd'
-import './OrderDetail.scss'
-import OrderState from '../../../components/OrderState/OrderState'
-import Pagination from '../../../components/Pagination/Pagination'
+import React, { useEffect, useState } from "react";
+import { Button, Divider, Table, Space, Spin } from "antd";
+import "./OrderDetail.scss";
+import OrderState from "../../../components/OrderState/OrderState";
+import { useParams } from "react-router-dom";
+import { notify } from "../../../helper/notify";
+import { connect } from "react-redux";
 
 const columns = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        sorter: (a, b) => a.name > b.name,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Number',
-        dataIndex: 'number',
-        key: 'number',
-        sorter: (a, b) => a.number > b.number,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Price',
-        dataIndex: 'price',
-        key: 'price',
-        sorter: (a, b) => a.price > b.price,
-        sortDirections: ['descend'],
-        render: (price) => (
-            <div>${price}</div>
-        )
-    },
-]
+  {
+    title: "Product Name",
+    dataIndex: "productName",
+    key: "productName",
+    sorter: (a, b) => a.productName > b.productName,
+    sortDirections: ["descend"],
+  },
+  {
+    title: "Number",
+    dataIndex: "count",
+    key: "count",
+    sorter: (a, b) => a.count > b.count,
+    sortDirections: ["descend"],
+  },
+  {
+    title: "Price",
+    dataIndex: "price",
+    key: "price",
+    sorter: (a, b) => a.price > b.price,
+    sortDirections: ["descend"],
+    render: (price) => <div>${price}</div>,
+  },
+];
 
-const data = [
-    {
-        name: 'Gaggi',
-        number: 1,
-        price: '752.8'
-    },
-    {
-        name: 'Gaggi',
-        number: 3,
-        price: '752.8'
-    },
-    {
-        name: 'Gaggi',
-        number: 2,
-        price: '752.8'
-    },
-]
+function OrderDetail({ token }) {
+  console.log(token);
 
-function OrderDetail() {
-    const [currentStep, setCurrentStep] = useState(0)
+  let { id } = useParams();
+  const [currentStep, setCurrentStep] = useState(null);
+  const [data, setData] = useState(null);
+  const [tableDataSrc, setTableDataSrc] = useState([]);
+  const [spinning, setSpinning] = useState(false);
 
-    return (
-        <section className='admin orderDetailAdmin'>
-            <div className="heading">Order # 3154</div>
-            <Divider />
-            <div className="personalInfo">
-                <div className="billedTo">
-                    <div className="title">Billed To:</div>
-                    <div>John Smith</div>
-                    <div>0901234567</div>
-                    <div>1234 Main Apt. 4B Springfield, ST 54321</div>
-                </div>
-                <div className="shippedBy">
-                    <div className="title">Shipped By:</div>
-                    <div>Kayle</div>
-                </div>
-            </div>
-            <div className="payment">
-                <div className="paymentInfo">
-                    <div className="title">Payment Method:</div>
-                    <div>Visa ending **** 4242</div>
-                </div>
-                <div className="paymentDate">
-                    <div className="title">Order Date:</div>
-                    <div>October 16, 2019</div>
-                </div>
-            </div>
-            <OrderState currentStep={currentStep} setCurrentStep={setCurrentStep} />
-            <div className="title">Order Summary</div>
-            <Table
-                columns={columns}
-                dataSource={data}
-                pagination={{ position: ['none', 'none'] }}
-                bordered={true} />
-            <div className="subtotal">
-                <div className="title">Sub Total</div>
-                <div>$4563</div>
-            </div>
-            <div className="shippingCost">
-                <div className="title">Shipping</div>
-                <div>Free</div>
-            </div>
-            <div className="total">
-                <div className="title">Total</div>
-                <div className='price'>$4563</div>
-            </div>
-            <Button type='primary'>Update</Button>
-        </section>
+  useEffect(() => {
+    if (!id) return;
+    setSpinning(true);
+    fetchOrderDetail();
+    setSpinning(false);
+  }, []);
+
+  const updateOrder = () => {
+    console.log(token);
+    console.log({ orderId: data.orderId, deliveryStatus: currentStep });
+    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/orders/updatestatus`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        orderId: data.orderId,
+        deliveryStatus: currentStep,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          notify(
+            "UPDATE SUCCESS",
+            "You have already update an order.",
+            "success"
+          );
+        } else {
+          notify(
+            "LOAD FAILED",
+            "Something went wrong :( Please try again.",
+            "error"
+          );
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const total =
+    tableDataSrc.length !== 0 &&
+    tableDataSrc.reduce((prev, curr) => prev + curr.price * curr.count, 0);
+
+  const fetchOrderDetail = () => {
+    fetch(
+      `${process.env.REACT_APP_HOST_DOMAIN}/api/orders/AdminGetOrderDetail?orderid=${id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     )
+      .then((response) => response.json())
+      .then((result) => {
+        const newData = {
+          orderId: result["OrderId"],
+          userId: result["UserId"],
+          name: result["Name"],
+          paymentStatus: result["PaymentStatus"],
+          address: result["Address"],
+          deliveryStatus: result["DeliveryStatus"],
+          orderDate: result["OrderDate"],
+          total: result["Total"],
+          phone: result["Phone"],
+          products: result["OrderDetails"].map((ele) => {
+            return {
+              productName: ele.ProductName,
+              price: ele.Price,
+              count: ele.Count,
+            };
+          }),
+        };
+        setData(newData);
+        setTableDataSrc([...newData.products]);
+        setCurrentStep(newData.deliveryStatus);
+        console.log(newData.deliveryStatus);
+      })
+      .catch((err) => {
+        console.log(err);
+        notify(
+          "LOAD FAILED",
+          "Something went wrong :( Please try again.",
+          "error"
+        );
+      });
+  };
+
+  return (
+    <section className="admin orderDetailAdmin">
+      <Spin spinning={spinning}>
+        <div className="heading">{`Order # ${data && data.orderId}`}</div>
+        <Divider />
+        <div className="personalInfo">
+          <div className="billedTo">
+            <div className="title">Billed To:</div>
+            <div>{data && data.name}</div>
+            <div>{data && data.phone}</div>
+            <div>{data && data.address}</div>
+          </div>
+          <div className="shippedBy">
+            <div className="title">Shipped By:</div>
+            <div>Kayle</div>
+          </div>
+        </div>
+        <div className="payment">
+          <div className="paymentInfo">
+            <div className="title">Payment Method:</div>
+            <div>Visa</div>
+          </div>
+          <div className="paymentDate">
+            <div className="title">Order Date:</div>
+            <div>{data && data.orderDate}</div>
+          </div>
+        </div>
+        {currentStep && (
+          <OrderState
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+          />
+        )}
+        <div className="title">Order Summary</div>
+        <Table
+          columns={columns}
+          dataSource={tableDataSrc}
+          pagination={{ position: ["none", "none"] }}
+          bordered={true}
+        />
+        <div className="subtotal">
+          <div className="title">Sub Total</div>
+          <div>${total}</div>
+        </div>
+        <div className="shippingCost">
+          <div className="title">Shipping</div>
+          <div>Free</div>
+        </div>
+        <div className="total">
+          <div className="title">Total</div>
+          <div className="price">${total}</div>
+        </div>
+        <Button type="primary" onClick={updateOrder}>
+          Update
+        </Button>
+      </Spin>
+    </section>
+  );
 }
 
-export default OrderDetail
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps, null)(OrderDetail);

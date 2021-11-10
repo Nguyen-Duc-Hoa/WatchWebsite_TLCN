@@ -10,14 +10,21 @@ import { connect } from "react-redux";
 import * as actionTyes from "../../store/actions/actionTypes";
 import * as actions from "../../store/actions/index";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
-function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout }) {
+function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout, onSetSearch }) {
+  const history = useHistory();
   const [showSearchArea, setShowSearchArea] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
   const openCartHandler = () => {
     onOpenOverlay();
     onOpenCart();
+  };
+
+  const searchHandler = () => {
+    onSetSearch(searchValue);
+    history.push("/products");
   };
 
   return (
@@ -59,7 +66,7 @@ function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout }) {
               showSearchArea && "search__area--active"
             }`}
           >
-            <div className="search__icon">
+            <div className="search__icon" onClick={searchHandler}>
               <FiSearch />
             </div>
             <input
@@ -98,6 +105,8 @@ const mapDispatchToProps = (dispatch) => {
     onOpenCart: () => dispatch({ type: actionTyes.OPEN_CART }),
     onOpenOverlay: () => dispatch({ type: actionTyes.OPEN_OVERLAY }),
     onLogout: () => dispatch(actions.logout()),
+    onSetSearch: (search) =>
+      dispatch({ type: actionTyes.FILTER_SEARCH, payload: search }),
   };
 };
 

@@ -24,10 +24,10 @@ const MenuAvatar = ({ onLogout }) => {
   );
 };
 
-function AvatarUser({ onLogout }) {
+function AvatarUser({ onLogout, image }) {
   return (
     <div className="avatar">
-      <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+      <Avatar src={`data:image/png;base64,${image}`} />
       <Dropdown overlay={() => <MenuAvatar onLogout={onLogout} />}>
         <div className="userName">
           Henry <DownOutlined />
@@ -37,10 +37,16 @@ function AvatarUser({ onLogout }) {
   );
 }
 
+const mapStateToProps = (state) => {
+  return {
+    image: state.auth.avatar,
+  };
+};
+
 const mapDispatchToProps = (dispatch) => {
   return {
     onLogout: () => dispatch(actions.logout),
   };
 };
 
-export default connect(null, mapDispatchToProps)(AvatarUser);
+export default connect(mapStateToProps, mapDispatchToProps)(AvatarUser);
