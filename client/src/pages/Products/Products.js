@@ -33,11 +33,11 @@ function Products({ filterInfo, onAddToCart, token, isAuth, userId }) {
   const addToCartHandler = (event, productId) => {
     event.stopPropagation();
     if (isAuth) {
-      onAddToCart(productId, 1, userId, token);
+      onAddToCart(productId, 1, userId, token, notify);
     } else {
       notify(
         "YOU MUST LOGIN",
-        "You must login to add product in cart",
+        "You must login to add product to cart",
         "warning"
       );
     }
@@ -128,8 +128,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onAddToCart: (productId, quantity, userId, token) =>
-      dispatch(actions.addToCart(productId, quantity, userId, token)),
+    onAddToCart: (productId, quantity, userId, token, notify) =>
+      dispatch(actions.addToCart(productId, quantity, userId, token, notify)),
   };
 };
 

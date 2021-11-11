@@ -8,10 +8,11 @@ import { FaTelegramPlane } from "react-icons/fa";
 import { ImReddit } from "react-icons/im";
 import { Tabs } from "antd";
 import Text from "antd/lib/typography/Text";
-import { Tooltip, List } from "antd";
+import { Form, List } from "antd";
 import Commenting from "../../components/Comment/Comment";
 import AddComment from "../../components/AddComment/AddComment";
 import { useParams } from "react-router";
+import * as actions from "../../store/actions/index";
 import {
   FacebookShareButton,
   TwitterShareButton,
@@ -19,10 +20,11 @@ import {
   TelegramShareButton,
 } from "react-share";
 import { connect } from "react-redux";
+import { notify } from "../../helper/notify";
 
 const { TabPane } = Tabs;
 
-function Product({ isAuth, token, userId, username, avatarUser }) {
+function Product({ isAuth, token, userId, username, avatarUser, onAddToCart }) {
   const [comments, setComments] = useState([]);
   const [productDetail, setProductDetail] = useState(null);
   const [replyUserName, setReplyUserName] = useState();
@@ -40,6 +42,8 @@ function Product({ isAuth, token, userId, username, avatarUser }) {
     fetchComments();
     fetchProductDetail();
   }, []);
+
+  console.log(comments)
 
   const fetchComments = () => {
     fetch(`https://localhost:44336/api/Comments?productId=${id}`, {
@@ -71,6 +75,21 @@ function Product({ isAuth, token, userId, username, avatarUser }) {
     setReplyUserName(author);
   };
 
+  const onFinish = (values) => {
+    console.log(values);
+    if (isAuth) {
+      onAddToCart(id, values.quantity, userId, token, notify);
+    } else {
+      notify(
+        "YOU MUST LOGIN",
+        "You must login to add product to cart",
+        "warning"
+      );
+    }
+  };
+
+  const commentTotal = comments.reduce((prev, curr) => prev + curr.Replies.length, 0) + comments.length
+
   return (
     <section className="product">
       <Breadcrumbing route={breadCrumbRoute} />
@@ -91,12 +110,21 @@ function Product({ isAuth, token, userId, username, avatarUser }) {
             left in stock!
           </div>
           <Space direction="vertical">
-            <InputNumber
-              min={1}
-              max={productDetail && productDetail.Amount}
-              defaultValue={1}
-            />
-            <Button size="large">Add to cart</Button>
+            <Form onFinish={onFinish}>
+              <Form.Item name="quantity">
+                <InputNumber
+                  min={1}
+                  max={productDetail && productDetail.Amount}
+                  parser={(value) => Math.round(value)}
+                  defaultValue={1}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Button size="large" htmlType="submit">
+                  Add to cart
+                </Button>
+              </Form.Item>
+            </Form>
           </Space>
           <div>
             Case material:{" "}
@@ -145,7 +173,7 @@ function Product({ isAuth, token, userId, username, avatarUser }) {
             {
               <List
                 className="comment-list"
-                header={`5 replies`}
+                header={`${commentTotal} comments`}
                 itemLayout="horizontal"
                 dataSource={comments}
                 renderItem={(item) => (
@@ -153,10 +181,10 @@ function Product({ isAuth, token, userId, username, avatarUser }) {
                     <Commenting
                       key={item.Id}
                       id={item.Id}
-                      author={item.User.Name}
+                      author={item.User.UserName}
                       avatar={item.User.Avatar}
                       content={item.Content}
-                      datetime={item.Date}
+                      datetime={new Date(item.Date).toLocaleDateString()}
                       onReply={handleReply}
                     >
                       {item.Replies &&
@@ -164,10 +192,10 @@ function Product({ isAuth, token, userId, username, avatarUser }) {
                           <Commenting
                             key={rep.Id}
                             id={rep.Id}
-                            author={rep.User.Name}
+                            author={rep.User.UserName}
                             avatar={rep.User.Avatar}
                             content={rep.Content}
-                            datetime={rep.Date}
+                            datetime={new Date(item.Date).toLocaleDateString()}
                             replyFrom={rep.ReplyFrom}
                             onReply={handleReply}
                           />
@@ -205,8 +233,14 @@ const mapStateToProps = (state) => {
     userId: state.auth.id,
     username: state.auth.username,
     avatarUser: state.auth.avatar,
-    
   };
 };
 
-export default connect(mapStateToProps, null)(Product);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onAddToCart: (productId, quantity, userId, token, notify) =>
+      dispatch(actions.addToCart(productId, quantity, userId, token, notify)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Product);

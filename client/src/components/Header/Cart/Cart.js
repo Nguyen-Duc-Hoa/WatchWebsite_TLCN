@@ -3,7 +3,7 @@ import "./Cart.scss";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import CartItem from "./CartItem/CartItem";
 import { IoMdClose } from "react-icons/io";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import * as actionTypes from "../../../store/actions/actionTypes";
 import { Button } from "antd";
@@ -76,11 +76,10 @@ function Cart({
   idUser,
   cart,
   total,
-  onUpdateCart
+  onUpdateCart,
 }) {
-
   useEffect(() => {
-    if(isAuth) {
+    if (isAuth) {
       onFetchCart(idUser, token);
     }
   }, [isAuth]);
@@ -91,7 +90,7 @@ function Cart({
   };
 
   const changeCartNumberHandler = (id, value) => {
-    onUpdateCart(id, value, idUser, token)
+    onUpdateCart(id, value, idUser, token);
   };
 
   return (
@@ -126,9 +125,11 @@ function Cart({
           <div>SUBTOTAL</div>
           <p>${total}</p>
         </div>
-        <Button block type="primary" style={{ height: "45px" }}>
-          Check out
-        </Button>
+        <Link to="/checkout">
+          <Button block type="primary" style={{ height: "45px" }}>
+            Check out
+          </Button>
+        </Link>
       </div>
     </div>
   );
@@ -142,7 +143,7 @@ const mapStateToProps = (state) => {
     token: state.auth.token,
     idUser: state.auth.id,
     cart: state.cart.cart,
-    total: state.cart.total
+    total: state.cart.total,
   };
 };
 
@@ -151,7 +152,8 @@ const mapDispatchToProps = (dispatch) => {
     onCloseCart: () => dispatch({ type: actionTypes.CLOSE_CART }),
     onCloseOverlay: () => dispatch({ type: actionTypes.CLOSE_OVERLAY }),
     onFetchCart: (idUser, token) => dispatch(actions.fetchCart(idUser, token)),
-    onUpdateCart: (productId, quantity, userId, token) => dispatch(actions.updateCart(productId, quantity, userId, token))
+    onUpdateCart: (productId, quantity, userId, token) =>
+      dispatch(actions.updateCart(productId, quantity, userId, token)),
   };
 };
 

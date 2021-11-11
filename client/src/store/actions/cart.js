@@ -13,7 +13,6 @@ export const fetchCart = (idUser, token) => {
       .then((response) => response.json())
       .then((result) => {
         dispatch(cartStopLoading());
-        console.log(result);
         dispatch(fetchCartSuccess(result));
       })
       .catch((err) => {
@@ -46,7 +45,10 @@ export const updateCart = (productId, quantity, userId, token) => {
   };
 };
 
-export const addToCart = (productId, quantity, userId, token) => {
+export const addToCart = (productId, quantity, userId, token, notify) => {
+  if (!quantity) {
+    quantity = 1;
+  }
   return (dispatch) => {
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/carts/AddToCart`, {
       method: "POST",
@@ -66,6 +68,11 @@ export const addToCart = (productId, quantity, userId, token) => {
         }
       })
       .catch((err) => {
+        notify(
+          "ERROR OCCUR",
+          "Something went wrong :( Please try again.",
+          "error"
+        );
         console.log(err);
       });
   };

@@ -54,17 +54,10 @@ function AddComment({
     setValue(e.target.value);
   };
 
-  let srcAvatar = null
-  console.log(avatarUser)
-  if(avatarUser !== "null"){
-    srcAvatar = `data:image/png;base64,${avatarUser}`
-  }else {
-    srcAvatar = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
-  }
 
   return (
     <Commenting
-      avatar={srcAvatar}
+      avatar={avatarUser}
       actions={true}
       author={username}
       datetime={

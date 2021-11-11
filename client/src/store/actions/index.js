@@ -1,4 +1,11 @@
-export { login, logout, register, reset, authCheckState } from "./auth";
+export {
+  login,
+  logout,
+  register,
+  reset,
+  authCheckState,
+  authUpdateInfo,
+} from "./auth";
 export {
   updateBrand,
   fetchBrands,

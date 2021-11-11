@@ -8,7 +8,7 @@ const layout = {
 
 const regexPhoneNumber = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 
-function FormProfile({ form, onSubmit }) {
+function FormProfile({ form, onSubmit, loading }) {
   const dateFormat = "YYYY/MM/DD";
 
   return (
@@ -100,7 +100,7 @@ function FormProfile({ form, onSubmit }) {
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={loading}>
           Submit
         </Button>
       </Form.Item>

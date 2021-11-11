@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // POST: api/Comments/AddComment
+        [Authorize]
         [Route("AddComment")]
         [HttpPost]
         public async Task<IActionResult> AddComment(Comment comment)

@@ -12,7 +12,14 @@ function Commenting({
   replyFrom,
   onReply,
 }) {
-    console.log(avatar)
+  // https://joeschmoe.io/api/v1/random
+  let srcAvatar = null;
+  if (avatar !== "null" && avatar !== null) {
+    srcAvatar = `data:image/png;base64,${avatar}`;
+  } else {
+    srcAvatar =
+      "https://joeschmoe.io/api/v1/random";
+  }
   return (
     <Comment
       actions={
@@ -29,7 +36,7 @@ function Commenting({
       datetime={datetime}
       avatar={
         <Avatar
-          src={avatar || "https://joeschmoe.io/api/v1/random"}
+          src={srcAvatar}
           alt={author}
         />
       }

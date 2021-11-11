@@ -38,7 +38,9 @@ export const login = (notify, loginInfo, redirect) => {
         localStorage.setItem("roles", JSON.stringify([...result.Role]));
         dispatch(loginSuccess(userInfo));
         dispatch(stopLoading());
-        dispatch(checkAuthTimeOut((expires.getTime() - new Date().getTime()) / 1000));
+        dispatch(
+          checkAuthTimeOut((expires.getTime() - new Date().getTime()) / 1000)
+        );
         notify("LOGIN SUCCESS", "Welcome to our store!", "success");
         setTimeout(() => {
           redirect();
@@ -69,7 +71,7 @@ const checkAuthTimeOut = (expire) => {
   return (dispatch) => {
     setTimeout(() => {
       dispatch(logout());
-    }, expire * 1000)
+    }, expire * 1000);
   };
 };
 
@@ -202,5 +204,33 @@ export const authCheckState = () => {
         dispatch(logout());
       }
     }
+  };
+};
+
+export const authUpdateInfo = (userInfo) => {
+  console.log(userInfo)
+  return (dispatch) => {
+    localStorage.setItem("name", userInfo.Name);
+    localStorage.setItem("email", userInfo.Email);
+    localStorage.setItem("address", userInfo.Address);
+    localStorage.setItem("phone", userInfo.Phone);
+    localStorage.setItem("birthday", userInfo.Birthday);
+    localStorage.setItem("avatar", userInfo.Avatar);
+    console.log({
+      name: userInfo.name,
+      email: userInfo.email,
+      address: userInfo.address,
+      phone: userInfo.phone,
+      birthday: userInfo.birthday,
+      avatar: userInfo.avatar
+    })
+    dispatch(loginSuccess({
+      name: userInfo.Name,
+      email: userInfo.Email,
+      address: userInfo.Address,
+      phone: userInfo.Phone,
+      birthday: userInfo.Birthday,
+      avatar: userInfo.Avatar
+    }));
   };
 };

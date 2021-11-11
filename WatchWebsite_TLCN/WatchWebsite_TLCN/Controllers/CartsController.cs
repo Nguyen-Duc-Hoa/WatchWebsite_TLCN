@@ -131,7 +131,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Customer")]
+        [Authorize]
         [Route("GetCart/{userId}")]
         public IEnumerable<CartDTO> GetByUser(int userId)
         {

@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import FormProfile from "../../../components/FormProfile/FormProfile";
-import { Row, Col } from "antd";
+import { Row, Col, Form } from "antd";
 import UploadImage from "../../../components/UploadImage/UploadImage";
-import { Form } from "antd";
-import { useParams } from "react-router";
 import { convertToByteArray } from "../../../helper/convertToByteArray";
 import { notify } from "../../../helper/notify";
 import moment from "moment";
 import { connect } from "react-redux";
+import * as actions from "../../../store/actions/index";
 
-function Profile({ idUser }) {
-  console.log(idUser)
+function Profile({ idUser, onUpdateInfo }) {
+  console.log(idUser);
   const [imageBase64, setImageBase64] = useState("");
   const [imageByteArray, setImageByteArray] = useState([]);
   const [form] = Form.useForm();
@@ -34,6 +33,20 @@ function Profile({ idUser }) {
           phone: result.Phone,
           birthday: moment(result.Birthday, dateFormat),
         });
+        return fetch(
+          `${process.env.REACT_APP_HOST_DOMAIN}/api/User?id=${idUser}`,
+          {
+            method: "GET",
+          }
+        );
+      })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        result.Avatar &&
+          setImageBase64(`data:image/png;base64,${result.Avatar}`);
+        result.Avatar && setImageByteArray(convertToByteArray(result.Avatar));
+        onUpdateInfo(result);
       })
       .catch(() => {
         notify(
@@ -108,11 +121,17 @@ function Profile({ idUser }) {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.auth.id)
-  console.log(state.auth)
+  console.log(state.auth.id);
+  console.log(state.auth);
   return {
     idUser: state.auth.id,
   };
 };
 
-export default connect(mapStateToProps, null)(Profile);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onUpdateInfo: (userInfo) => dispatch(actions.authUpdateInfo(userInfo)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

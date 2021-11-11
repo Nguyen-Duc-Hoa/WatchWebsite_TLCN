@@ -12,7 +12,7 @@ import * as actions from "../../store/actions/index";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 
-function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout, onSetSearch }) {
+function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout, onSetSearch, numberOfCart }) {
   const history = useHistory();
   const [showSearchArea, setShowSearchArea] = useState(false);
   const [searchValue, setSearchValue] = useState("");
@@ -39,12 +39,14 @@ function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout, onSetSearch }) {
           <span>
             <FaRegUser />
           </span>
-          <div
-            className="dropdown-account"
-            style={{ bottom: isAuth ? "-40%" : "-90%" }}
-          >
+          <div className="dropdown-account" style={{ bottom: "-90%" }}>
             {isAuth ? (
-              <div onClick={onLogout}>Logout</div>
+              <>
+                <div>
+                  <Link to="/profile">Profile</Link>
+                </div>
+                <div onClick={onLogout}>Logout</div>
+              </>
             ) : (
               <>
                 <div>
@@ -87,7 +89,7 @@ function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout, onSetSearch }) {
           <span>
             <BiShoppingBag />
           </span>
-          <div className="cart__number">3</div>
+          <div className="cart__number">{numberOfCart}</div>
         </div>
       </div>
     </section>
@@ -97,6 +99,7 @@ function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout, onSetSearch }) {
 const mapStateToProps = (state) => {
   return {
     isAuth: state.auth.token !== null,
+    numberOfCart: state.cart.cart.length
   };
 };
 

@@ -11,6 +11,7 @@ import authReducer from "./store/reducers/auth";
 import brandReducer from "./store/reducers/brand";
 import filterReducer from "./store/reducers/filter";
 import cartReducer from "./store/reducers/cart";
+import orderReducer from "./store/reducers/order";
 
 const composeEnhancers =
   (process.env.NODE_ENV === "development"
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   brand: brandReducer,
   filter: filterReducer,
-  cart: cartReducer
+  cart: cartReducer,
+  order: orderReducer,
 });
 
 const store = createStore(

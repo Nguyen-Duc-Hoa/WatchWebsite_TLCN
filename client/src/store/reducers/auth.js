@@ -22,6 +22,9 @@ const authReducer = (state = initialState, action) => {
         loading: true,
       };
     case actionTypes.LOGIN_SUCCESS:
+      console.log('old', state.avatar)
+      console.log({...state,
+        ...action.payload})
       return {
         ...state,
         ...action.payload

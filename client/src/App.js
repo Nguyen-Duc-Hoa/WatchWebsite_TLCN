@@ -19,6 +19,7 @@ import LoginAdmin from "./pages/Admin/Login/Login";
 import * as actions from "./store/actions/index";
 import { connect } from "react-redux";
 import { useEffect } from "react";
+import PrivateRoute from "./components/Routes/PrivateRoute";
 
 function App({ onCheckAuthState, onFetchAllBrands }) {
   useEffect(() => {
@@ -50,12 +51,18 @@ function App({ onCheckAuthState, onFetchAllBrands }) {
             component={Payment}
             layout={UserLayout}
           />
-          <PublicRoute
+          <PrivateRoute
             path="/checkout"
             component={Checkout}
             layout={UserLayout}
+            forUser
           />
-          <PublicRoute exact={true} path="/login" component={Login} layout={UserLayout} />
+          <PublicRoute
+            exact={true}
+            path="/login"
+            component={Login}
+            layout={UserLayout}
+          />
           <PublicRoute
             path="/register"
             component={Register}
@@ -76,10 +83,11 @@ function App({ onCheckAuthState, onFetchAllBrands }) {
             component={PaymentSuccess}
             layout={UserLayout}
           />
-          <PublicRoute
+          <PrivateRoute
             path="/profile"
             component={Profile}
             layout={UserLayout}
+            forUser
           />
           <PublicRoute
             exact={true}
@@ -96,7 +104,7 @@ function App({ onCheckAuthState, onFetchAllBrands }) {
 const mapDispatchToProps = (dispatch) => {
   return {
     onCheckAuthState: () => dispatch(actions.authCheckState()),
-    onFetchAllBrands: () => dispatch(actions.fetchAllBrands())
+    onFetchAllBrands: () => dispatch(actions.fetchAllBrands()),
   };
 };
 
