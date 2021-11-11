@@ -14,13 +14,7 @@ namespace WatchWebsite_TLCN.Utilities
         public const string alphabetically = "Alphabetically, A-Z";
         public const string nonAlphabetically = "Alphabetically, Z-A";
 
-        public static readonly Dictionary<string, string> status = new Dictionary<string, string>()
-        {
-            {"Waiting", "Chờ xác nhận" },
-            {"Confirmed", "Đã xác nhận" },
-            {"Delivering", "Đang giao" },
-            {"Complete", "Đã giao" }
-        };
+        public static readonly string[] status = { "Waiting", "Confirmed", "Delivering", "Completed", "Canceled" };
 
         public const string adminRole = "Admin";
         public const string employeeRole = "Employee";

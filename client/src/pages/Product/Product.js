@@ -9,7 +9,6 @@ import { ImReddit } from "react-icons/im";
 import { Tabs } from "antd";
 import Text from "antd/lib/typography/Text";
 import { Tooltip, List } from "antd";
-import moment from "moment";
 import Commenting from "../../components/Comment/Comment";
 import AddComment from "../../components/AddComment/AddComment";
 import { useParams } from "react-router";
@@ -19,63 +18,27 @@ import {
   RedditShareButton,
   TelegramShareButton,
 } from "react-share";
+import { connect } from "react-redux";
 
 const { TabPane } = Tabs;
 
-const breadCrumbRoute = [
-  { link: "/", name: "Home" },
-  { link: "/Products", name: "Products" },
-  { link: "/Products/1", name: "Big Bang" },
-];
-
-const data = [
-  {
-    author: "Han Solo",
-    avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-    content: (
-      <p>
-        We supply a series of design principles, practical patterns and high
-        quality design resources (Sketch and Axure), to help people create their
-        product prototypes beautifully and efficiently.
-      </p>
-    ),
-    datetime: (
-      <Tooltip
-        title={moment().subtract(1, "days").format("YYYY-MM-DD HH:mm:ss")}
-      >
-        <span>{moment().subtract(1, "days").fromNow()}</span>
-      </Tooltip>
-    ),
-  },
-  {
-    author: "Han Solo",
-    avatar: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-    content: (
-      <p>
-        We supply a series of design principles, practical patterns and high
-        quality design resources (Sketch and Axure), to help people create their
-        product prototypes beautifully and efficiently.
-      </p>
-    ),
-    datetime: (
-      <Tooltip
-        title={moment().subtract(2, "days").format("YYYY-MM-DD HH:mm:ss")}
-      >
-        <span>{moment().subtract(2, "days").fromNow()}</span>
-      </Tooltip>
-    ),
-  },
-];
-
-function Product() {
+function Product({ isAuth, token, userId, username, avatarUser }) {
   const [comments, setComments] = useState([]);
+  const [productDetail, setProductDetail] = useState(null);
   const [replyUserName, setReplyUserName] = useState();
   const [replyCommentId, setReplyCommentId] = useState();
   const { id } = useParams();
+  const breadCrumbRoute = [
+    { link: "/", name: "Home" },
+    { link: "/Products", name: "Products" },
+    { link: `/Products/${id}`, name: productDetail && productDetail.Name },
+  ];
   const url = document.location.href;
 
   useEffect(() => {
+    if (!id) return;
     fetchComments();
+    fetchProductDetail();
   }, []);
 
   const fetchComments = () => {
@@ -86,6 +49,21 @@ function Product() {
       .then((result) => {
         setComments(result);
       });
+  };
+
+  const fetchProductDetail = () => {
+    fetch(
+      `${process.env.REACT_APP_HOST_DOMAIN}/api/products/ProductDetail?id=${id}`,
+      {
+        method: "GET",
+      }
+    )
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        setProductDetail({ ...result });
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleReply = (id, author, replyFrom) => {
@@ -100,25 +78,40 @@ function Product() {
         <div className="image">
           <Image
             width={"100%"}
-            src={
-              "https://cdn.shopify.com/s/files/1/1063/3618/products/hublot-big-bang_900x.png?v=1568783338"
-            }
+            src={`data:image/png;base64,${
+              productDetail && productDetail.Image
+            }`}
           />
         </div>
         <div className="info">
-          <div className="name">Big Bang</div>
-          <div className="price">$153,00</div>
+          <div className="name">{productDetail && productDetail.Name}</div>
+          <div className="price">${productDetail && productDetail.Price}</div>
           <div className="stock">
-            Only <span>6</span> item(s) left in stock!
+            Only <span>{productDetail && productDetail.Amount}</span> item(s)
+            left in stock!
           </div>
           <Space direction="vertical">
-            <InputNumber min={1} max={10} defaultValue={1} />
+            <InputNumber
+              min={1}
+              max={productDetail && productDetail.Amount}
+              defaultValue={1}
+            />
             <Button size="large">Add to cart</Button>
           </Space>
-          <div>Case material: Stainless steel</div>
-          <div>Gender: Men's</div>
-          <div>Water resistence: 10</div>
-          <div>Automatic</div>
+          <div>
+            Case material:{" "}
+            {productDetail && productDetail.Material.MaterialValue}
+          </div>
+          <div>
+            Gender:{" "}
+            {productDetail && productDetail.Gender === 1 ? "Mens" : "Ladies"}
+          </div>
+          <div>
+            Water resistence:{" "}
+            {productDetail && productDetail.GetWaterResistance.WaterValue}
+          </div>
+          <div>Size: {productDetail && productDetail.Size.SizeId}</div>
+          <div>Energy: {productDetail && productDetail.Energy.EnergyValue}</div>
           <div>Share:</div>
 
           <span className="icon-social">
@@ -146,21 +139,7 @@ function Product() {
       <section className="descriptionAndComments">
         <Tabs defaultActiveKey="1" centered size="large">
           <TabPane tab="Description" key="1">
-            <Text strong>
-              he garments labelled as Committed are products that have been
-              produced using sustainable fibers or processes, reducing their
-              environmental impact. Mango's goal is to support the
-              implementation of practices more committed to the environment, and
-              therefore increase the number of sustainable garments in the
-              collection. Lorem, ipsum dolor sit amet consectetur adipisicing
-              elit. Quisquam eum officiis impedit amet? Eos quos nulla, corrupti
-              aut ratione reprehenderit odio consequuntur esse ipsam fugiat. A,
-              voluptate animi. Perspiciatis, quos. Lorem ipsum dolor sit amet
-              consectetur adipisicing elit. Tempore ex mollitia aut qui,
-              recusandae nobis ipsum eveniet enim ducimus modi quidem, amet
-              velit molestiae delectus? Excepturi voluptas sit sapiente
-              repellendus?
-            </Text>
+            <Text strong>{productDetail && productDetail.Description}</Text>
           </TabPane>
           <TabPane tab="Reviews" key="2">
             {
@@ -198,14 +177,20 @@ function Product() {
                 )}
               />
             }
-            <AddComment
-              setComments={setComments}
-              replyUserName={replyUserName}
-              replyCommentId={replyCommentId}
-              productId={id}
-              setReplyCommentId={setReplyCommentId}
-              setReplyUserName={setReplyUserName}
-            />
+            {isAuth && (
+              <AddComment
+                setComments={setComments}
+                replyUserName={replyUserName}
+                replyCommentId={replyCommentId}
+                productId={id}
+                setReplyCommentId={setReplyCommentId}
+                setReplyUserName={setReplyUserName}
+                userId={userId}
+                token={token}
+                username={username}
+                avatarUser={avatarUser}
+              />
+            )}
           </TabPane>
         </Tabs>
       </section>
@@ -213,4 +198,15 @@ function Product() {
   );
 }
 
-export default Product;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+    isAuth: state.auth.token !== null,
+    userId: state.auth.id,
+    username: state.auth.username,
+    avatarUser: state.auth.avatar,
+    
+  };
+};
+
+export default connect(mapStateToProps, null)(Product);

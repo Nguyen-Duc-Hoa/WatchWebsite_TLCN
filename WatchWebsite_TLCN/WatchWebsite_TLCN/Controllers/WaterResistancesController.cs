@@ -40,10 +40,20 @@ namespace WatchWebsite_TLCN.Controllers
 
             return Ok(new
             {
-                Energies = listWaterDTO,
+                WaterRes = listWaterDTO,
                 CurrentPage = result.Item2.CurrentPage,
                 TotalPage = result.Item2.TotalPage
             });
+        }
+
+        // GET: api/WaterResistances/GetAll
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<IActionResult> GetWaterResistances()
+        {
+            var result = await _unitOfWork.WaterResistances.GetAll();
+            var listWaterResDTO = _mapper.Map<List<WaterResistancesDTO>>(result);
+            return Ok(listWaterResDTO);
         }
 
         // GET: api/WaterResistances/5
@@ -63,23 +73,19 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/WaterResistances/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
+        [HttpPut]
         public async Task<IActionResult> PutWaterResistance(int id, WaterResistance waterResistance)
         {
-            if (id != waterResistance.WaterId)
-            {
-                return BadRequest();
-            }
-
             _unitOfWork.WaterResistances.Update(waterResistance);
 
             try
             {
                 await _unitOfWork.Save();
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await WaterResistanceExists(id))
+                if (!await WaterResistanceExists(waterResistance.WaterId))
                 {
                     return NotFound();
                 }
@@ -88,8 +94,6 @@ namespace WatchWebsite_TLCN.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
         }
 
         // POST: api/WaterResistances
@@ -98,26 +102,35 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpPost]
         public async Task<ActionResult<WaterResistance>> PostWaterResistance(WaterResistance waterResistance)
         {
-            await _unitOfWork.WaterResistances.Insert(waterResistance);
-            await _unitOfWork.Save();
-
-            return CreatedAtAction("GetWaterResistance", new { id = waterResistance.WaterId }, waterResistance);
+            try
+            {
+                await _unitOfWork.WaterResistances.Insert(waterResistance);
+                await _unitOfWork.Save();
+                return Ok();
+            }
+            catch
+            {
+                return StatusCode(500);
+            }
         }
 
-        // DELETE: api/WaterResistances/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<WaterResistance>> DeleteWaterResistance(int id)
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<IActionResult> Delete(List<int> id)
         {
-            var waterResistance = await _unitOfWork.WaterResistances.Get(x => x.WaterId == id);
-            if (waterResistance == null)
+            try
             {
-                return NotFound();
+                foreach (int item in id)
+                {
+                    await _unitOfWork.WaterResistances.Delete<int>(item);
+                }
+                await _unitOfWork.Save();
+                return Ok();
             }
-
-            await _unitOfWork.WaterResistances.Delete(id);
-            await _unitOfWork.Save();
-
-            return waterResistance;
+            catch
+            {
+                return BadRequest("Something was wrong");
+            }
         }
 
         private Task<bool> WaterResistanceExists(int id)

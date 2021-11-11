@@ -33,7 +33,7 @@ namespace WatchWebsite_TLCN.Repository
                                       })
                                       on p.Id equals c.ProductId
                            orderby c.Count descending
-                           select p).Take(10).ToList();
+                           select p).Include(p => p.Brand).Take(10).ToList();
 
             return product;
         }

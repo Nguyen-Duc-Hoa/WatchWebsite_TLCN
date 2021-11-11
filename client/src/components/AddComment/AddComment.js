@@ -12,6 +12,10 @@ function AddComment({
   productId,
   setReplyCommentId,
   setReplyUserName,
+  userId,
+  token,
+  username,
+  avatarUser
 }) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +27,7 @@ function AddComment({
     }
     setLoading(true);
     const comment = {
-      userId: 4,
+      userId: userId,
       productId: productId,
       content: value.content,
       date: new Date(),
@@ -33,6 +37,7 @@ function AddComment({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify(comment),
     })
@@ -49,11 +54,19 @@ function AddComment({
     setValue(e.target.value);
   };
 
+  let srcAvatar = null
+  console.log(avatarUser)
+  if(avatarUser !== "null"){
+    srcAvatar = `data:image/png;base64,${avatarUser}`
+  }else {
+    srcAvatar = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
+  }
+
   return (
     <Commenting
-      avatar="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+      avatar={srcAvatar}
       actions={true}
-      author="Duc Hoa"
+      author={username}
       datetime={
         <Tooltip
           title={moment().subtract(1, "days").format("YYYY-MM-DD HH:mm:ss")}

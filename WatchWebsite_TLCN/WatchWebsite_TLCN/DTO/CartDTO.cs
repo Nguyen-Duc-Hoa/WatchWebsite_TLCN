@@ -12,5 +12,7 @@ namespace WatchWebsite_TLCN.DTO
         public byte[] Image { get; set; }
         public double Price { get; set; }
         public int Quantity { get; set; }
+        public string BrandName { get; set; }
+        public int Amount { get; set; }
     }
 }

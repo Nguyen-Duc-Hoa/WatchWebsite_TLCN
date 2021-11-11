@@ -12,13 +12,8 @@ using WatchWebsite_TLCN.Models;
 namespace WatchWebsite_TLCN
 {
     public class JwtAuthenticationManager : IJwtAuthenticationManager
-    {
-        //private readonly MyDBContext _context;
-        //private readonly IRefreshTokenGenerator refreshTokenGenerator;
-        //public IDictionary<string, string> UsersRefreshTokens = new Dictionary<string, string>();
-        
+    {        
         public readonly string tokenKey;
-
         public IDictionary<string, string> UsersRefreshTokens { get; set; }
 
         //tokenKey is private key to encode
@@ -26,98 +21,59 @@ namespace WatchWebsite_TLCN
         {
             this.tokenKey = tokenKey;
             UsersRefreshTokens = new Dictionary<string, string>();
-
-            //this.refreshTokenGenerator = refreshTokenGenerator;
-            //_context = context;
         }
 
-
-        /*public AuthenticationResponse Authenticate(string username, Claim[] claims)
+        public AuthenticationResponse Authenticate(int userid, string username, string password, List<string> roles)
         {
-            var key = Encoding.ASCII.GetBytes(tokenKey);
+            var signingCredentials = GetSigningCredentials();
 
-            var jwtSecurityToken = new JwtSecurityToken(
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddHours(1),
-                    signingCredentials: new SigningCredentials(
-                        new SymmetricSecurityKey(key),
-                        SecurityAlgorithms.HmacSha256Signature)
+            var claims = GetClaims(username, roles);
+            var token = GenerateTokenOptions(signingCredentials, claims);
+
+            return new AuthenticationResponse
+            {
+                JwtToken = new JwtSecurityTokenHandler().WriteToken(token)
+            };
+        }
+
+        private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
+        {
+            // create expire time
+            var expiration = DateTime.UtcNow.AddHours(1);
+
+            var token = new JwtSecurityToken(
+                issuer: "WatchshopAPI",
+                claims: claims,
+                expires: expiration,
+                signingCredentials: signingCredentials
                 );
 
-            var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-
-            var refreshToken = refreshTokenGenerator.GeneratorToken();
-
-            if (UsersRefreshTokens.ContainsKey(username))
-            {
-                UsersRefreshTokens[username] = refreshToken;
-            }
-            else
-            {
-                UsersRefreshTokens.Add(username, refreshToken);
-            }
-
-            //return tokenHandler.WriteToken(token);
-
-            return new AuthenticationResponse
-            {
-                JwtToken = token,
-                *//*RefreshToken = refreshToken*//*
-            };
+            return token;
         }
-*/
-        public AuthenticationResponse Authenticate(int userid, string username, string password, List<int> role)
+
+        private List<Claim> GetClaims(string username, List<string> roles)
         {
-            
-            if(username == null || password == null)
+            var claims = new List<Claim>
+             {
+                 new Claim(ClaimTypes.Name, username)
+             };
+
+
+            foreach (var role in roles)
             {
-                return null;
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            //Tạo khóa riêng tư để encode
-            var key = Encoding.ASCII.GetBytes(tokenKey);
-
-            //Mô tả mã thông báo
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.NameIdentifier, userid.ToString()),
-                    new Claim(ClaimTypes.Name, username),
-                }),
-                
-                Expires = DateTime.UtcNow.AddHours(1),
-                
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            
-            //var refreshToken = refreshTokenGenerator.GeneratorToken();
-
-            /*if (UsersRefreshTokens.ContainsKey(username))
-            {
-                UsersRefreshTokens[username] = refreshToken;
-            }
-            else
-            {
-                UsersRefreshTokens.Add(username, refreshToken);
-            }*/
-
-            //return tokenHandler.WriteToken(token);
-
-            return new AuthenticationResponse
-            {
-                JwtToken = tokenHandler.WriteToken(token),
-                //RefreshToken = refreshToken
-            };
+            return claims;
         }
 
+        private SigningCredentials GetSigningCredentials()
+        {
+            // Biểu diễn lớp cơ sở trừu tượng cho tất cả các khóa được tạo bằng thuật toán đối xứng.
+            var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
 
+            // Đại diện cho mật mã, thuật toán
+            return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+        }
     }
 }

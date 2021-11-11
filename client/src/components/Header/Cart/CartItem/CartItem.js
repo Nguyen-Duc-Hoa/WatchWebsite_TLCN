@@ -2,14 +2,14 @@ import React from 'react'
 import './CartItem.scss'
 import { InputNumber } from 'antd';
 
-function CartItem({name, image, amount, number, price, changeCartNumberHandler, brand, id}) {
+function CartItem({name, image, amount, number, price, changeCartNumberHandler, brand, idProduct}) {
     return (
         <div className="cart__card">
-            <img src={image} alt="" />
+            <img src={`data:image/png;base64,${image}`} alt="" />
             <div className="card__info">
                 <div>{name}</div>
-                <p>Brand: {brand}</p>
-                <InputNumber min={0} max={amount} defaultValue={number} value={number} onChange={(value) => changeCartNumberHandler(id, value)} />
+                <p>{brand}</p>
+                <InputNumber min={0} max={amount} defaultValue={number} value={number} onChange={(value) => changeCartNumberHandler(idProduct, value)} />
             </div>
             <div className="price">${price}</div>
         </div>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/Energies?currentPage=1
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetEnegies(int currentPage)
         {
@@ -54,6 +56,16 @@ namespace WatchWebsite_TLCN.Controllers
             });
         }
 
+        // GET: api/Energies/GetAll
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<IActionResult> GetEnergies()
+        {
+            var result = await _unitOfWork.Energies.GetAll();
+            var listEnergiesDTO = _mapper.Map<List<EnergyDTO>>(result);
+            return Ok(listEnergiesDTO);
+        }
+
         // GET: api/Energies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Energy>> GetEnergy(int id)
@@ -71,6 +83,7 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/Energies/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> PutEnergy(Energy energy)
         {
@@ -95,6 +108,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // POST: api/Energies
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Energy>> PostEnergy(Energy energy)
         {
@@ -131,6 +145,7 @@ namespace WatchWebsite_TLCN.Controllers
             return _unitOfWork.Energies.IsExist<int>(id);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("Delete")]
         public async Task<IActionResult> Delete(List<int> id)

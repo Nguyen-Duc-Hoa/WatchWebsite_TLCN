@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -130,6 +131,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Customer")]
         [Route("GetCart/{userId}")]
         public IEnumerable<CartDTO> GetByUser(int userId)
         {
@@ -138,6 +140,7 @@ namespace WatchWebsite_TLCN.Controllers
 
         [HttpPost]
         [Route("AddToCart")]
+        [Authorize]
         public ActionResult AddToCart([FromBody] Cart cart)
         {
             if (_cart.AddToCart(cart))
@@ -145,33 +148,17 @@ namespace WatchWebsite_TLCN.Controllers
             return BadRequest("Something was wrong");
         }
 
-        // Click button (+)
         [HttpPut]
-        [Route("IncQuantity")]
-        public IActionResult IncreaseQuantity(Cart cart)
+        [Route("UpdateQuantity")]
+        [Authorize]
+        public async Task<IActionResult> UpdateQuantity(Cart cart)
         {
-            if (_cart.IncreaseQuantity(cart))
+            if (_cart.UpdateQuantity(cart))
                 return Ok();
-            return BadRequest("Can not increase quantity");
+                        return BadRequest("Can not increase quantity");
         }
 
-        // Click button (-)
-        [HttpPut]
-        [Route("DecQuantity")]
-        public IActionResult DecreaseQuantity(Cart cart)
-        {
-            if (_cart.DecreaseQuantity(cart))
-                return Ok();
-            return BadRequest("Can not decrease quantity");
-        }
-
-        [HttpDelete]
-        public IActionResult DeleteFromCart(Cart cart)
-        {
-            if(_cart.DeleteFromCart(cart))
-                return Ok("Deleted");
-            return BadRequest("Something was wrong");
-        }
+        
     }
 
 }

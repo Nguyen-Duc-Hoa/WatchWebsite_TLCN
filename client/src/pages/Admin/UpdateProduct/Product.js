@@ -37,7 +37,7 @@ function Product({ brands, onFetchAllBrands }) {
   const [imageByteArray, setImageByteArray] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hidden, setHidden] = useState(false);
-
+  console.log(useParams())
   let { id } = useParams();
   const isAdd =
     useLocation().pathname.slice(15).toLocaleLowerCase() === "addproduct"
@@ -179,7 +179,7 @@ function Product({ brands, onFetchAllBrands }) {
   };
 
   const fetchProduct = () => {
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Products?id=1`, {
+    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Products?id=${id}`, {
       method: "GET",
     })
       .then((response) => response.json())

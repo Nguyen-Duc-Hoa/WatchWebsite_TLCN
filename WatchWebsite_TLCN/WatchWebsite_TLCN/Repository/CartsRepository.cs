@@ -33,7 +33,9 @@ namespace WatchWebsite_TLCN.Repository
                                 Name = p.Name,
                                 Image = p.Image,
                                 Price = c.Count * p.Price,
-                                Quantity = c.Count
+                                Quantity = c.Count,
+                                BrandName = p.Brand.Name,
+                                Amount = p.Amount
                             }).ToList();
                               
             return cartItem;
@@ -68,50 +70,22 @@ namespace WatchWebsite_TLCN.Repository
             
         }
 
-        public bool DecreaseQuantity(Cart cart)
+        public bool UpdateQuantity(Cart cart)
         {
-            //var product = _context.Products.FindAsync(cart.ProductId);
-
-            if(cart.Count == 1)
+            Cart cartdb = _context.Carts.FirstOrDefault(c => c.ProductId == cart.ProductId && c.UserId == cart.UserId);
+            if(cart.Count == 0)
             {
-                //Xoa san pham khoi gio hang
-                _context.Carts.Remove(cart);
-                return Save();
+                _context.Carts.Remove(cartdb);
             }
-
-            //So luong --1;
-            cart.Count -= 1;
-            //_context.Carts.Update(cart);
-            //return Save();
-
-            (from p in _context.Carts
-             where (p.UserId == cart.UserId) && (p.ProductId == cart.ProductId)
-             select p).ToList()
-                                .ForEach(x => x.Count = cart.Count);
-            return Save();
-
-        }
-
-        public bool DeleteFromCart(Cart cart)
-        {
-            _context.Carts.Remove(cart);
-            return Save();
-        }
-
-
-        public bool IncreaseQuantity(Cart cart)
-        {
-            Product product = _context.Products.Where(x => x.Id == cart.ProductId).FirstOrDefault();
-            int count = cart.Count + 1;
-            if(count > product.Amount)
+            else
             {
-                return false;
+                var product = _context.Products.FirstOrDefault(p => p.Id == cart.ProductId);
+                if(cart.Count <= product.Amount)
+                {
+                    cartdb.Count = cart.Count;
+                    _context.Carts.Update(cartdb);
+                }
             }
-
-            (from p in _context.Carts
-             where (p.UserId == cart.UserId) && (p.ProductId == cart.ProductId)
-             select p).ToList()
-                                .ForEach(x => x.Count = count);
             return Save();
 
         }

@@ -11,6 +11,13 @@ namespace WatchWebsite_TLCN.DTO
         public string Id { get; set; }
         public string Name { get; set; }
         public string Image { get; set; }
-        public double Price { get; set; }
+        public float Price { get; set; }
+    }
+
+    public class ProductResponseDTO : ProductDTO
+    {
+        public int Amount { get; set; }
+        public string Brand { get; set; }
+        public int Gender { get; set; }
     }
 }

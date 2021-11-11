@@ -1,5 +1,5 @@
-import { Button, Image, Space } from "antd";
-import React, { useState } from "react";
+import {  Image, Space } from "antd";
+import React from "react";
 import { faultTolerant } from "./FaultTolerant";
 import { AiOutlineUpload } from "react-icons/ai";
 import "./UploadImage.scss";

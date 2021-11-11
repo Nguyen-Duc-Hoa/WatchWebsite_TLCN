@@ -73,7 +73,7 @@ namespace WatchWebsite_TLCN.Controllers
             List<string> listRole = new List<string>();
             List<int> listRoleId = new List<int>();
 
-            User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
+            User user = _context.Users.Where(x => x.Username == username && x.Password == password && x.State == true).FirstOrDefault();
            
             if (user == null)
             {
@@ -102,7 +102,7 @@ namespace WatchWebsite_TLCN.Controllers
 
             //var token = _jwtAuthenticationManager.Authenticate(username, password);
 
-            var token = _jwtAuthenticationManager.Authenticate(userid, username, password, listRoleId);
+            var token = _jwtAuthenticationManager.Authenticate(userid, username, password, listRole);
 
             if (token == null)
             {
@@ -195,19 +195,5 @@ namespace WatchWebsite_TLCN.Controllers
             }
         }
 
-        /*[AllowAnonymous]
-        [HttpPost]
-        [Route("Refresh")]
-        public IActionResult Refresh([FromBody] RefreshCred refreshCred)
-        {
-            var token = _tokenRefresher.Refresh(refreshCred);
-
-            if(token == null)
-            {
-                return Unauthorized();
-            }
-
-            return Ok(token);
-        }*/
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,14 +27,8 @@ namespace WatchWebsite_TLCN.Controllers
             _mapper = mapper;
         }
 
-        /*        // GET: api/Brands
-                [HttpGet]
-                public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
-                {
-                    return await _unitOfWork.Brands.GetAll();
-                }*/
-
         // GET: api/Brands
+        [Authorize(Roles = "Admin")]
         [Route("GetBrandsWithPagination")]
         [HttpGet]
         public async Task<ActionResult> GetBrands(int currentPage)
@@ -67,11 +62,12 @@ namespace WatchWebsite_TLCN.Controllers
         {
             var result = await _unitOfWork.Brands.GetAll();
             var listBrandDTO = _mapper.Map<List<BrandDTO>>(result);
-            return Ok(listBrandDTO);
+            return Ok(new { Brands = listBrandDTO });
         }
 
 
         // GET: api/Brands?id=5
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<Brand>> GetBrand(int id)
         {
@@ -87,6 +83,7 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/Brands/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> PutBrand(Brand brand)
         {
@@ -113,6 +110,7 @@ namespace WatchWebsite_TLCN.Controllers
         // POST: api/Brands
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(Brand brand)
         {
@@ -145,6 +143,7 @@ namespace WatchWebsite_TLCN.Controllers
             return brand;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete ]
         [Route("Delete")]
         public async Task<ActionResult<Brand>> DeleteBrand(List<int> id)
@@ -171,8 +170,6 @@ namespace WatchWebsite_TLCN.Controllers
 
             return Ok();
         }
-
-
 
         private Task<bool> BrandExists(int id)
         {

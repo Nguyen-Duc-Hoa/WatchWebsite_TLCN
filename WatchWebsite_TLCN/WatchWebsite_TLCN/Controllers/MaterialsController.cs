@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/Materials
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetMaterials(int currentPage)
         {
@@ -46,6 +48,16 @@ namespace WatchWebsite_TLCN.Controllers
             });
         }
 
+        // GET: api/Materials/GetAll
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<IActionResult> GetMaterials()
+        {
+            var result = await _unitOfWork.Materials.GetAll();
+            var listMaeterialsDTO = _mapper.Map<List<MaterialDTO>>(result);
+            return Ok(listMaeterialsDTO);
+        }
+
         // GET: api/Materials/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Material>> GetMaterial(int id)
@@ -63,6 +75,7 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/Materials/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> PutMaterial(Material material)
         {
@@ -89,6 +102,7 @@ namespace WatchWebsite_TLCN.Controllers
         // POST: api/Materials
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Material>> PostMaterial(Material material)
         {
@@ -121,6 +135,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         [Route("Delete")]
         public async Task<ActionResult<Brand>> DeleteMaterial(List<int> id)
         {

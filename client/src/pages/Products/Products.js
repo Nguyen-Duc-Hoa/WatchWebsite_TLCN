@@ -9,14 +9,14 @@ import Pagination from "../../components/Pagination/Pagination";
 import Breadcrumbing from "../../components/Breadcrumb/Breadcrumb";
 import { notify } from "../../helper/notify";
 import { connect } from "react-redux";
-
+import * as actions from "../../store/actions/index";
 
 const breadCrumbRoute = [
   { name: "Home", link: "/" },
   { name: "Products", link: "/" },
 ];
 
-function Products({ filterInfo }) {
+function Products({ filterInfo, onAddToCart, token, isAuth, userId }) {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
@@ -28,6 +28,19 @@ function Products({ filterInfo }) {
 
   const filterHandler = (values) => {
     filterReq(values);
+  };
+
+  const addToCartHandler = (event, productId) => {
+    event.stopPropagation();
+    if (isAuth) {
+      onAddToCart(productId, 1, userId, token);
+    } else {
+      notify(
+        "YOU MUST LOGIN",
+        "You must login to add product in cart",
+        "warning"
+      );
+    }
   };
 
   const filterReq = (values, currPage = 1) => {
@@ -81,10 +94,12 @@ function Products({ filterInfo }) {
                     xs={{ span: 12 }}
                   >
                     <ProductCard
+                      productId={ele.Id}
                       image={ele.Image}
                       name={ele.Name}
                       price={ele.Price}
                       brand={ele.Brand}
+                      addToCartHandler={addToCartHandler}
                     />
                   </Col>
                 ))}
@@ -105,7 +120,17 @@ function Products({ filterInfo }) {
 const mapStateToProps = (state) => {
   return {
     filterInfo: state.filter,
+    token: state.auth.token,
+    isAuth: state.auth.token !== null,
+    userId: state.auth.id,
   };
 };
 
-export default connect(mapStateToProps)(Products);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onAddToCart: (productId, quantity, userId, token) =>
+      dispatch(actions.addToCart(productId, quantity, userId, token)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Products);

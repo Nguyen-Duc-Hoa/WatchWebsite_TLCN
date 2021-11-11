@@ -12,9 +12,7 @@ namespace WatchWebsite_TLCN.Intefaces
         IEnumerable<CartDTO> GetCart(int userId);
         bool ProductExists(Cart cart);
         bool AddToCart(Cart cart);
-        bool IncreaseQuantity(Cart cart);
-        bool DecreaseQuantity(Cart cart);
-        bool DeleteFromCart(Cart cart);
+        bool UpdateQuantity(Cart cart);
         bool Save();
     }
 }
