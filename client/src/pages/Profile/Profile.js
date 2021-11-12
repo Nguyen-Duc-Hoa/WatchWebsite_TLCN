@@ -40,7 +40,7 @@ function Profile({
       address: (address !== "null" && address) || "",
       email: (email !== "null" && email) || "",
       phone: (phone !== "null" && phone) || "",
-      birthday: birthday !== "null" && moment(birthday, dateFormat),
+      birthday: birthday !== "null" && moment(birthday, dateFormat) || '',
     });
   }, []);
 

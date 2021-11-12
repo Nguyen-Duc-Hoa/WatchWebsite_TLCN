@@ -81,6 +81,7 @@ namespace WatchWebsite_TLCN.Controllers
 
         // POST: /api/Orders/CreateOrder
         [HttpPost]
+        [Authorize]
         [Route("CreateOrder")]
         public async Task<IActionResult> PostOrder(OrderDTO orderDTO)
         {
@@ -127,6 +128,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // POST: /api/Orders/Payment
+        [Authorize]
         [HttpPost]
         [Route("Payment")]
         public async Task<IActionResult> Create(PaymentIntentCreateRequest request)

@@ -8,63 +8,8 @@ import { connect } from "react-redux";
 import * as actionTypes from "../../../store/actions/actionTypes";
 import { Button } from "antd";
 import * as actions from "../../../store/actions/index";
-
-const products = [
-  {
-    name: "Citizens Navihawk",
-    price: 524,
-    brand: "Citizen",
-    amount: 10,
-    number: 2,
-    image:
-      "https://d1rkccsb0jf1bk.cloudfront.net/products/99986640/main/large/jy8037-50e_high_res-1439896505-1302.jpg",
-  },
-  {
-    name: "Citizen Navihawk",
-    price: 524,
-    brand: "Citizen",
-    amount: 10,
-    number: 2,
-    image:
-      "https://d1rkccsb0jf1bk.cloudfront.net/products/99986640/main/large/jy8037-50e_high_res-1439896505-1302.jpg",
-  },
-  {
-    name: "Citizen Navihawk",
-    price: 524,
-    brand: "Citizen",
-    amount: 10,
-    number: 2,
-    image:
-      "https://d1rkccsb0jf1bk.cloudfront.net/products/99986640/main/large/jy8037-50e_high_res-1439896505-1302.jpg",
-  },
-  {
-    name: "Citizen Navihawk",
-    price: 524,
-    brand: "Citizen",
-    amount: 10,
-    number: 2,
-    image:
-      "https://d1rkccsb0jf1bk.cloudfront.net/products/99986640/main/large/jy8037-50e_high_res-1439896505-1302.jpg",
-  },
-  {
-    name: "Citizen Navihawk",
-    price: 524,
-    brand: "Citizen",
-    amount: 10,
-    number: 2,
-    image:
-      "https://d1rkccsb0jf1bk.cloudfront.net/products/99986640/main/large/jy8037-50e_high_res-1439896505-1302.jpg",
-  },
-  {
-    name: "Citizen Navihawk",
-    price: 524,
-    brand: "Citizen",
-    amount: 10,
-    number: 2,
-    image:
-      "https://d1rkccsb0jf1bk.cloudfront.net/products/99986640/main/large/jy8037-50e_high_res-1439896505-1302.jpg",
-  },
-];
+import { notify } from "../../../helper/notify";
+import {useHistory} from 'react-router-dom'
 
 function Cart({
   showCart,
@@ -78,6 +23,8 @@ function Cart({
   total,
   onUpdateCart,
 }) {
+  const history = useHistory()
+
   useEffect(() => {
     if (isAuth) {
       onFetchCart(idUser, token);
@@ -91,6 +38,16 @@ function Cart({
 
   const changeCartNumberHandler = (id, value) => {
     onUpdateCart(id, value, idUser, token);
+  };
+
+  const clickCheckoutHandler = () => {
+    if (cart.length === 0) {
+      notify("EMPTY CART", "Choose products to continue.", "warning");
+      return;
+    }
+    else {
+      history.push('/checkout')
+    }
   };
 
   return (
@@ -125,11 +82,9 @@ function Cart({
           <div>SUBTOTAL</div>
           <p>${total}</p>
         </div>
-        <Link to="/checkout">
-          <Button block type="primary" style={{ height: "45px" }}>
+        <Button block type="primary" style={{ height: "45px" }} onClick={clickCheckoutHandler}>
             Check out
           </Button>
-        </Link>
       </div>
     </div>
   );

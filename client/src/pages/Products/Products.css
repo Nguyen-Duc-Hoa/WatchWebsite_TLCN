@@ -59,4 +59,8 @@
 .products .body .product-list {
   width: 100%;
 }
+
+.products .body .product-list .ant-empty-image {
+  height: 180px;
+}
 /*# sourceMappingURL=Products.css.map */

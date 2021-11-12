@@ -19,10 +19,7 @@ const cartReducer = (state = initialState, action) => {
         loading: false,
       };
     case actionTypes.CART_FETCH_SUCCESS:
-      const total = action.payload.reduce(
-        (prev, curr) => prev + curr.Price * curr.Quantity,
-        0
-      );
+      const total = action.payload.reduce((prev, curr) => prev + curr.Price, 0);
       return {
         ...state,
         cart: [...action.payload],
@@ -40,15 +37,17 @@ const cartReducer = (state = initialState, action) => {
             return {
               ...ele,
               Quantity: action.payload.quantity,
+              Price: (ele.Price / ele.Quantity) * action.payload.quantity,
             };
           }
-          return ele
+          return ele;
         });
       }
-      console.log(newData)
+      const updateTotal = newData.reduce((prev, curr) => prev + curr.Price, 0);
       return {
         ...state,
         cart: newData,
+        total: updateTotal
       };
     default:
       return state;

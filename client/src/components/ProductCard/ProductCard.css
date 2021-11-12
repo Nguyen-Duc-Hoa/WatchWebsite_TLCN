@@ -18,8 +18,15 @@
   overflow: hidden;
 }
 
+.productCard .imageAndButton:hover img {
+  -webkit-transform: scale(1.15);
+          transform: scale(1.15);
+}
+
 .productCard .imageAndButton img {
   width: 100%;
+  -webkit-transition: .3s transform;
+  transition: .3s transform;
 }
 
 .productCard .imageAndButton img:hover + button {
@@ -27,22 +34,24 @@
 }
 
 .productCard .imageAndButton button {
-  width: 80%;
+  width: 60%;
   padding: 6px 0;
-  background: white;
+  background: #ffffffc9;
   border-radius: 10px;
   font-size: 16px;
   font-weight: 500;
   -webkit-transition: all .3s;
   transition: all .3s;
   position: absolute;
+  border: 1px solid #ccc;
   top: 100%;
   cursor: pointer;
 }
 
 .productCard .imageAndButton button:hover {
   color: white;
-  background-color: black;
+  border: 1px solid #000000b5;
+  background-color: #000000b5;
   top: 75%;
 }
 

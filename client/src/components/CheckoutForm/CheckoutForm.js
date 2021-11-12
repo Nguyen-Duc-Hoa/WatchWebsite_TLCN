@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Form, Input, Button, Space } from "antd";
 import "./CheckoutForm.scss";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import * as actionTypes from "../../store/actions/actionTypes";
 
 const formItemLayout = {
@@ -16,6 +16,7 @@ const formItemLayout = {
 
 function CheckoutForm({ name, address, phone, onSetInfoOrder, orderInfo }) {
   const [form] = Form.useForm();
+  const history = useHistory()
   useEffect(() => {
     if (orderInfo.name || orderInfo.address || orderInfo.phone) {
       form.setFieldsValue({
@@ -26,14 +27,15 @@ function CheckoutForm({ name, address, phone, onSetInfoOrder, orderInfo }) {
     } else {
       form.setFieldsValue({
         name: name !== "null" && name,
-        address: address !== "null" && address || '',
-        phone: phone !== "null" && phone || '',
+        address: (address !== "null" && address) || "",
+        phone: (phone !== "null" && phone) || "",
       });
     }
   }, []);
 
   const onFinish = (values) => {
     onSetInfoOrder(values);
+    history.push('/checkout/payment')
   };
 
   return (
