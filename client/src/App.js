@@ -82,7 +82,7 @@ function App({ onCheckAuthState, onFetchAllBrands }) {
               layout={UserLayout}
             />
             <PublicRoute
-              path="/orderDetail/:id"
+              path="/orders/:id"
               component={OrderDetail}
               layout={UserLayout}
             />

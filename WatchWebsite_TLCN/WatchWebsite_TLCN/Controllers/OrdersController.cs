@@ -170,13 +170,14 @@ namespace WatchWebsite_TLCN.Controllers
 
         // Lich su mua hang tren trang user
         // Get: api/orders/history?currentPage=1&userid=1
+        [Authorize]
         [HttpGet]
         [Route("History")]
         public async Task<IActionResult> GetHistory(int currentPage, int userid)
         {
 
             var result = await _unitOfWork.Orders.GetAllWithPagination(
-                expression: p=>p.UserId == userid && p.DeliveryStatus == "Complete",
+                expression: p=>p.UserId == userid,
                 orderBy: x => x.OrderBy(a => a.OrderDate),
                 pagination: new Pagination { CurrentPage = currentPage }
                 );
@@ -194,6 +195,7 @@ namespace WatchWebsite_TLCN.Controllers
 
         // xem detail don hang tren trang user
         // get: api/orders/getorderdetail?orderid=1
+        [Authorize]
         [HttpGet]
         [Route("GetOrderDetail")]
         public async Task<IActionResult> GetOrderDetail(int orderid, int userid)
@@ -218,6 +220,7 @@ namespace WatchWebsite_TLCN.Controllers
             
         }
 
+        [Authorize]
         [HttpGet]
         [Route("AdminGetOrderDetail")]
         public async Task<IActionResult> GetOrderDetail(int orderid)

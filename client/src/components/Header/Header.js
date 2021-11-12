@@ -39,11 +39,14 @@ function Header({ onOpenCart, onOpenOverlay, isAuth, onLogout, onSetSearch, numb
           <span>
             <FaRegUser />
           </span>
-          <div className="dropdown-account" style={{ bottom: "-90%" }}>
+          <div className="dropdown-account" style={{ bottom: isAuth ? "-140%" : "-90%" }}>
             {isAuth ? (
               <>
                 <div>
                   <Link to="/profile">Profile</Link>
+                </div>
+                <div>
+                  <Link to="/orderHistory">Orders</Link>
                 </div>
                 <div onClick={onLogout}>Logout</div>
               </>

@@ -8,6 +8,13 @@ import { connect } from "react-redux";
 
 const columns = [
   {
+    title: "Id",
+    dataIndex: "productId",
+    key: "productId",
+    sorter: (a, b) => a.productId > b.productId,
+    sortDirections: ["descend"],
+  },
+  {
     title: "Product Name",
     dataIndex: "productName",
     key: "productName",
@@ -27,7 +34,7 @@ const columns = [
     key: "price",
     sorter: (a, b) => a.price > b.price,
     sortDirections: ["descend"],
-    render: (price) => <div>${price}</div>,
+    render: (price, record) => <div>${price * record.Count}</div>,
   },
 ];
 
@@ -79,10 +86,6 @@ function OrderDetail({ token }) {
       .catch((err) => console.log(err));
   };
 
-  const total =
-    tableDataSrc.length !== 0 &&
-    tableDataSrc.reduce((prev, curr) => prev + curr.price * curr.count, 0);
-
   const fetchOrderDetail = () => {
     fetch(
       `${process.env.REACT_APP_HOST_DOMAIN}/api/orders/AdminGetOrderDetail?orderid=${id}`,
@@ -110,6 +113,7 @@ function OrderDetail({ token }) {
               productName: ele.ProductName,
               price: ele.Price,
               count: ele.Count,
+              productId: ele.ProductId,
             };
           }),
         };
@@ -170,7 +174,7 @@ function OrderDetail({ token }) {
         />
         <div className="subtotal">
           <div className="title">Sub Total</div>
-          <div>${total}</div>
+          <div>${data && data.total}</div>
         </div>
         <div className="shippingCost">
           <div className="title">Shipping</div>
@@ -178,7 +182,7 @@ function OrderDetail({ token }) {
         </div>
         <div className="total">
           <div className="title">Total</div>
-          <div className="price">${total}</div>
+          <div className="price">${data && data.total}</div>
         </div>
         <Button type="primary" onClick={updateOrder}>
           Update

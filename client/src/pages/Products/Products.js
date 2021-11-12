@@ -24,7 +24,7 @@ function Products({ filterInfo, onAddToCart, token, isAuth, userId }) {
 
   useEffect(() => {
     filterReq(filterInfo, currentPage);
-  }, [currentPage, filterInfo.search]);
+  }, [currentPage, filterInfo]);
 
   const filterHandler = (values) => {
     filterReq(values);

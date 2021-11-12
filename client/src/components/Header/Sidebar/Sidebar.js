@@ -8,7 +8,6 @@ import * as actionTypes from "../../../store/actions/actionTypes";
 import * as actions from "../../../store/actions/index";
 import { Link } from "react-router-dom";
 
-
 function Sidebar({
   showSidebar,
   onCloseSidebar,
@@ -29,14 +28,17 @@ function Sidebar({
       </div>
       <ul className="sidebar__menu">
         <Link to="/">
-          <SidebarItem key={0} content="Home" submenu={[]} />
+          <SidebarItem key={0} content="Home" />
         </Link>
         <SidebarItem key={1} content="Brands" submenu={brands} />
         <Link to="/products">
-          <SidebarItem key={2} content="Mens" submenu={[]} />
+          <SidebarItem key={3} content="Products" />
         </Link>
         <Link to="/products">
-          <SidebarItem key={3} content="Ladies" submenu={[]} />
+          <SidebarItem key={2} content="Mens" />
+        </Link>
+        <Link to="/products">
+          <SidebarItem key={3} content="Ladies" />
         </Link>
       </ul>
       <SidebarAccount isAuth={isAuth} onLogout={onLogout} />

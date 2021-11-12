@@ -10,6 +10,7 @@ import "swiper/components/pagination/pagination.min.css";
 
 // import Swiper core and required modules
 import SwiperCore, { Pagination } from "swiper/core";
+import { Link } from "react-router-dom";
 
 // install Swiper modules
 SwiperCore.use([Pagination]);
@@ -47,17 +48,16 @@ function BestSeller() {
         }}
       >
         {data.length !== 0 &&
-          data.map((ele, index) => (
+          data.map((ele) => (
             <SwiperSlide key={ele.Id}>
-              <div className="card">
-                <img
-                  src={`data:image/png;base64,${ele.Image}`}
-                  alt=""
-                />
-                <div>{ele.Name}</div>
-                <p>{ele.Brand}</p>
-                <p>${ele.Price}</p>
-              </div>
+              <Link to={`/products/${ele.Id}`}>
+                <div className="card">
+                  <img src={`data:image/png;base64,${ele.Image}`} alt="" />
+                  <div>{ele.Name}</div>
+                  <p>{ele.Brand}</p>
+                  <p>${ele.Price}</p>
+                </div>
+              </Link>
             </SwiperSlide>
           ))}
       </Swiper>

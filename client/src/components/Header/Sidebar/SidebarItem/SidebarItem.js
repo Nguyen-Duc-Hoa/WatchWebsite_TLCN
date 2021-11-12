@@ -21,14 +21,14 @@ function SidebarItem({ content, submenu, onSetBrands, onSetGender }) {
     <li className="sidebar-item" onClick={clickHandler}>
       <div className="item__content">
         {content}
-        {submenu.length !== 0 && (
+        {submenu && submenu.length !== 0 && (
           <span className="item__arrow">
             <IoIosArrowDown />
           </span>
         )}
       </div>
       <ul className={`item__submenu ${showSubmenu && "active"}`}>
-        {submenu.length !== 0 &&
+        {submenu && submenu.length !== 0 &&
           submenu.map((ele) => (
             <li>
               <Link
