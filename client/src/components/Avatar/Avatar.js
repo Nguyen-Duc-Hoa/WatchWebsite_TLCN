@@ -12,12 +12,21 @@ const MenuAvatar = ({ onLogout }) => {
   return (
     <Menu>
       <Link to="/admin/Profile">
-        <Menu.Item icon={<AiOutlineProfile />}>Profile</Menu.Item>
+        <Menu.Item key={1} icon={<AiOutlineProfile />}>
+          Profile
+        </Menu.Item>
       </Link>
       <Link to="/admin/ChangePassword">
-        <Menu.Item icon={<AiOutlineKey />}>Password</Menu.Item>
+        <Menu.Item key={2} icon={<AiOutlineKey />}>
+          Password
+        </Menu.Item>
       </Link>
-      <Menu.Item danger icon={<RiLogoutCircleRLine />} onClick={onLogout}>
+      <Menu.Item
+        key={3}
+        danger
+        icon={<RiLogoutCircleRLine />}
+        onClick={onLogout}
+      >
         Log out
       </Menu.Item>
     </Menu>

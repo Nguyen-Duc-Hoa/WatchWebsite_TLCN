@@ -20,7 +20,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             _statis = statis;
         }
-        [HttpGet]
+        [HttpPost]
         [Route("Chart1")]
         public IEnumerable<Chart1DTO> GetChart1([FromBody]Statis statis)
         {

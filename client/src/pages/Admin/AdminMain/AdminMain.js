@@ -22,6 +22,8 @@ import Employee from "../Employee/Employee";
 import CreateAccount from "../CreateAccount/CreateAccount";
 import ChangePassword from "../ChangePassword/ChangePassword";
 import Statistic from "../Statistic/Statistic";
+import ProductsStatistic from "../ProductsStatistic/ProductsStatistic";
+import TurnoverStatistic from '../TurnoverStatistic/TurnoverStatistic'
 
 function AdminMain() {
   return (
@@ -161,6 +163,18 @@ function AdminMain() {
           path="/admin/Statistic"
           onlyAdmin
           // layout={AdminLayout}
+        />
+        <PrivateRoute
+          exact
+          component={ProductsStatistic}
+          path="/admin/ProductsStatistic"
+          onlyAdmin
+        />
+        <PrivateRoute
+          exact
+          component={TurnoverStatistic}
+          path="/admin/TurnoverStatistic"
+          onlyAdmin
         />
       </Switch>
     </AdminLayout>

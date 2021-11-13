@@ -24,8 +24,8 @@ namespace WatchWebsite_TLCN.Repository
         {
 
             var list = (from order in _context.Orders
-                        where order.OrderDate >= statis.date[0] && order.OrderDate <= statis.date[1] && order.DeliveryStatus == "Complete"              
-                        group order by order.OrderDate into g
+                        where order.OrderDate >= statis.date[0].Date && order.OrderDate <= statis.date[1].Date           
+                        group order by order.OrderDate.Date into g
                         orderby g.Key ascending
                         select new Chart1DTO
                         {
@@ -43,7 +43,7 @@ namespace WatchWebsite_TLCN.Repository
 
 
             var list = (from order in _context.Orders
-                        where order.OrderDate >= date0 && order.OrderDate <= date1 && order.DeliveryStatus == "Complete"
+                        where order.OrderDate >= date0 && order.OrderDate <= date1
                         orderby order.OrderDate ascending
                         group order by new { month = order.OrderDate.Month, year = order.OrderDate.Year } into g
                         select new Chart1DTO
@@ -58,7 +58,7 @@ namespace WatchWebsite_TLCN.Repository
         public IEnumerable<Chart1DTO> Statis1ByYear(Statis statis)
         {
             var list = (from order in _context.Orders
-                        where order.OrderDate.Year >= statis.date[0].Year && order.OrderDate.Year <= statis.date[1].Year && order.DeliveryStatus == "Complete"
+                        where order.OrderDate.Year >= statis.date[0].Year && order.OrderDate.Year <= statis.date[1].Year
                         group order by order.OrderDate.Year into g
                         orderby g.Key ascending
                         select new Chart1DTO
@@ -77,7 +77,7 @@ namespace WatchWebsite_TLCN.Repository
             var list = (from x in (from o in _context.Orders
                                    join d in _context.OrderDetails on o.OrderId equals d.OrderId
                                    join p in _context.Products on d.ProductId equals p.Id
-                                   where o.OrderDate.Month == statis.date[0].Month && o.OrderDate.Year == statis.date[0].Year && o.DeliveryStatus == "Complete"
+                                   where o.OrderDate.Month == statis.date[0].Month && o.OrderDate.Year == statis.date[0].Year
                                    select new
                                    {
                                        name = p.Name,
@@ -136,7 +136,7 @@ namespace WatchWebsite_TLCN.Repository
             var list = (from x in (from o in _context.Orders
                                    join d in _context.OrderDetails on o.OrderId equals d.OrderId
                                    join p in _context.Products on d.ProductId equals p.Id
-                                   where o.OrderDate.Year == statis.date[0].Year && o.DeliveryStatus == "Complete"
+                                   where o.OrderDate.Year == statis.date[0].Year 
                                    select new
                                    {
                                        name = p.Name,
