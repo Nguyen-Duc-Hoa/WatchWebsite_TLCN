@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
-using WatchWebsite_TLCN.Utilities;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -28,6 +29,23 @@ namespace WatchWebsite_TLCN.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
+        [Route("GetCommentsWithPagination")]
+        public async Task<IActionResult> GetCommentsWithPagination(int currentPage)
+        {
+            var result = await _unitOfWork.Comments.GetAllWithPagination(
+                expression: null,
+                includes: new List<string> { "User", "Product"},
+                orderBy: x => x.OrderBy(a => a.ProductId),
+                pagination: new Pagination { CurrentPage = currentPage });
+            return Ok(new
+            {
+                Comments = result.Item1,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
+        }
+
         // GET: api/Comments
         [HttpGet]
         public async Task<IEnumerable<CommentDTO>> GetComments(string productId)
@@ -38,6 +56,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // POST: api/Comments/AddComment
+        [Authorize]
         [Route("AddComment")]
         [HttpPost]
         public async Task<IActionResult> AddComment(Comment comment)
@@ -102,93 +121,50 @@ namespace WatchWebsite_TLCN.Controllers
 
         }
 
-        
-        // DELETE: api/comments/1
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Comment>> DeleteComment(int id)
+        [Authorize(Roles = "Admin,Employee")]
+        [Route("Delete")]
+        [HttpDelete]
+        public async Task<ActionResult<Comment>> DeleteComment(List<int> keys)
         {
-            var comment = await _unitOfWork.Comments.Get(b => b.Id == id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                if(comment.ReplyFrom == null)
-                {
-                    // Comment cha
-                    //Xoa tat ca cac comment con
-                    List<Comment> repComment = await _comments.GetAllRepComments(id);
-
-
-                    if (repComment != null)
-                    {
-                        foreach(Comment item in repComment)
-                        {
-                            try
-                            {
-                                await _unitOfWork.Comments.Delete(item.Id);
-                                await _unitOfWork.Save();
-                            }
-                            catch
-                            {
-                                return BadRequest("Cant not delete");
-                            }
-                            
-                        }
-                    }
-                }
-            }
-
-            await _unitOfWork.Comments.Delete(id);
-            await _unitOfWork.Save();
-
-            return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });
-        }
-
-
-        /* PUt: api/comments?id=1&userid=8
-           {
-                "Id": 1,
-               "UserId": 11,
-               "ProductId": "aaa111",
-               "Content": "Update content",
-               "Date":"1-11-2000",
-               "TypeComment": "type",
-               "ReplyFrom": null
-           }
-        */
-        [HttpPut]
-        public async Task<IActionResult> PutComment(int id, int userid, Comment comment)
-        {
-            if (id != comment.Id || userid != comment.UserId)
-            {
-                return BadRequest();
-            }
-
-            comment.Date = DateTime.Now;
-            comment.TypeComment = "Edited";
-            _unitOfWork.Comments.Update(comment);
-
             try
             {
+                foreach (var id in keys)
+                {
+                    var comment = await _unitOfWork.Comments.Get(b => b.Id == id);
+                    if (comment == null)
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        if (comment.ReplyFrom == null)
+                        {
+                            // Comment cha
+                            //Xoa tat ca cac comment con
+                            List<Comment> repComment = await _comments.GetAllRepComments(id);
+
+
+                            if (repComment != null)
+                            {
+                                foreach (Comment item in repComment)
+                                {
+                                    await _unitOfWork.Comments.Delete(item.Id);
+                                    await _unitOfWork.Save();
+                                }
+                            }
+                        }
+                    }
+                    await _unitOfWork.Comments.Delete(id);
+                }
                 await _unitOfWork.Save();
+
+                return Ok();
             }
-            catch (DbUpdateConcurrencyException)
+            catch
             {
-                if (!(await CommentExists(id)))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500);
             }
-
-            return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });
         }
-
 
         private Task<bool> CommentExists(int id)
         {

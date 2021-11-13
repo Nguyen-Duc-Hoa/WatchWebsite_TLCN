@@ -7,26 +7,34 @@
         flex-direction: column;
         position: relative;
         overflow: hidden;
+        &:hover {
+            img {
+                transform: scale(1.15);
+            }
+        }
         img {
             width: 100%;
+            transition: .3s transform;
             &:hover + button {
                 top: 75%;
             }
         }
         button {
-            width: 80%;
+            width: 60%;
             padding: 6px 0;
-            background: white;
+            background: #ffffffc9;
             border-radius: 10px;
             font-size: 16px;
             font-weight: 500;
             transition: all .3s;
             position: absolute;
+            border: 1px solid #ccc;
             top: 100%;
             cursor: pointer;
             &:hover {
                 color: white;
-                background-color: black;
+                border: 1px solid #000000b5;
+                background-color: #000000b5;
                 top: 75%;
             }
         }

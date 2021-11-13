@@ -12,7 +12,7 @@ function Breadcrumbing({ route }) {
         <Breadcrumb separator=">" style={style}>
             {
                 route.map((ele, index) => (
-                    <Breadcrumb.Item href={ele.link}>{ele.name}</Breadcrumb.Item>
+                    <Breadcrumb.Item key={index} href={ele.link}>{ele.name}</Breadcrumb.Item>
                 ))
             }
         </Breadcrumb>

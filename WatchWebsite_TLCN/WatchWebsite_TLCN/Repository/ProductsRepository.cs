@@ -35,13 +35,7 @@ namespace WatchWebsite_TLCN.Repository
                                       })
                                       on p.Id equals c.ProductId
                            orderby c.Count descending
-                           select new Product1DTO{ 
-                               Id = p.Id,
-                               Name = p.Name, 
-                               Brand = b.Name,
-                               Image = Convert.ToBase64String(p.Image),
-                               Price = p.Price
-                           }).Take(10).ToList();
+                           select p).Include(p => p.Brand).Take(10).ToList();
 
             return product;
         }

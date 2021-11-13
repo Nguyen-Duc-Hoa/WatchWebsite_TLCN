@@ -11,6 +11,7 @@
     display: flex;
     flex-direction: column;
     min-width: 360px;
+    overflow: hidden;
     width: 30%;
     &.active {
         transform: translateX(0);

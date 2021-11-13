@@ -13,6 +13,7 @@ using WatchWebsite_TLCN.Models;
 using WatchWebsite_TLCN.DTO;
 using AutoMapper;
 using WatchWebsite_TLCN.Intefaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -38,63 +39,24 @@ namespace WatchWebsite_TLCN.Controllers
             return await _unitOfWork.Orders.GetAll();
         }
 
-        // GET: api/Orders/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Entities.Order>> GetOrder(int id)
+        // GET: api/Orders/GetOrdersWithPagination
+        [Route("GetOrdersWithPagination")]
+        [HttpGet]
+        [Authorize(Roles = "Admin,Employee")]
+        public async Task<ActionResult<Entities.Order>> GetOrder(int currentPage)
         {
-            var order = await _unitOfWork.Orders.Get(o => o.OrderId == id);
-
-            if (order == null)
+            var result = await _unitOfWork.Orders.GetAllWithPagination(
+                expression: null,
+                orderBy: x => x.OrderBy(a => a.OrderId),
+                pagination: new Pagination { CurrentPage = currentPage }
+                );
+            return Ok(new
             {
-                return NotFound();
-            }
-
-            return order;
+                Orders = result.Item1,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
         }
-
-        // PUT: api/Orders/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(int id, Entities.Order order)
-        {
-            if (id != order.OrderId)
-            {
-                return BadRequest();
-            }
-
-            _unitOfWork.Orders.Update(order);
-
-            try
-            {
-                await _unitOfWork.Save();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!(await OrderExists(id)))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Orders
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        //[HttpPost]
-        //public async Task<ActionResult<Entities.Order>> PostOrder(Entities.Order order)
-        //{
-        //    await _unitOfWork.Orders.Insert(order);
-        //    await _unitOfWork.Save();
-
-        //    return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
-        //}
 
         // DELETE: api/Orders/5
         [HttpDelete("{id}")]
@@ -119,6 +81,7 @@ namespace WatchWebsite_TLCN.Controllers
 
         // POST: /api/Orders/CreateOrder
         [HttpPost]
+        [Authorize]
         [Route("CreateOrder")]
         public async Task<IActionResult> PostOrder(OrderDTO orderDTO)
         {
@@ -165,6 +128,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // POST: /api/Orders/Payment
+        [Authorize]
         [HttpPost]
         [Route("Payment")]
         public async Task<IActionResult> Create(PaymentIntentCreateRequest request)
@@ -206,16 +170,16 @@ namespace WatchWebsite_TLCN.Controllers
             return order;
         }
 
-
         // Lich su mua hang tren trang user
         // Get: api/orders/history?currentPage=1&userid=1
+        [Authorize]
         [HttpGet]
         [Route("History")]
         public async Task<IActionResult> GetHistory(int currentPage, int userid)
         {
 
             var result = await _unitOfWork.Orders.GetAllWithPagination(
-                expression: p=>p.UserId == userid && p.DeliveryStatus == "Complete",
+                expression: p=>p.UserId == userid,
                 orderBy: x => x.OrderBy(a => a.OrderDate),
                 pagination: new Pagination { CurrentPage = currentPage }
                 );
@@ -232,7 +196,8 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // xem detail don hang tren trang user
-        // get: api/orders/getorderdetail?orderid=1&userid=1
+        // get: api/orders/getorderdetail?orderid=1
+        [Authorize]
         [HttpGet]
         [Route("GetOrderDetail")]
         public async Task<IActionResult> GetOrderDetail(int orderid, int userid)
@@ -250,9 +215,7 @@ namespace WatchWebsite_TLCN.Controllers
                 { 
                     OrderId = order.OrderId,
                     Address = order.Address,
-                    Phone = order.Phone,
-                    Email = user.Email,
-                    Products = orderDetails
+                    Phone = order.Phone,                
                 });
             }
 
@@ -260,14 +223,37 @@ namespace WatchWebsite_TLCN.Controllers
             
         }
 
+        [Authorize]
+        [HttpGet]
+        [Route("AdminGetOrderDetail")]
+        public async Task<IActionResult> GetOrderDetail(int orderid)
+        {
+            // Thong tin cua order
+            var order = await _unitOfWork.Orders.Get(expression: x => x.OrderId == orderid, includes: new List<string> {"OrderDetails"});
+
+            if (order != null)
+            {
+                return Ok(order);
+            }
+
+            return NotFound();
+        }
 
         //PUT: api/orders/UpdateStatus?orderid=1&status=Confirmed
         [HttpPut]
+        [Authorize(Roles = "Admin,Employee")]
         [Route("UpdateStatus")]
-        public Entities.Order UpdateStatus(int orderid, string status)
+        public async Task<IActionResult> UpdateStatus(OrderUpdateState order)
         {
-            var order = _userOrder.UpdateStatus(orderid, status);
-            return order;
+            var dbOrder = await _unitOfWork.Orders.Get(o => o.OrderId == order.OrderId);
+            if(dbOrder != null)
+            {
+                dbOrder.DeliveryStatus = order.DeliveryStatus;
+                _unitOfWork.Orders.Update(dbOrder);
+                await _unitOfWork.Save();
+                return Ok();
+            }
+            return NotFound();
         }
 
     }

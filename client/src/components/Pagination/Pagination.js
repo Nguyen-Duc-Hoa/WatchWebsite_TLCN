@@ -3,7 +3,7 @@ import { Pagination } from 'antd'
 import './Pagination.scss'
 
 function Paging({ currentPage, totalPage, setCurrentPage, noPadding }) {
-    const onShowSizeChange = (current, pageSize) => {
+    const onShowSizeChange = (current) => {
         setCurrentPage(current)
     }
 

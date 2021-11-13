@@ -1,91 +1,112 @@
-import React from 'react'
-import { Form, Input, Button, Space, Row, Col } from 'antd';
-import './CheckoutForm.scss'
+import React, { useEffect } from "react";
+import { Form, Input, Button, Space } from "antd";
+import "./CheckoutForm.scss";
+import { connect } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
+import * as actionTypes from "../../store/actions/actionTypes";
 
 const formItemLayout = {
-    labelCol: {
-        span: 0,
-    },
-    wrapperCol: {
-        span: 24,
-    },
+  labelCol: {
+    span: 0,
+  },
+  wrapperCol: {
+    span: 24,
+  },
 };
 
-function CheckoutForm() {
-    return (
-        <div className='form-order'>
-            <Form
-                {...formItemLayout}
-                size='large'
-            >
-                <div className="heading">Contact information</div>
-                <Form.Item
-                    name='email'
-                    rules={[{ required: true, message: 'Email is required', type: 'email' }]}
-                >
-                    <Input placeholder='Email here' defaultValue={'john@abc.com'} />
-                </Form.Item>
+function CheckoutForm({ name, address, phone, onSetInfoOrder, orderInfo }) {
+  const [form] = Form.useForm();
+  const history = useHistory()
+  useEffect(() => {
+    if (orderInfo.name || orderInfo.address || orderInfo.phone) {
+      form.setFieldsValue({
+        name: orderInfo.name,
+        address: orderInfo.address,
+        phone: orderInfo.phone,
+      });
+    } else {
+      form.setFieldsValue({
+        name: name !== "null" && name,
+        address: (address !== "null" && address) || "",
+        phone: (phone !== "null" && phone) || "",
+      });
+    }
+  }, []);
 
-                <div className="heading">Shipping address</div>
+  const onFinish = (values) => {
+    onSetInfoOrder(values);
+    history.push('/checkout/payment')
+  };
 
-                <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                    <Col span={12}>
-                        <Form.Item
-                            name='firstName'
-                            rules={[{ required: true, message: 'First name is required!' }]}
-                        >
-                            <Input placeholder='First name' />
-                        </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                        <Form.Item
-                            name='lastName'
-                            rules={[{ required: true, message: 'Last name is required!' }]}
-                        >
-                            <Input placeholder='Last name' />
-                        </Form.Item>
-                    </Col>
-                </Row>
+  return (
+    <div className="form-order">
+      <Form {...formItemLayout} size="large" form={form} onFinish={onFinish}>
+        <div className="heading">Shipping address</div>
 
-                <Form.Item
-                    name='address'
-                    rules={[{ required: true, message: 'Address is required!' }]}
-                >
-                    <Input placeholder='Address' />
-                </Form.Item>
+        <Form.Item
+          name="name"
+          rules={[{ required: true, message: "Full name is required!" }]}
+        >
+          <Input placeholder="Full name" />
+        </Form.Item>
 
-                <Form.Item
-                    name='phone'
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Phone is required!'
-                        },
-                        {
-                            validator: (_, value) => {
-                                const regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
-                                return regex.test(value) ? Promise.resolve() : Promise.reject(new Error("Phone Number is not valid!"))
-                            }
-                        }
-                    ]}
-                >
-                    <Input placeholder='Phone' />
-                </Form.Item>
+        <Form.Item
+          name="address"
+          rules={[{ required: true, message: "Address is required!" }]}
+        >
+          <Input placeholder="Address" />
+        </Form.Item>
 
-                <Form.Item>
-                    <Space>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                        >
-                            Continue Shipping
-                        </Button>
-                        <Button>Return</Button>
-                    </Space>
-                </Form.Item>
-            </Form>
-        </div>
-    )
+        <Form.Item
+          name="phone"
+          rules={[
+            {
+              required: true,
+              message: "Phone is required!",
+            },
+            {
+              validator: (_, value) => {
+                const regex =
+                  /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+                return regex.test(value)
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Phone Number is not valid!"));
+              },
+            },
+          ]}
+        >
+          <Input placeholder="Phone" />
+        </Form.Item>
+
+        <Form.Item>
+          <Space>
+            <Button type="primary" htmlType="submit">
+              Continue Shipping
+            </Button>
+            <Link to="/products">
+              <Button>Return</Button>
+            </Link>
+          </Space>
+        </Form.Item>
+      </Form>
+    </div>
+  );
 }
 
-export default CheckoutForm
+const mapStateToProps = (state) => {
+  return {
+    name: state.auth.name,
+    address: state.auth.address,
+    phone: state.auth.phone,
+    orderInfo: state.order,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSetInfoOrder: (orderInfo) =>
+      dispatch({ type: actionTypes.ORDER_SET_INFO, payload: orderInfo }),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CheckoutForm);

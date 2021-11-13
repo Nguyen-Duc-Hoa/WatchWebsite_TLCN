@@ -10,12 +10,8 @@ namespace WatchWebsite_TLCN
 {
     public interface IJwtAuthenticationManager
     {
+        AuthenticationResponse Authenticate(int userid, string username, string password, List<string> role);
 
-        AuthenticationResponse Authenticate(int userid, string username, string password, List<int> role);
-
-        //IDictionary<string, string> UsersRefreshTokens { get; set; }
-
-        //AuthenticationResponse Authenticate(string username, Claim[] claims);
-
+        IDictionary<string, string> UsersRefreshTokens { get; set; }
     }
 }

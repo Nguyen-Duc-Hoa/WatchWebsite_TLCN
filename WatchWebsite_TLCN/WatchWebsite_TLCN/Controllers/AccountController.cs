@@ -49,41 +49,26 @@ namespace WatchWebsite_TLCN.Controllers
          */
         public async Task<IActionResult> Register([FromBody] Register model)
         {
-            string rolename = Constant.customerRole;
-
-            //Kiem tra confirm password
-            if (model.Password == model.ConfirmPass)
+            var user = new User { Username = model.Username, Password = model.Password, Phone = model.Phone, Email = model.Email, State = true };
+            try
             {
-                var user = new User { Username = model.Username, Password = model.Password, Phone = model.Phone, Email = model.Email, State = true };
-                try
+                _context.Users.Add(user);
+                var result = await _context.SaveChangesAsync();
+
+
+                if (result.Equals(1))
                 {
-                    _context.Users.Add(user);
-                    var result = await _context.SaveChangesAsync();
-
-                    if (result.Equals(1))
-                    {
-
-                        //them User_Role
-                        if(AddUser_Role(rolename, model.Username))
-                            return Ok();
-                        return BadRequest("Role user have trouble");
-                    }
-                    else
-                    {
-                        return BadRequest("Dang ki khong thanh cong");
-                    }
+                    return Ok();
                 }
-                catch
+                else
                 {
-                    return BadRequest();
+                    return BadRequest("Dang ki khong thanh cong");
                 }
-
             }
-
-            return BadRequest("Xac nhan mat khau sai!");
-
-
-
+            catch
+            {
+                return BadRequest();
+            }
         }
 
 
@@ -134,7 +119,9 @@ namespace WatchWebsite_TLCN.Controllers
 
             }
 
-            var token = _jwtAuthenticationManager.Authenticate(userid, username, password, listRoleId);
+            //var token = _jwtAuthenticationManager.Authenticate(username, password);
+
+            var token = _jwtAuthenticationManager.Authenticate(userid, username, password, listRole);
 
             if (token == null)
             {
@@ -224,59 +211,8 @@ namespace WatchWebsite_TLCN.Controllers
             }
             else
             {
-                return NotFound();
+                return StatusCode(500);
             }
-
-        }
-
-
-        public bool AddUser_Role(string rolename, string username)
-        {
-
-            User_Role user_Role = new User_Role();
-            var user = _context.Users.Where(x => x.Username == username).FirstOrDefault();
-            if(user == null)
-            {
-                return false;
-            }
-
-            user_Role.UserId = user.Id;
-
-            int roleid = 0;
-            if (rolename == Constant.customerRole || rolename == Constant.employeeRole || rolename == Constant.adminRole)
-            {
-                roleid = GetRoleId(rolename);
-            }
-            
-            // ton tai 
-            if (roleid!=0)
-            {
-                user_Role.RoleId = roleid;
-
-                try
-                {
-                    //Save User_Role
-                    _context.User_Roles.Add(user_Role);
-                    _context.SaveChanges();
-                        
-                    return true;
-                }
-                catch
-                {
-                }
-                    
-            }
-            
-            return false;
-        }
-
-        //get role id 
-        public int GetRoleId(string rolename)
-        {
-            var role = _context.Roles.Where(x => x.RoleName == rolename).FirstOrDefault();
-            if (role != null)
-                return role.RoleId;
-            return 0;
         }
     }
 }

@@ -34,6 +34,9 @@
         }
         .product-list {
             width: 100%;
+            .ant-empty-image {
+                height: 180px;
+            }
         }
     }
 }

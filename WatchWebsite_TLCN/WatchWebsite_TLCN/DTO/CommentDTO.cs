@@ -13,7 +13,6 @@ namespace WatchWebsite_TLCN.DTO
         public string ProductId { get; set; }
         public string Content { get; set; }
         public DateTime Date { get; set; }
-        public string TypeComment { get; set; }
         public int? ReplyFrom { get; set; }
         public virtual ICollection<CommentDTO> Replies { get; set; }
         public UserCommentDTO User { get; set; }
@@ -21,7 +20,7 @@ namespace WatchWebsite_TLCN.DTO
     public class UserCommentDTO
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string UserName { get; set; }
         public string Avatar { get; set; }
     }
 }

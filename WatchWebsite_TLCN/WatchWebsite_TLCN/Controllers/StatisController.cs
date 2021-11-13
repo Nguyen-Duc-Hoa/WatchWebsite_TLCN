@@ -20,15 +20,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             _statis = statis;
         }
-
-        //GET: api/statis/chart1
-        /*JSON
-         * {
-            "date":["2020-1-1","2021-12-1"],
-            "typeDate":"day"
-        }
-         */
-        [HttpGet]
+        [HttpPost]
         [Route("Chart1")]
         public IEnumerable<Chart1DTO> GetChart1([FromBody]Statis statis)
         {

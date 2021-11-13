@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/Sizes
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetSizes(int currentPage)
         {
@@ -46,6 +48,16 @@ namespace WatchWebsite_TLCN.Controllers
             });
         }
 
+        // GET: api/Sizes/GetAll
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<IActionResult> GetSizes()
+        {
+            var result = await _unitOfWork.Sizes.GetAll();
+            var listSizesDTO = _mapper.Map<List<SizeDTO>>(result);
+            return Ok(listSizesDTO);
+        }
+
         // GET: api/Sizes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Size>> GetSize(int id)
@@ -63,24 +75,20 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/Sizes/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSize(int id, Size size)
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        public async Task<IActionResult> PutSize(Size size)
         {
-            if (id != size.SizeId)
-            {
-                return BadRequest();
-            }
-
             _unitOfWork.Sizes.Update(size);
 
             try
             {
                 await _unitOfWork.Save();
-                return RedirectToAction(nameof(GetSizes), new { currentPage = 1 });
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await SizeExists(id))
+                if (!await SizeExists(size.SizeId))
                 {
                     return NotFound();
                 }
@@ -89,13 +97,12 @@ namespace WatchWebsite_TLCN.Controllers
                     throw;
                 }
             }
-
-            //return NoContent();
         }
 
         // POST: api/Sizes
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Size>> PostSize(Size size)
         {
@@ -103,14 +110,12 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 await _unitOfWork.Sizes.Insert(size);
                 await _unitOfWork.Save();
-
                 return Ok();
             }
             catch
-            { }
-
-            return BadRequest();
-            //return CreatedAtAction("GetSize", new { id = size.SizeId }, size);
+            {
+                return StatusCode(500);
+            }
         }
 
         // DELETE: api/Sizes/5
@@ -130,31 +135,23 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         [Route("Delete")]
         public async Task<ActionResult<Brand>> DeleteSize(List<int> id)
         {
-            foreach (int item in id)
+            try
             {
-                try
+                foreach (int item in id)
                 {
-                    var brand = await _unitOfWork.Sizes.Get(b => b.SizeId == item);
-                    if (brand == null)
-                    {
-                        return BadRequest("Something was wrong!");
-                    }
-
-                    await _unitOfWork.Sizes.Delete(item);
-                    await _unitOfWork.Save();
+                    await _unitOfWork.Sizes.Delete<int>(item);
                 }
-                catch (Exception e)
-                {
-                    return BadRequest(e.ToString());
-                }
-
+                await _unitOfWork.Save();
+                return Ok();
             }
-
-
-            return RedirectToAction(nameof(GetSizes), new { currentPage = 1 });
+            catch
+            {
+                return BadRequest("Something was wrong");
+            }
         }
 
 

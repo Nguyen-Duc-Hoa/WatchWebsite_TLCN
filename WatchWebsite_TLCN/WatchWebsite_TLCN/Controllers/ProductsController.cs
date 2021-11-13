@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/Products
+        [Route("GetAll")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
@@ -39,10 +41,26 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/Products/5
-        [HttpGet("{id}")]
+        [HttpGet]
         public async Task<ActionResult<Product>> GetProduct(string id)
         {
             var product = await _unitOfWork.Products.Get(p => p.Id == id);
+            
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return product;
+        }
+
+        [HttpGet]
+        [Route("ProductDetail")]
+        public async Task<ActionResult<Product>> GetProductDetail(string id)
+        {
+            var product = await _unitOfWork.Products.Get(
+                expression: p => p.Id == id, 
+                includes: new List<string> { "Brand", "Size", "Energy", "GetWaterResistance", "Material" }) ;
 
             if (product == null)
             {
@@ -52,17 +70,11 @@ namespace WatchWebsite_TLCN.Controllers
             return product;
         }
 
-        // PUT: api/Products/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(string id, Product product)
-        {
-            if (id != product.Id)
-            {
-                return BadRequest();
-            }
 
+        //[Authorize(Roles = "Admin,Employee")]
+        [HttpPut]
+        public async Task<IActionResult> PutProduct(Product product)
+        {
             _unitOfWork.Products.Update(product);
 
             try
@@ -71,7 +83,7 @@ namespace WatchWebsite_TLCN.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!(await ProductExists(id)))
+                if (!(await ProductExists(product.Id)))
                 {
                     return NotFound();
                 }
@@ -80,13 +92,9 @@ namespace WatchWebsite_TLCN.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
+            return Ok();
         }
 
-        // POST: api/Products
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
@@ -107,23 +115,27 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return CreatedAtAction("GetProduct", new { id = product.Id }, product);
+            return Ok();
         }
 
-        // DELETE: api/Products/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Product>> DeleteProduct(string id)
+        // DELETE: api/Products/Delete/5
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<ActionResult<Product>> DeleteProduct(List<string> id)
         {
-            var product = await _unitOfWork.Products.Get(p => p.Id == id);
-            if (product == null)
+            try
             {
-                return NotFound();
+                foreach (string item in id)
+                {
+                    await _unitOfWork.Products.Delete<string>(item);
+                }
+                await _unitOfWork.Save();
+                return Ok();
             }
-
-            await _unitOfWork.Products.Delete(id);
-            await _unitOfWork.Save();
-
-            return product;
+            catch
+            {
+                return BadRequest("Something was wrong");
+            }
         }
 
         private Task<bool> ProductExists(string id)
@@ -134,17 +146,11 @@ namespace WatchWebsite_TLCN.Controllers
         //GET: api/products/PopularProduct
         [HttpGet]
         [Route("PopularProduct")]
-        public IEnumerable<Product1DTO> GetPopularProducts()
+        public IEnumerable<ProductResponseDTO> GetPopularProducts()
         {
-            return _product.GetPopularProduct().ToList();
-        }
-
-        //Get product detail
-        [HttpGet]
-        [Route("ProductDetail/{id}")]
-        public ProductDetail GetProductDetail(string id)
-        {
-            return _product.GetProductDetail(id);
+            var product = _product.GetPopularProduct().ToList();
+            var productDTO = _mapper.Map<List<ProductResponseDTO>>(product);
+            return productDTO;
         }
 
         // GET: api/Products/Search&currentPage=1&searchKey=abc
@@ -152,15 +158,17 @@ namespace WatchWebsite_TLCN.Controllers
         [Route("Search")]
         public async Task<IActionResult> SearchProducts(int currentPage, string searchKey)
         {
+            if (String.IsNullOrEmpty(searchKey)) searchKey = "";
             Expression<Func<Product, bool>> expression = null;
             expression = p => p.Name.Contains(searchKey);
 
             var result = await _unitOfWork.Products.GetAllWithPagination(
                 expression: expression,
                 orderBy: p => p.OrderBy(x => x.Name),
+                includes: new List<string> { "Brand"},
                 pagination: new Pagination { CurrentPage = currentPage });
 
-            var listProductDTO = _mapper.Map<List<ProductDTO>>(result.Item1);
+            var listProductDTO = _mapper.Map<List<ProductResponseDTO>>(result.Item1);
 
             return Ok(new
             {
@@ -175,6 +183,16 @@ namespace WatchWebsite_TLCN.Controllers
         [Route("FilterProduct")]
         public async Task<IActionResult> Filter(int currentPage, [FromBody] FilterProduct filter)
         {
+            Expression<Func<Product, bool>> expression = PredicateBuilder.True<Product>();
+
+            if (String.IsNullOrEmpty(filter.Search))
+            {
+                filter.Search = "";
+            }
+
+            // Filter search
+            expression = expression.And(p => p.Name.Contains(filter.Search));
+
             // Specify Max, Min
             double[] limit = new double[2];
             limit[0] = 0;
@@ -187,34 +205,23 @@ namespace WatchWebsite_TLCN.Controllers
                  * 90/200 (tu 90 toi 200)
                  * 200/-1 (lon hon 200)
                  */
-                limit = Array.ConvertAll(filter.Prices.Split('/'), Double.Parse);
+                limit = Array.ConvertAll(filter.Prices.Split('-'), Double.Parse);
                 if (limit[1] == -1)
                 {
                     limit[1] = int.MaxValue;
                 }
             }
 
-            Expression<Func<Product, bool>> expression = PredicateBuilder.True<Product>();
-
             // Filter price
             if (filter.Prices != null)
             {
                 expression = expression.And(p => p.Price > limit[0] && p.Price <= limit[1]);
             }
-            var result1 = await _unitOfWork.Products.GetAllWithPagination(
-                expression: expression,
-                pagination: new Pagination { CurrentPage = currentPage });
 
             // Filter gender (1: Male, 0: Female)
             if (filter.Gender != -1)
             {
                 expression = expression.And(p => p.Gender == filter.Gender);
-            }
-
-            //Fitler brands
-            foreach (var b in filter.Brands)
-            {
-                expression = expression.And(p => p.Brand.Name == b);
             }
 
             //Fitler sort by
@@ -245,7 +252,24 @@ namespace WatchWebsite_TLCN.Controllers
                 pagination: new Pagination { CurrentPage = currentPage },
                 includes: new List<String>() { "Brand" });
 
-            var listProductDTO = _mapper.Map<List<ProductDTO>>(result.Item1);
+            List<Product> productList = new List<Product>();
+
+            if(filter.Brands != null && filter.Brands.Length != 0 )
+            {
+                foreach(var item in result.Item1)
+                {
+                    if(CheckBrands(item, filter.Brands))
+                    {
+                        productList.Add(item);
+                    }
+                }
+            }
+            else
+            {
+                productList = result.Item1;
+            }
+
+            var listProductDTO = _mapper.Map<List<ProductResponseDTO>>(productList);
 
             return Ok(new
             {
@@ -253,6 +277,18 @@ namespace WatchWebsite_TLCN.Controllers
                 CurrentPage = result.Item2.CurrentPage,
                 TotalPage = result.Item2.TotalPage
             });
+        }
+
+        private bool CheckBrands(Product product, string[] filter)
+        {
+            foreach(var f in filter)
+            {
+                if(f == product.Brand.Name)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

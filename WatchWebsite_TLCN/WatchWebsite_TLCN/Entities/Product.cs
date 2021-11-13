@@ -65,5 +65,7 @@ namespace WatchWebsite_TLCN.Entities
         public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
 
+
+
     }
 }

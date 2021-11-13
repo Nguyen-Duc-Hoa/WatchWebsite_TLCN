@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.IRepository;
 using WatchWebsite_TLCN.Models;
@@ -26,16 +28,17 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/Materials
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetMaterials(int currentPage)
         {
-            var result = await _unitOfWork.Brands.GetAllWithPagination(
+            var result = await _unitOfWork.Materials.GetAllWithPagination(
                 expression: null,
-                orderBy: x => x.OrderBy(a => a.BrandId),
+                orderBy: x => x.OrderBy(a => a.MaterialId),
                 pagination: new Pagination { CurrentPage = currentPage }
                 );
 
-            var listMaterialDTO = _mapper.Map<List<Material>>(result.Item1);
+            var listMaterialDTO = _mapper.Map<List<MaterialDTO>>(result.Item1);
 
             return Ok(new
             {
@@ -43,6 +46,16 @@ namespace WatchWebsite_TLCN.Controllers
                 CurrentPage = result.Item2.CurrentPage,
                 TotalPage = result.Item2.TotalPage
             });
+        }
+
+        // GET: api/Materials/GetAll
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<IActionResult> GetMaterials()
+        {
+            var result = await _unitOfWork.Materials.GetAll();
+            var listMaeterialsDTO = _mapper.Map<List<MaterialDTO>>(result);
+            return Ok(listMaeterialsDTO);
         }
 
         // GET: api/Materials/5
@@ -62,25 +75,20 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/Materials/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMaterial(int id, Material material)
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        public async Task<IActionResult> PutMaterial(Material material)
         {
-            if (id != material.MaterialId)
-            {
-                return BadRequest();
-            }
-
             _unitOfWork.Materials.Update(material);
 
             try
             {
                 await _unitOfWork.Save();
-                
-                return RedirectToAction(nameof(GetMaterials), new { currentPage = 1 });
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await MaterialExists(id))
+                if (!await MaterialExists(material.MaterialId))
                 {
                     return NotFound();
                 }
@@ -89,13 +97,12 @@ namespace WatchWebsite_TLCN.Controllers
                     throw;
                 }
             }
-
-            //return NoContent();
         }
 
         // POST: api/Materials
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Material>> PostMaterial(Material material)
         {
@@ -103,14 +110,12 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 await _unitOfWork.Materials.Insert(material);
                 await _unitOfWork.Save();
-
                 return Ok();
             }
-            catch { }
-
-
-            return BadRequest();
-            //return CreatedAtAction("GetMaterial", new { id = material.MaterialId }, material);
+            catch
+            {
+                return StatusCode(500);
+            }
         }
 
         // DELETE: api/Materials/5
@@ -129,8 +134,8 @@ namespace WatchWebsite_TLCN.Controllers
             return material;
         }
 
-
-        [HttpDelete()]
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
         [Route("Delete")]
         // Delete nhieu 
         // DELETE: api/Materials/delete
@@ -139,28 +144,19 @@ namespace WatchWebsite_TLCN.Controllers
         */
         public async Task<ActionResult<Brand>> DeleteMaterial(List<int> id)
         {
-            foreach (int item in id)
+            try
             {
-                try
+                foreach (int item in id)
                 {
-                    var brand = await _unitOfWork.Materials.Get(b => b.MaterialId == item);
-                    if (brand == null)
-                    {
-                        return BadRequest("Something was wrong!");
-                    }
-
-                    await _unitOfWork.Materials.Delete(item);
-                    await _unitOfWork.Save();
+                    await _unitOfWork.Materials.Delete<int>(item);
                 }
-                catch (Exception e)
-                {
-                    return BadRequest(e.ToString());
-                }
-
+                await _unitOfWork.Save();
+                return Ok();
             }
-
-
-            return RedirectToAction(nameof(GetMaterials), new { currentPage = 1 });
+            catch
+            {
+                return BadRequest("Something was wrong");
+            }
         }
 
 

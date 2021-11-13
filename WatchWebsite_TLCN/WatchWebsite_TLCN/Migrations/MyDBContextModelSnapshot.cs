@@ -81,10 +81,6 @@ namespace WatchWebsite_TLCN.Migrations
                     b.Property<int?>("ReplyFrom")
                         .HasColumnType("int");
 
-                    b.Property<string>("TypeComment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 

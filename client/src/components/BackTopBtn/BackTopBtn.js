@@ -18,7 +18,7 @@ const style = {
 
 function BackTopBtn() {
     return (
-        <BackTop>
+        <BackTop style={{zIndex: 2}}>
             <div style={style}>
                 <AiOutlineArrowUp />
             </div>

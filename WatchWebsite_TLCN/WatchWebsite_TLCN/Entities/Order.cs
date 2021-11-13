@@ -38,7 +38,7 @@ namespace WatchWebsite_TLCN.Entities
         public string Phone { get; set; }
 
         //[Required]
-        public string DeliveryStatus { get; set; } = Constant.status["Waiting"];
+        public string DeliveryStatus { get; set; } = Constant.status[0];
 
         [ForeignKey("UserId")]
         public virtual User User { get; set; }

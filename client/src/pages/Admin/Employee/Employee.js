@@ -1,139 +1,146 @@
-import React, { useState, useEffect } from 'react'
-import { Table, Button } from 'antd'
-import { FaLock, FaUnlockAlt } from 'react-icons/fa'
-import Pagination from '../../../components/Pagination/Pagination'
-import { AiOutlineAppstoreAdd } from 'react-icons/ai'
-import { Link } from 'react-router-dom'
-import SearchBox from '../../../components/SearchBox/SearchBox'
+import React from "react";
+import { Table, Button, Spin } from "antd";
+import { FaLock, FaUnlockAlt } from "react-icons/fa";
+import Pagination from "../../../components/Pagination/Pagination";
+import { AiOutlineAppstoreAdd } from "react-icons/ai";
+import { Link } from "react-router-dom";
+import SearchBox from "../../../components/SearchBox/SearchBox";
+import { useFetchData } from "../../../hook/useFetchData";
+import { connect } from "react-redux";
 
-function Employee() {
-    const [data, setData] = useState([])
-    const [searchKey, setSearchKey] = useState("")
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPage, setTotalPage] = useState(1)
+function Employee({ token }) {
+  
+  const updateData = (result) => {
+    const dataArray = result.Users.map((element) => {
+      return {
+        key: element["Id"],
+        id: element["Id"],
+        name: element["Name"],
+        phone: element["Phone"],
+        address: element["Address"],
+        state: element["State"],
+      };
+    });
+    return dataArray;
+  };
 
-    const columns = [
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            sorter: (a, b) => a.name > b.name,
-            sortDirections: ['descend'],
-        },
-        {
-            title: 'Phone',
-            dataIndex: 'phone',
-            key: 'phone'
-        },
-        {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            sorter: (a, b) => a.address > b.address,
-            sortDirections: ['descend'],
-        },
-        {
-            title: 'State',
-            dataIndex: 'state',
-            key: 'state',
-            align: 'center',
-            render: (state, record) => {
-                return (
-                    <>
-                        {state ?
-                            <FaLock
-                                style={{
-                                    fontSize: 20,
-                                    cursor: 'pointer'
-                                }}
-                                onClick={() => changeStateHandler(record)}
-                            /> :
-                            <FaUnlockAlt
-                                style={{
-                                    fontSize: 20,
-                                    cursor: 'pointer'
-                                }}
-                                onClick={() => changeStateHandler(record)}
-                            />}
-                    </>
-                )
-            }
-        }
-    ]
+  const {
+    data,
+    currentPage,
+    setCurrentPage,
+    totalPage,
+    spinning,
+    updateReq,
+    setSearchKey,
+    forceUpdate,
+  } = useFetchData(
+    {
+      get: `${process.env.REACT_APP_HOST_DOMAIN}/api/User/SearchEmployee`,
+      post: `${process.env.REACT_APP_HOST_DOMAIN}/api/User/UpdateStateEmployee`,
+    },
+    null,
+    updateData,
+    token
+  );
 
-    useEffect(() => {
-        fetchEmployeeList()
-        console.log(data)
-    }, [currentPage, searchKey])
+  const changeStateHandler = (row) => {
+    updateReq("PUT", row, () => {
+      forceUpdate();
+      return data;
+    });
+  };
 
-    const updateState = res => {
-        const employeeList = []
-        res.Users.map(ele => employeeList.push({
-            key: ele.Id,
-            name: ele.Name,
-            phone: ele.Phone,
-            address: ele.Address,
-            state: ele.State
-        }))
-        setData(employeeList)
-        setCurrentPage(res.CurrentPage)
-        setTotalPage(res.TotalPage)
-    }
+  const searchHandler = (values) => {
+    setSearchKey(values.search);
+    setCurrentPage(1);
+  };
 
-    const fetchEmployeeList = () => {
-        fetch(`https://localhost:44336/api/User/SearchEmployee?currentPage=${currentPage}&searchKey=${searchKey}`, {
-            method: 'GET'
-        })
-            .then(response => response.json())
-            .then(res => updateState(res))
-            .catch(error => {
-                console.log(error)
-            })
-    }
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => a.name > b.name,
+      sortDirections: ["descend"],
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      sorter: (a, b) => a.address > b.address,
+      sortDirections: ["descend"],
+    },
+    {
+      title: "State",
+      dataIndex: "state",
+      key: "state",
+      align: "center",
+      render: (state, record) => {
+        return (
+          <>
+            {state ? (
+              <FaLock
+                style={{
+                  fontSize: 20,
+                  cursor: "pointer",
+                }}
+                onClick={() => changeStateHandler(record)}
+              />
+            ) : (
+              <FaUnlockAlt
+                style={{
+                  fontSize: 20,
+                  cursor: "pointer",
+                }}
+                onClick={() => changeStateHandler(record)}
+              />
+            )}
+          </>
+        );
+      },
+    },
+  ];
 
-    const changeStateHandler = record => {
-        fetch(`https://localhost:44336/api/User/UpdateStateEmployee?currentPage=${currentPage}&searchKey=${searchKey}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: record.key
-        })
-            .then(response => response.json())
-            .then(res => updateState(res))
-            .catch(error => {
-                console.log(error)
-            })
-    }
-
-    const searchHandler = values => {
-        setSearchKey(values.search)
-    }
-
-    return (
-        <section className='admin'>
-            <div className="heading">Employee</div>
-            <div className="buttonLayout" style={{ justifyContent: 'space-between' }}>
-                <SearchBox onSubmit={searchHandler} />
-                <Link to='/admin/CreateAccount'>
-                    <Button size='large' type='primary'><AiOutlineAppstoreAdd className='icon' /> Create new account</Button>
-                </Link>
-            </div>
-            <Table
-                columns={columns}
-                dataSource={data}
-                pagination={{ position: ['none', 'none'] }}
-                footer={() => (
-                    <Pagination
-                        setCurrentPage={setCurrentPage}
-                        currentPage={currentPage}
-                        noPadding={true}
-                        totalPage={totalPage}
-                    />
-                )}
-                bordered={true} />
-        </section>
-    )
+  return (
+    <section className="admin">
+      <div className="heading">Employee</div>
+      <div className="buttonLayout" style={{ justifyContent: "space-between" }}>
+        <SearchBox onSubmit={searchHandler} />
+        <Link to="/admin/CreateAccount">
+          <Button size="large" type="primary">
+            <AiOutlineAppstoreAdd className="icon" /> Create new account
+          </Button>
+        </Link>
+      </div>
+      <Spin spinning={spinning}>
+        <Table
+          columns={columns}
+          dataSource={data}
+          pagination={{ position: ["none", "none"] }}
+          footer={() => (
+            <Pagination
+              setCurrentPage={setCurrentPage}
+              currentPage={currentPage}
+              noPadding={true}
+              totalPage={totalPage}
+            />
+          )}
+          bordered={true}
+        />
+      </Spin>
+    </section>
+  );
 }
 
-export default Employee
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps, null)(Employee);

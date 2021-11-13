@@ -29,39 +29,8 @@ namespace WatchWebsite_TLCN.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: api/User/GetEmployeeList
-        //[HttpGet]
-        //[Route("GetEmployeeList")]
-        //public async Task<ActionResult<IEnumerable<User>>> GetEmployeeList(int currentPage)
-        //{
-        //    try
-        //    {
-        //        var result = await _unitOfWork.UserRole.GetAllWithPagination(
-        //            expression: ur => ur.Role.RoleName == "Employee",
-        //            includes: new List<string> { "User"},
-        //            pagination: new Pagination { CurrentPage = currentPage });
-
-        //        List<User> employeeList = new List<User>();
-        //        foreach(var user in result.Item1)
-        //        {
-        //            employeeList.Add(user.User);
-        //        }
-
-        //        var employeeListDTO = _mapper.Map<List<UserDTO>>(employeeList);
-        //        return Ok(new
-        //        { 
-        //            Users = employeeListDTO,
-        //            CurrentPage = result.Item2.CurrentPage,
-        //            TotalPage = result.Item2.TotalPage
-        //        });
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        return StatusCode(500, ex.Message);
-        //    }
-        //}
-
         // GET: api/User/SearchEmployee?currentPage=1&searchKey=abc
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [Route("SearchEmployee")]
         public async Task<ActionResult<IEnumerable<User>>> SearchEmployee(int currentPage, string searchKey)
@@ -98,6 +67,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/User/SearchCustomer?currentPage=1&searchKey=abc
+        [Authorize(Roles = "Admin,Employee")]
         [HttpGet]
         [Route("SearchCustomer")]
         public async Task<ActionResult<IEnumerable<User>>> SearchCustomer(int currentPage, string searchKey)
@@ -133,9 +103,9 @@ namespace WatchWebsite_TLCN.Controllers
             }
         }
 
-        // GET: api/User/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        // GET: api/User
+        [HttpGet]
+        public async Task<ActionResult<UserDTO>> GetUser(int id)
         {
             var user = await _unitOfWork.Users.Get(u => u.Id == id);
 
@@ -143,28 +113,26 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 return NotFound();
             }
-
-            return user;
+            var userDTO = _mapper.Map<UserDTO>(user);
+            return userDTO;
         }
 
         // POST: api/User/UpdateStateEmployee?currentPage=1&searchKey=123
-        [HttpPost]
+        [Authorize(Roles = "Admin, Employee")]
+        [HttpPut]
         [Route("UpdateStateEmployee")]
-        public async Task<IActionResult> UpdateStateEmployee([FromBody] int id, int currentPage, string searchKey)
+        public async Task<IActionResult> UpdateStateEmployee(UserDTO userDTO)
         {
-            if (String.IsNullOrEmpty(searchKey)) searchKey = "";
-
-            var user = await _unitOfWork.Users.Get(u => u.Id == id);
-            user.State = !user.State;
-            _unitOfWork.Users.Update(user);
-
             try
             {
+                var user = await _unitOfWork.Users.Get(u => u.Id == userDTO.Id);
+                user.State = !user.State;
+                _unitOfWork.Users.Update(user);
                 await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!(await UserExists(user.Id)))
+                if (!(await UserExists(userDTO.Id)))
                 {
                     return NotFound();
                 }
@@ -174,27 +142,28 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return RedirectToAction(nameof(SearchEmployee), new { currentPage = currentPage, searchKey = searchKey });
+            return Ok();
         }
 
-        // POST: api/User/UpdateStateCustomer?currentPage=1&searchKey=123
-        [HttpPost]
-        [Route("UpdateStateCustomer")]
-        public async Task<IActionResult> UpdateStateCustomer([FromBody] int id, int currentPage, string searchKey)
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateInfo(UserRequest userReq)
         {
-            if (String.IsNullOrEmpty(searchKey)) searchKey = "";
-
-            var user = await _unitOfWork.Users.Get(u => u.Id == id);
-            user.State = !user.State;
-            _unitOfWork.Users.Update(user);
-
             try
             {
+                var user = await _unitOfWork.Users.Get(u => u.Id == userReq.Id);
+                user.Name = userReq.Name;
+                user.Address = userReq.Address;
+                user.Email = userReq.Email;
+                user.Phone = userReq.Phone;
+                user.Birthday = userReq.Birthday;
+                user.Avatar = userReq.Avatar;
+                _unitOfWork.Users.Update(user);
                 await _unitOfWork.Save();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!(await UserExists(user.Id)))
+                if (!(await UserExists(userReq.Id)))
                 {
                     return NotFound();
                 }
@@ -204,10 +173,45 @@ namespace WatchWebsite_TLCN.Controllers
                 }
             }
 
-            return RedirectToAction(nameof(SearchCustomer), new { currentPage = currentPage, searchKey = searchKey });
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(UserChangePassword userChangePass)
+        {
+            try
+            {
+                var user = await _unitOfWork.Users.Get(u => u.Id == userChangePass.Id);
+                if(userChangePass.CurrentPassword == user.Password)
+                {
+                    user.Password = userChangePass.NewPassword;
+                    _unitOfWork.Users.Update(user);
+                    await _unitOfWork.Save();
+                }
+                else
+                {
+                    return NotFound();
+                }
+                
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!(await UserExists(userChangePass.Id)))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return Ok();
         }
 
         // POST: api/User/CreateEmployee
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("CreateEmployee")]
         public async Task<ActionResult<User>> CreateEmployee(User user)

@@ -11,5 +11,6 @@ namespace WatchWebsite_TLCN.Models
         public int Gender { get; set; } = -1;
         public string Prices { get; set; }
         public string[] Brands { get; set; }
+        public string Search { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
         // GET: api/Energies?currentPage=1
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetEnegies(int currentPage)
         {
@@ -54,6 +56,16 @@ namespace WatchWebsite_TLCN.Controllers
             });
         }
 
+        // GET: api/Energies/GetAll
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<IActionResult> GetEnergies()
+        {
+            var result = await _unitOfWork.Energies.GetAll();
+            var listEnergiesDTO = _mapper.Map<List<EnergyDTO>>(result);
+            return Ok(listEnergiesDTO);
+        }
+
         // GET: api/Energies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Energy>> GetEnergy(int id)
@@ -71,23 +83,20 @@ namespace WatchWebsite_TLCN.Controllers
         // PUT: api/Energies/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEnergy(int id, Energy energy)
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        public async Task<IActionResult> PutEnergy(Energy energy)
         {
-            if (id != energy.EnergyId)
-            {
-                return BadRequest();
-            }
-
             _unitOfWork.Energies.Update(energy);
 
             try
             {
                 await _unitOfWork.Save();
+                return Ok();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await EnergyExists(id))
+                if (!await EnergyExists(energy.EnergyId))
                 {
                     return NotFound();
                 }
@@ -96,14 +105,10 @@ namespace WatchWebsite_TLCN.Controllers
                     throw;
                 }
             }
-
-            return RedirectToAction(nameof(GetEnegies), new { currentPage = 1 });
-            //return NoContent();
         }
 
         // POST: api/Energies
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Energy>> PostEnergy(Energy energy)
         {
@@ -111,14 +116,12 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 await _unitOfWork.Energies.Insert(energy);
                 await _unitOfWork.Save();
-
                 return Ok();
             }
             catch
-            { }
-
-            return BadRequest();
-            //return CreatedAtAction("GetEnergy", new { id = energy.EnergyId }, energy);
+            {
+                return StatusCode(500);
+            }
         }
 
         // DELETE: api/Energies/5
@@ -138,29 +141,24 @@ namespace WatchWebsite_TLCN.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("Delete")]
-        // Delete nhieu san pham
-        // 
-        /* DELETE: api/Energies/delete
-         * JSON
-           [6,7]
-            */
-        public IActionResult Delete(List<int> id)
+        public async Task<IActionResult> Delete(List<int> id)
         {
-            foreach (int item in id)
+            try
             {
-                if (!_energy.DeleteEnergy(item))
+                foreach (int item in id)
                 {
-                    return BadRequest("Something was wrong");
+                    await _unitOfWork.Energies.Delete<int>(item);
                 }
+                await _unitOfWork.Save();
+                return Ok();
             }
-            return RedirectToAction(nameof(GetEnegies), new { currentPage = 1 });
-        }
-
-        private Task<bool> EnergyExists(int id)
-        {
-            return _unitOfWork.Energies.IsExist<int>(id);
+            catch
+            {
+                return BadRequest("Something was wrong");
+            }
         }
 
         

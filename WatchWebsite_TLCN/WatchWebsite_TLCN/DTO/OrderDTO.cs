@@ -17,4 +17,9 @@ namespace WatchWebsite_TLCN.DTO
         public string Phone { get; set; }
         public List<ProductItem> Products { get; set; }
     }
+    public class OrderUpdateState
+    {
+        public int OrderId { get; set; }
+        public string DeliveryStatus { get; set; }
+    }
 }

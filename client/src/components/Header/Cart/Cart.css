@@ -20,6 +20,7 @@
       -ms-flex-direction: column;
           flex-direction: column;
   min-width: 360px;
+  overflow: hidden;
   width: 30%;
 }
 
