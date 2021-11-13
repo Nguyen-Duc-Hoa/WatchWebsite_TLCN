@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WatchWebsite_TLCN.Entities;
-using WatchWebsite_TLCN.Methods;
+using WatchWebsite_TLCN.IRepository;
 using WatchWebsite_TLCN.Models;
 using WatchWebsite_TLCN.Utilities;
 
@@ -22,11 +22,13 @@ namespace WatchWebsite_TLCN.Controllers
     public class AccountController : ControllerBase
     {
         private readonly MyDBContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
 
-        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, MyDBContext context)
+        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, MyDBContext context, IUnitOfWork unitOfWork)
         {
             _context = context;
+            _unitOfWork = unitOfWork;
             _jwtAuthenticationManager = jwtAuthenticationManager;
         }
 
@@ -98,8 +100,8 @@ namespace WatchWebsite_TLCN.Controllers
             List<string> listRole = new List<string>();
             List<int> listRoleId = new List<int>();
 
-            User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
-            
+            //User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
+            var user = await _unitOfWork.Users.Get(x => x.Username == username && x.Password == password);
 
 
             if (user == null)
@@ -171,8 +173,9 @@ namespace WatchWebsite_TLCN.Controllers
         {
 
             // query id tu email va password de kiem tra dang nhap
+            var user = await _unitOfWork.Users.Get(x => x.Email == email);
 
-            var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
+            //var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
 
             if (user != null && user.State is true)
             {

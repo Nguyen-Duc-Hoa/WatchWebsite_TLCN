@@ -20,7 +20,6 @@ using WatchWebsite_TLCN.Configuration;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
-using WatchWebsite_TLCN.Methods;
 using WatchWebsite_TLCN.Models;
 using WatchWebsite_TLCN.Repository;
 
