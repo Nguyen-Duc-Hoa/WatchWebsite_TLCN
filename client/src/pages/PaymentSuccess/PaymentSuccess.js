@@ -16,7 +16,9 @@ function PaymentSuccess() {
               Continue shopping
             </Button>
           </Link>,
-          <Button size="large">View order</Button>,
+          <Link to="/oderHistory">
+            <Button size="large">View order</Button>
+          </Link>,
         ]}
       />
     </section>

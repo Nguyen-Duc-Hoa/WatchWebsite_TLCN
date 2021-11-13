@@ -9,29 +9,7 @@ import moment from "moment";
 
 const { Column } = Table;
 
-const data = [
-  {
-    key: 1,
-    name: "Jhong Le",
-    placed: "3/10/2021",
-    status: "Đã giao",
-    cost: "$754.5",
-  },
-  {
-    key: 2,
-    name: "Jhong Le",
-    placed: "3/10/2021",
-    status: "Đã giao",
-    cost: "$754.5",
-  },
-  {
-    key: 3,
-    name: "Jhong Le",
-    placed: "3/10/2021",
-    status: "Đã giao",
-    cost: "$754.5",
-  },
-];
+
 
 const breadcrumbRoute = [
   { name: "Home", link: "/" },

@@ -1,111 +1,165 @@
-import React from 'react'
-import { Table, Button } from 'antd'
-import Pagination from '../../../components/Pagination/Pagination'
-import { AiTwotoneDelete } from 'react-icons/ai'
-import AddComment from '../../../components/AddComment/AddComment'
+import React, { useState } from "react";
+import { Table, Button, Spin } from "antd";
+import Pagination from "../../../components/Pagination/Pagination";
+import { AiTwotoneDelete } from "react-icons/ai";
+import AddComment from "../../../components/AddComment/AddComment";
+import moment from "moment";
+import { useFetchData } from "../../../hook/useFetchData";
+import { connect } from "react-redux";
 
-const columns = [
-    {
-        title: 'User Name',
-        dataIndex: 'username',
-        key: 'username',
-        sorter: (a, b) => a.username > b.username,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Product',
-        dataIndex: 'product',
-        key: 'product',
-        sorter: (a, b) => a.product > b.product,
-        sortDirections: ['descend'],
-    },
-    {
-        title: 'Content',
-        dataIndex: 'content',
-        key: 'content',
-    },
-    {
-        title: 'Date',
-        dataIndex: 'date',
-        key: 'date',
-        sorter: (a, b) => a.date > b.date
-    },
-    {
-        title: 'Action',
-        dataIndex: 'reply',
-        key: 'reply',
-        render: () => (
-            <a>Reply</a>
-        )
-    },
-]
+function Comments({ token, userId, avatarUser, username }) {
+  const [replyUserName, setReplyUserName] = useState();
+  const [replyCommentId, setReplyCommentId] = useState();
+  const [productId, setProductId] = useState();
 
-const data = [
-    {
-        key: 1,
-        username: 'Jhong Lee',
-        product: 'Haaigh',
-        content: 'Excellent customer service! Whenever I needed something they were there for me.',
-        date: '10/7/2021 15:02:37'
-    },
-    {
-        key: 2,
-        username: 'Jhong Lee',
-        product: 'Haaigh',
-        content: 'Excellent customer service! Whenever I needed something they were there for me.',
-        date: '10/7/2021 12:02:37'
-    },
-    {
-        key: 3,
-        username: 'Jhong Lee',
-        product: 'Haaigh',
-        content: 'Excellent customer service! Whenever I needed something they were there for me.',
-        date: '10/7/2021 14:02:37'
-    },
-    {
-        key: 4,
-        username: 'Jhong Lee',
-        product: 'Haaigh',
-        content: 'I love this product so much! I will repurchase soon.',
-        date: '10/7/2021 9:02:37'
-    },
-]
+  const updateData = (result) => {
+    const dataArray = result.Comments.map((element) => {
+      return {
+        key: element["Id"],
+        id: element["Id"],
+        productId: element.Product.Id,
+        username: element.User.Username,
+        product: element.Product.Name,
+        content: element.Content,
+        date: element.Date,
+        replyFrom: element.ReplyFrom,
+      };
+    });
+    return dataArray;
+  };
 
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  const {
+    data,
+    currentPage,
+    setCurrentPage,
+    totalPage,
+    loading,
+    spinning,
+    updateReq,
+    deleteReq,
+    deletiveArray,
+  } = useFetchData(
+    {
+      get: `${process.env.REACT_APP_HOST_DOMAIN}/api/comments/GetCommentsWithPagination`,
+      delete: `${process.env.REACT_APP_HOST_DOMAIN}/api/comments/Delete`,
     },
-    getCheckboxProps: (record) => ({
-        // Column configuration not to be checked
-        name: record.name,
-    }),
-};
+    null,
+    updateData,
+    token
+  );
 
-function Comments() {
-    return (
-        <section className='admin'>
-            <div className="heading">Comments</div>
-            <div className="buttonLayout">
-                <Button size='large' type='danger'><AiTwotoneDelete className='icon' /> Delete</Button>
-            </div>
-            <Table
-                columns={columns}
-                dataSource={data}
-                rowSelection={{
-                    type: 'checkbox',
-                    ...rowSelection,
-                }}
-                pagination={{ position: ['none', 'none'] }}
-                footer={() => (
-                    <Pagination
-                        currentPage={3}
-                        noPadding={true}
-                        totalPage={5} />
-                )}
-                bordered={true} />
-            <AddComment replyUser='@Jhong Lee' />
-        </section>
-    )
+  const deleteHandler = () => {
+    if (deletiveArray.current.length === 0) return;
+    deleteReq();
+  };
+
+  const handleReply = (commentId) => {
+    const item = data.find((ele) => ele.id === commentId);
+    setReplyCommentId(item.replyFrom || item.id);
+    setReplyUserName(item.username);
+    setProductId(item.productId);
+  };
+
+  const rowSelection = {
+    onChange: (_, selectedRows) => {
+      deletiveArray.current = selectedRows.map((ele) => ele.key);
+    },
+  };
+
+  const columns = [
+    {
+      title: "User Name",
+      dataIndex: "username",
+      key: "username",
+      sorter: (a, b) => a.username > b.username,
+      sortDirections: ["descend"],
+    },
+    {
+      title: "Product",
+      dataIndex: "product",
+      key: "product",
+      sorter: (a, b) => a.product > b.product,
+      sortDirections: ["descend"],
+    },
+    {
+      title: "Content",
+      dataIndex: "content",
+      key: "content",
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+      sorter: (a, b) => a.date > b.date,
+      render: (date) => (
+        <p>{moment(date).format("dddd, MMMM Do YYYY, h:mm:ss a")}</p>
+      ),
+    },
+    {
+      title: "Action",
+      dataIndex: "reply",
+      key: "reply",
+      render: (_, record) => (
+        <div
+          style={{ cursor: "pointer" }}
+          onClick={() => handleReply(record.key)}
+        >
+          Reply
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <section className="admin">
+      <div className="heading">Comments</div>
+      <div className="buttonLayout">
+        <Button size="large" type="danger" onClick={deleteHandler}>
+          <AiTwotoneDelete className="icon" /> Delete
+        </Button>
+      </div>
+      <Spin spinning={spinning}>
+        <Table
+          columns={columns}
+          dataSource={data}
+          rowSelection={{
+            type: "checkbox",
+            ...rowSelection,
+          }}
+          pagination={{ position: ["none", "none"] }}
+          footer={() => (
+            <Pagination
+              currentPage={currentPage}
+              noPadding={true}
+              totalPage={totalPage}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
+          bordered={true}
+        />
+      </Spin>
+      <AddComment
+        replyUserName={replyUserName}
+        replyCommentId={replyCommentId}
+        productId={productId}
+        setReplyCommentId={setReplyCommentId}
+        setReplyUserName={setReplyUserName}
+        userId={userId}
+        token={token}
+        username={username}
+        avatarUser={avatarUser}
+      />
+    </section>
+  );
 }
 
-export default Comments
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+    userId: state.auth.id,
+    username: state.auth.username,
+    avatarUser: state.auth.avatar,
+  };
+};
+
+export default connect(mapStateToProps)(Comments);

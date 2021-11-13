@@ -37,8 +37,7 @@ namespace WatchWebsite_TLCN.Controllers
             var result = await _unitOfWork.Brands.GetAllWithPagination(
                 expression: null,
                 orderBy: x => x.OrderBy(a => a.BrandId),
-                pagination: new Pagination { CurrentPage = currentPage }
-                );
+                pagination: new Pagination { CurrentPage = currentPage });
             List<Brand> list = new List<Brand>();
 
             foreach (var item in result.Item1)

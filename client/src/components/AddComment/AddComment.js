@@ -15,7 +15,7 @@ function AddComment({
   userId,
   token,
   username,
-  avatarUser
+  avatarUser,
 }) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,14 +37,14 @@ function AddComment({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(comment),
     })
       .then((response) => response.json())
       .then((result) => {
         setValue("");
-        setComments(result);
+        setComments && setComments(result);
         setLoading(false);
         form.resetFields();
       });
@@ -53,7 +53,6 @@ function AddComment({
   const handleChange = (e) => {
     setValue(e.target.value);
   };
-
 
   return (
     <Commenting

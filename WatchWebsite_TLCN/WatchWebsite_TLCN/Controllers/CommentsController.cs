@@ -11,6 +11,7 @@ using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Models;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -26,6 +27,23 @@ namespace WatchWebsite_TLCN.Controllers
             _unitOfWork = unitOfWork;
             _comments = comments;
             _mapper = mapper;
+        }
+
+        [HttpGet]
+        [Route("GetCommentsWithPagination")]
+        public async Task<IActionResult> GetCommentsWithPagination(int currentPage)
+        {
+            var result = await _unitOfWork.Comments.GetAllWithPagination(
+                expression: null,
+                includes: new List<string> { "User", "Product"},
+                orderBy: x => x.OrderBy(a => a.ProductId),
+                pagination: new Pagination { CurrentPage = currentPage });
+            return Ok(new
+            {
+                Comments = result.Item1,
+                CurrentPage = result.Item2.CurrentPage,
+                TotalPage = result.Item2.TotalPage
+            });
         }
 
         // GET: api/Comments
@@ -90,41 +108,50 @@ namespace WatchWebsite_TLCN.Controllers
 
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Comment>> DeleteComment(int id)
+        [Authorize(Roles = "Admin,Employee")]
+        [Route("Delete")]
+        [HttpDelete]
+        public async Task<ActionResult<Comment>> DeleteComment(List<int> keys)
         {
-            var comment = await _unitOfWork.Comments.Get(b => b.Id == id);
-            if (comment == null)
+            try
             {
-                return NotFound();
-            }
-            else
-            {
-                if(comment.ReplyFrom == null)
+                foreach (var id in keys)
                 {
-                    // Comment cha
-                    //Xoa tat ca cac comment con
-                    List<Comment> repComment = await _comments.GetAllRepComments(id);
-
-
-                    if (repComment != null)
+                    var comment = await _unitOfWork.Comments.Get(b => b.Id == id);
+                    if (comment == null)
                     {
-                        foreach(Comment item in repComment)
+                        return NotFound();
+                    }
+                    else
+                    {
+                        if (comment.ReplyFrom == null)
                         {
-                            await _unitOfWork.Comments.Delete(item.Id);
-                            await _unitOfWork.Save();
+                            // Comment cha
+                            //Xoa tat ca cac comment con
+                            List<Comment> repComment = await _comments.GetAllRepComments(id);
+
+
+                            if (repComment != null)
+                            {
+                                foreach (Comment item in repComment)
+                                {
+                                    await _unitOfWork.Comments.Delete(item.Id);
+                                    await _unitOfWork.Save();
+                                }
+                            }
                         }
                     }
+                    await _unitOfWork.Comments.Delete(id);
                 }
+                await _unitOfWork.Save();
+
+                return Ok();
             }
-
-            await _unitOfWork.Comments.Delete(id);
-            await _unitOfWork.Save();
-
-            return Ok();
+            catch
+            {
+                return StatusCode(500);
+            }
         }
-
-
 
         private Task<bool> CommentExists(int id)
         {
