@@ -25,6 +25,7 @@ namespace WatchWebsite_TLCN.Repository
         {
 
             var cartItem = (from p in _context.Products
+                            join b in _context.Brands on p.BrandId equals b.BrandId
                             join c in _context.Carts on p.Id equals c.ProductId
                             where c.UserId == userId
                             select new CartDTO()

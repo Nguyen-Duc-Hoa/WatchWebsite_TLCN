@@ -143,6 +143,7 @@ namespace WatchWebsite_TLCN.Controllers
             return _unitOfWork.Products.IsExist<string>(id);
         }
 
+        //GET: api/products/PopularProduct
         [HttpGet]
         [Route("PopularProduct")]
         public IEnumerable<ProductResponseDTO> GetPopularProducts()
@@ -152,7 +153,7 @@ namespace WatchWebsite_TLCN.Controllers
             return productDTO;
         }
 
-        // GET: /api/Products/SearchProducts&currentPage=1&searchKey=abc
+        // GET: api/Products/Search&currentPage=1&searchKey=abc
         [HttpGet]
         [Route("Search")]
         public async Task<IActionResult> SearchProducts(int currentPage, string searchKey)

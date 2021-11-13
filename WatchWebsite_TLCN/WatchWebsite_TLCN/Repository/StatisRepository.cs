@@ -30,7 +30,7 @@ namespace WatchWebsite_TLCN.Repository
                         select new Chart1DTO
                         {
                             Time = g.Key.ToString("dd-MM-yyyy"),
-                            TurnOver = g.Sum(x=> x.Total)
+                            TurnOver = g.Sum(x => x.Total)
                         }).ToList();
             return list;
         }
@@ -85,7 +85,7 @@ namespace WatchWebsite_TLCN.Repository
                                        price = d.Price,
                                    })
                         group x by new { x.name } into g
-                        orderby g.Sum(x => x.price) ascending
+                        orderby g.Sum(x => x.price) descending
                         select new Chart2DTO
                         {
                             Name = g.Key.name,
@@ -144,7 +144,7 @@ namespace WatchWebsite_TLCN.Repository
                                        price = d.Price,
                                    })
                         group x by new { x.name } into g
-                        orderby g.Sum(x => x.price) ascending
+                        orderby g.Sum(x => x.price) descending
                         select new Chart2DTO
                         {
                             Name = g.Key.name,

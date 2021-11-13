@@ -75,13 +75,25 @@ namespace WatchWebsite_TLCN.Controllers
 
 
         //reply comment
-        [Route("ReplyComment")]
+        // 
+        /* POST: api/comments/replycomment/1
+            {
+                "UserId": 11,
+                "ProductId": "aaa111",
+                "Content": "Cảm ơn bạn",
+                "Date":"1-11-2000",
+                "TypeComment": "type",
+                "ReplyFrom": null
+            }
+         */
+        [Route("ReplyComment/{commentid}")]
         [HttpPost]
         public async Task<IActionResult> Reply(int commentid, Comment comment)
         {
             var userComment = await _unitOfWork.Comments.Get(x => x.Id == commentid);
             if(userComment != null)
             {
+                comment.Date = DateTime.Now;
                 int? ReplyFrom = userComment.ReplyFrom;
                 if(ReplyFrom == null)
                 {
@@ -94,6 +106,7 @@ namespace WatchWebsite_TLCN.Controllers
 
                 try
                 {
+                    comment.TypeComment = Constant.typeComment[1];
                     await _unitOfWork.Comments.Insert(comment);
                     await _unitOfWork.Save();
                     return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });

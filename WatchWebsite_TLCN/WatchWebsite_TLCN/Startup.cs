@@ -93,11 +93,14 @@ namespace WatchWebsite_TLCN
                 };
             });
 
-            services.AddSingleton<ITokenRefresher>(x => 
+            /*services.AddSingleton<ITokenRefresher>(x => 
                 new TokenRefresher(key, x.GetService<IJwtAuthenticationManager>()));
             services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
             services.AddSingleton<IJwtAuthenticationManager>(x => 
-                new JwtAuthenticationManager(tokenKey, x.GetService<IRefreshTokenGenerator>()));
+                new JwtAuthenticationManager(tokenKey, x.GetService<IRefreshTokenGenerator>()));*/
+
+            services.AddSingleton<IJwtAuthenticationManager>(x =>
+                new JwtAuthenticationManager(tokenKey));
 
             // Đăng ký sử dụng AutoMapper
             services.AddAutoMapper(typeof(MapperInitializer));

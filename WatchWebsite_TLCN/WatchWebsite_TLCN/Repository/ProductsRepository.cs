@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WatchWebsite_TLCN.DTO;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Intefaces;
 using WatchWebsite_TLCN.Models;
@@ -19,11 +20,12 @@ namespace WatchWebsite_TLCN.Repository
             _context = context;
         }
 
-        public IEnumerable<Product> GetPopularProduct()
+        public IEnumerable<Product1DTO> GetPopularProduct()
         {
             //Tinh so luong ban theo tung san pham
 
             var product = (from p in _context.Products
+                           join b in _context.Brands on p.BrandId equals b.BrandId
                            join c in (from orderDetails in _context.OrderDetails
                                       group orderDetails by orderDetails.ProductId into g
                                       select new CountSellProduct()
@@ -52,7 +54,7 @@ namespace WatchWebsite_TLCN.Repository
                                  {
                                      Id = p.Id,
                                      Name = p.Name,
-                                     //Price = p.Price,
+                                     Price = p.Price,
                                      Amount = p.Amount,
                                      Image = p.Image,
                                      Description = p.Description,

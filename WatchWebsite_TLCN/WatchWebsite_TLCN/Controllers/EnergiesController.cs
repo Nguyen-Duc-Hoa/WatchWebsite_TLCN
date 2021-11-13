@@ -140,10 +140,6 @@ namespace WatchWebsite_TLCN.Controllers
             return energy;
         }
 
-        private Task<bool> EnergyExists(int id)
-        {
-            return _unitOfWork.Energies.IsExist<int>(id);
-        }
 
         [Authorize(Roles = "Admin")]
         [HttpDelete]
@@ -164,5 +160,7 @@ namespace WatchWebsite_TLCN.Controllers
                 return BadRequest("Something was wrong");
             }
         }
+
+        
     }
 }

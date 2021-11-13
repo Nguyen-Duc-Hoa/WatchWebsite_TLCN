@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Methods;
 using WatchWebsite_TLCN.Models;
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -22,19 +23,28 @@ namespace WatchWebsite_TLCN.Controllers
     {
         private readonly MyDBContext _context;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
-        private readonly ITokenRefresher _tokenRefresher;
 
-        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, ITokenRefresher tokenRefresher, MyDBContext context)
+        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, MyDBContext context)
         {
             _context = context;
             _jwtAuthenticationManager = jwtAuthenticationManager;
-            _tokenRefresher = tokenRefresher;
         }
 
 
         [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
+        //POST: api/account/register
+        /*JSON
+            {
+                "Username":"username",
+                "Email": "abc@gmail.com",
+                "Phone": "123456789",
+                "Password": "123",
+                "ConfirmPass": "123"
+            }
+
+         */
         public async Task<IActionResult> Register([FromBody] Register model)
         {
             var user = new User { Username = model.Username, Password = model.Password, Phone = model.Phone, Email = model.Email, State = true };
@@ -82,6 +92,11 @@ namespace WatchWebsite_TLCN.Controllers
             }
             else
             {
+                if (user.State is false)
+                {
+                    return BadRequest("UnAuthorize");
+                }
+
                 userid = user.Id;
                 var user_role = (from u in _context.User_Roles
                                  join r in _context.Roles on u.RoleId equals r.RoleId
@@ -92,7 +107,7 @@ namespace WatchWebsite_TLCN.Controllers
                                      r.RoleName
                                  }).ToList();
 
-                foreach(var item in user_role)
+                foreach (var item in user_role)
                 {
                     listRole.Add(item.RoleName);
                     listRoleId.Add(item.RoleId);
@@ -144,9 +159,9 @@ namespace WatchWebsite_TLCN.Controllers
 
             var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
 
-            if (user != null)
+            if (user != null && user.State is true)
             {
-                
+
                 string web_email = "laptrinhwebnhom9@gmail.com";
                 // Cau hinh thong tin gmail
                 var mail = new SmtpClient("smtp.gmail.com", 25)
@@ -163,13 +178,16 @@ namespace WatchWebsite_TLCN.Controllers
                 // Create a random 6-digits number for verification code
                 Random random = new Random();
                 int code = random.Next(100000, 999999);
-                
+
 
                 message.Subject = "Reset Watch-Website Password";
                 message.Body = code + " is your account password.";
 
                 try
                 {
+                    // gui gmail    
+                    mail.Send(message);
+
                     //Update Password
                     (from p in _context.Users
                      where (p.Email == email)
@@ -178,22 +196,18 @@ namespace WatchWebsite_TLCN.Controllers
 
                     _context.SaveChanges();
 
-                    // gui gmail    
-                    mail.Send(message);
-
                     return Ok("Check your email");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     return BadRequest(e.ToString());
                 }
-                
+
             }
             else
             {
                 return StatusCode(500);
             }
         }
-
     }
 }

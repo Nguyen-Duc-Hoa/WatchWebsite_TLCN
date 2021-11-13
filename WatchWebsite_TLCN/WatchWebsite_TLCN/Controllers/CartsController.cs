@@ -130,6 +130,8 @@ namespace WatchWebsite_TLCN.Controllers
             return _unitOfWork.Carts.IsExist<int>(id);
         }
 
+
+        //GET: api/carts/GetCart/8
         [HttpGet]
         [Authorize]
         [Route("GetCart/{userId}")]
@@ -138,6 +140,15 @@ namespace WatchWebsite_TLCN.Controllers
             return _cart.GetCart(userId);
         }
 
+
+        //POST: api/carts/AddToCart
+        /* JSON
+         * {
+                "UserId": 8,
+                "ProductId": "aaa111",
+                "Count": 3
+            }
+         */
         [HttpPost]
         [Route("AddToCart")]
         [Authorize]

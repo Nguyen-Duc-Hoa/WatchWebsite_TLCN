@@ -137,6 +137,11 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete]
         [Authorize(Roles = "Admin")]
         [Route("Delete")]
+        // Delete nhieu 
+        // DELETE: api/Materials/delete
+        /* JSON
+           [6,7]
+        */
         public async Task<ActionResult<Brand>> DeleteMaterial(List<int> id)
         {
             try

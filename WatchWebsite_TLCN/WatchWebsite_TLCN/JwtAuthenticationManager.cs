@@ -17,7 +17,7 @@ namespace WatchWebsite_TLCN
         public IDictionary<string, string> UsersRefreshTokens { get; set; }
 
         //tokenKey is private key to encode
-        public JwtAuthenticationManager(string tokenKey, IRefreshTokenGenerator refreshTokenGenerator)
+        public JwtAuthenticationManager(string tokenKey)
         {
             this.tokenKey = tokenKey;
             UsersRefreshTokens = new Dictionary<string, string>();

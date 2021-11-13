@@ -54,6 +54,7 @@ namespace WatchWebsite_TLCN.Controllers
             });
         }
 
+        
         // GET: api/Brands/GetAll
         [HttpGet]
         [Route("GetAll")]

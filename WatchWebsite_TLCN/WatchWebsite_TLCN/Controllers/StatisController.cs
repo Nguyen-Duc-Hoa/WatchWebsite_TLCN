@@ -43,6 +43,12 @@ namespace WatchWebsite_TLCN.Controllers
 
         }
 
+
+        //GET: api/statis/chart2
+        /* {
+            "date":["2021-9-1"],
+            "typeDate":"month"
+        }*/
         [HttpGet]
         [Route("Chart2")]
         public IEnumerable<Chart2DTO> GetChart2([FromBody] Statis statis)

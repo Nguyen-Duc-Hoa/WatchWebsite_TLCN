@@ -160,6 +160,8 @@ namespace WatchWebsite_TLCN.Controllers
             return total*100;
         }
 
+
+        //GET: api/orders/getbyuser
         [HttpGet]
         [Route("GetByUser/{userid}")]
         public IEnumerable<Entities.Order> GetByUser(int userid)
@@ -202,6 +204,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             // Thong tin cua order
             var order = await _unitOfWork.Orders.Get(x => x.OrderId == orderid && x.UserId == userid);
+            var user = await _unitOfWork.Users.Get(x => x.Id == userid);
 
             if(order != null)
             {
@@ -236,7 +239,7 @@ namespace WatchWebsite_TLCN.Controllers
             return NotFound();
         }
 
-
+        //PUT: api/orders/UpdateStatus?orderid=1&status=Confirmed
         [HttpPut]
         [Authorize(Roles = "Admin,Employee")]
         [Route("UpdateStatus")]

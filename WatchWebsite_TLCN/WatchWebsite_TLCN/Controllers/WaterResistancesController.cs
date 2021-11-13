@@ -133,6 +133,34 @@ namespace WatchWebsite_TLCN.Controllers
             }
         }
 
+        [HttpDelete]
+        [Route("Delete")]
+        public async Task<ActionResult<Brand>> Delete(List<int> id)
+        {
+            foreach (int item in id)
+            {
+                try
+                {
+                    var water = await _unitOfWork.WaterResistances.Get(b => b.WaterId == item);
+                    if (water == null)
+                    {
+                        return BadRequest("Something was wrong!");
+                    }
+
+                    await _unitOfWork.Sizes.Delete(item);
+                    await _unitOfWork.Save();
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.ToString());
+                }
+
+            }
+
+
+            return RedirectToAction(nameof(GetWaterResistances), new { currentPage = 1 });
+        }
+
         private Task<bool> WaterResistanceExists(int id)
         {
             return _unitOfWork.WaterResistances.IsExist<int>(id);
