@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using WatchWebsite_TLCN.Entities;
 using WatchWebsite_TLCN.Methods;
 using WatchWebsite_TLCN.Models;
+using WatchWebsite_TLCN.Utilities;
 
 namespace WatchWebsite_TLCN.Controllers
 {
@@ -46,6 +47,11 @@ namespace WatchWebsite_TLCN.Controllers
 
                 if (result.Equals(1))
                 {
+                    string customerRole = Constant.customerRole;
+                    Role dbRole = _context.Roles.FirstOrDefault(r => r.RoleName == customerRole);
+                    User_Role usrRole = new User_Role { RoleId = dbRole.RoleId, UserId = user.Id };
+                    _context.User_Roles.Add(usrRole);
+                    await _context.SaveChangesAsync();
                     return Ok();
                 }
                 else

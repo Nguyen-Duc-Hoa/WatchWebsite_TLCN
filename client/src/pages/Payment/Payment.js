@@ -62,8 +62,8 @@ function Shipping({ phone, address, cart }) {
 
 const mapStateToProps = (state) => {
   return {
-    phone: state.auth.phone,
-    address: state.auth.address,
+    phone: state.order.phone,
+    address: state.order.address,
     cart: state.cart.cart,
   };
 };
