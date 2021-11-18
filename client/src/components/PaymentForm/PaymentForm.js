@@ -91,7 +91,6 @@ function PaymentForm({ cart, orderInfo, token, idUser, onFetchCart }) {
         },
         body: JSON.stringify({
           userId: idUser,
-          orderDate: new Date(),
           transaction: payload.paymentIntent.id,
           paymentStatus: payload.paymentIntent.status,
           address: orderInfo.address,
@@ -143,6 +142,7 @@ function PaymentForm({ cart, orderInfo, token, idUser, onFetchCart }) {
           htmlType="submit"
           type="primary"
           size="large"
+          loading={loading}
         >
           Pay now
         </Button>
