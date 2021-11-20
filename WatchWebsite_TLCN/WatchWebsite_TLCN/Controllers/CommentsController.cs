@@ -113,10 +113,15 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete]
         public async Task<ActionResult<Comment>> DeleteComment(List<int> keys)
         {
+            List<int> childKeys = new List<int>();
             try
             {
-                foreach (var id in keys)
+                foreach (var id in keys.ToList())
                 {
+                    if(childKeys.Any(childKey => childKey == id))
+                    {
+                        continue;
+                    }
                     var comment = await _unitOfWork.Comments.Get(b => b.Id == id);
                     if (comment == null)
                     {
@@ -127,9 +132,17 @@ namespace WatchWebsite_TLCN.Controllers
                         if (comment.ReplyFrom == null)
                         {
                             // Comment cha
-                            //Xoa tat ca cac comment con
+                            // Xoa tat ca cac comment con
                             List<Comment> repComment = await _comments.GetAllRepComments(id);
 
+                            // If child comment exists in keys, remove it from keys
+                            foreach (var item in repComment)
+                            {
+                                if (keys.Any(key => key == item.Id))
+                                {
+                                    childKeys.Add(item.Id);
+                                }
+                            }
 
                             if (repComment != null)
                             {
@@ -142,12 +155,12 @@ namespace WatchWebsite_TLCN.Controllers
                         }
                     }
                     await _unitOfWork.Comments.Delete(id);
+                    await _unitOfWork.Save();
                 }
-                await _unitOfWork.Save();
 
                 return Ok();
             }
-            catch
+            catch (Exception ex)
             {
                 return StatusCode(500);
             }

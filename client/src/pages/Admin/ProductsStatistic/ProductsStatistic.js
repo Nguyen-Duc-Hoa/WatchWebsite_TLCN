@@ -190,6 +190,7 @@ const productColumns = [
     key: "AveragePrice",
     sorter: (a, b) => a.AveragePrice > b.AveragePrice,
     sortDirections: ["descend"],
+    render: (avg) => <p>{avg.toFixed(2)}</p>
   },
   {
     title: "Quantity",
@@ -274,17 +275,17 @@ function Statistic({ token }) {
       <div style={titleStyle}>Product</div>
       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
         <Col span={24}>
-          {/* <ColumnChart
-            xField="year"
+          <ColumnChart
+            xField="Name"
             yField="Value"
-            seriesField="Name"
+            seriesField=""
             data={productChartData}
-          /> */}
-          <LineChart
+          />
+          {/* <LineChart
             data={productChartData}
             xField={"Name"}
             yField={"Value"}
-          />
+          /> */}
         </Col>
       </Row>
       <Divider />

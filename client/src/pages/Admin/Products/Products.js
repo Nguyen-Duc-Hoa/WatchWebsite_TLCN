@@ -31,7 +31,6 @@ function Products({ token }) {
     totalPage,
     spinning,
     setSearchKey,
-    forceUpdate,
     deleteReq,
     deletiveArray,
   } = useFetchData(
@@ -62,6 +61,13 @@ function Products({ token }) {
   };
 
   const columns = [
+    {
+      title: "Id",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id > b.id,
+      sortDirections: ["descend"],
+    },
     {
       title: "Name",
       dataIndex: "name",

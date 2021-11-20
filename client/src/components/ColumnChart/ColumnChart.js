@@ -7,12 +7,13 @@ function ColumnChart({ data, xField, yField, seriesField }) {
         xField: xField,
         yField: yField,
         seriesField: seriesField,
-        isPercent: true,
-        isStack: true,
+        // isPercent: true,
+        // isStack: true,
         label: {
             position: 'middle',
             content: function content(item) {
-                return item.value.toFixed(2);
+                console.log(item)
+                return item.Percent.toFixed(2);
             },
             style: { fill: '#000' },
         },

@@ -29,12 +29,12 @@ const columns = [
     sortDirections: ["descend"],
   },
   {
-    title: "Price",
+    title: "Price per item",
     dataIndex: "price",
     key: "price",
     sorter: (a, b) => a.price > b.price,
     sortDirections: ["descend"],
-    render: (price, record) => <div>${price * record.Count}</div>,
+    render: (price) => <div>${price}</div>,
   },
 ];
 
@@ -117,6 +117,7 @@ function OrderDetail({ token }) {
             };
           }),
         };
+        console.log(newData)
         setData(newData);
         setTableDataSrc([...newData.products]);
         setCurrentStep(newData.deliveryStatus);

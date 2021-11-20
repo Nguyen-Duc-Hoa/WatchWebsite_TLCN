@@ -81,7 +81,7 @@ function ManageAccount({ token }) {
       render: (state, record) => {
         return (
           <>
-            {state ? (
+            {!state ? (
               <FaLock
                 style={{
                   fontSize: 20,
