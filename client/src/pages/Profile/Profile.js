@@ -1,4 +1,4 @@
-import { Row, Col } from "antd";
+import { Row, Col, Button } from "antd";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import Breadcrumbing from "../../components/Breadcrumb/Breadcrumb";
@@ -10,10 +10,11 @@ import moment from "moment";
 import "./Profile.scss";
 import { notify } from "../../helper/notify";
 import * as actions from "../../store/actions/index";
+import { Link } from "react-router-dom";
 
 const breadCrumbRoute = [
   { name: "Home", link: "/" },
-  { name: "Profile", link: "/" },
+  { name: "Profile", link: "/profile" },
 ];
 
 function Profile({
@@ -40,7 +41,7 @@ function Profile({
       address: (address !== "null" && address) || "",
       email: (email !== "null" && email) || "",
       phone: (phone !== "null" && phone) || "",
-      birthday: birthday !== "null" && moment(birthday, dateFormat) || '',
+      birthday: (birthday !== "null" && moment(birthday, dateFormat)) || "",
     });
   }, []);
 
@@ -109,6 +110,7 @@ function Profile({
             loading={loading}
           />
         </Col>
+
         <Col lg={{ span: 6, order: 2 }} sm={{ span: 24, order: 1 }}>
           <UploadImage
             imageBase64={imageBase64}
@@ -117,6 +119,9 @@ function Profile({
           />
         </Col>
       </Row>
+      <Link to="/changepassword">
+        <Button>Change password</Button>
+      </Link>
     </section>
   );
 }

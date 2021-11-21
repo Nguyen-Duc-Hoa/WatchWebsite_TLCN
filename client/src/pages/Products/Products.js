@@ -13,7 +13,7 @@ import * as actions from "../../store/actions/index";
 
 const breadCrumbRoute = [
   { name: "Home", link: "/" },
-  { name: "Products", link: "/" },
+  { name: "Products", link: "/products" },
 ];
 
 function Products({ filterInfo, onAddToCart, token, isAuth, userId }) {

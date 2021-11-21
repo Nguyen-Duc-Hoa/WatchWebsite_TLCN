@@ -9,7 +9,7 @@ import { connect } from "react-redux";
 
 const breadcrumbRoute = [
   { name: "Home", link: "/" },
-  { name: "Order History", link: "/" },
+  { name: "Order History", link: "/orderHistory" },
   { name: "Order Detail", link: "/" },
 ];
 

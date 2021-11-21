@@ -13,7 +13,7 @@ const { Column } = Table;
 
 const breadcrumbRoute = [
   { name: "Home", link: "/" },
-  { name: "Order History", link: "/" },
+  { name: "Order History", link: "/orderHistory" },
 ];
 
 function OrderHistory({ token, userId }) {
