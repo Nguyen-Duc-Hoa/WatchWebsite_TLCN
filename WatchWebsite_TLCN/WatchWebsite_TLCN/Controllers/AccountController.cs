@@ -153,11 +153,11 @@ namespace WatchWebsite_TLCN.Controllers
             if (user != null)
             {
                 
-                string web_email = "laptrinhwebnhom9@gmail.com";
+                string web_email = "nhomltweb@gmail.com";
                 // Cau hinh thong tin gmail
                 var mail = new SmtpClient("smtp.gmail.com", 25)
                 {
-                    Credentials = new NetworkCredential(web_email, "123asd456qwe"),
+                    Credentials = new NetworkCredential(web_email, "123456789a@"),
                     EnableSsl = true
                 };
                 // tao gmail

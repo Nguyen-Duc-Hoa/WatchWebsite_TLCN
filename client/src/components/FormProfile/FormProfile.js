@@ -68,8 +68,8 @@ function FormProfile({ form, onSubmit, loading }) {
             message: "Please input your E-mail!",
           },
           {
-            max: 20,
-            message: "Email length must be less than 20 characters!",
+            max: 80,
+            message: "Email length must be less than 80 characters!",
           },
         ]}
       >
