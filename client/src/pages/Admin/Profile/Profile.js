@@ -1,100 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import FormProfile from "../../../components/FormProfile/FormProfile";
 import { Row, Col, Form } from "antd";
 import UploadImage from "../../../components/UploadImage/UploadImage";
-import { convertToByteArray } from "../../../helper/convertToByteArray";
-import { notify } from "../../../helper/notify";
-import moment from "moment";
 import { connect } from "react-redux";
 import * as actions from "../../../store/actions/index";
 
-function Profile({ idUser, onUpdateInfo }) {
-  console.log(idUser);
-  const [imageBase64, setImageBase64] = useState("");
-  const [imageByteArray, setImageByteArray] = useState([]);
+import { useUpdateProfile } from "../../../hook/useUpdateProfile";
+
+function Profile({
+  name,
+  address,
+  email,
+  phone,
+  birthday,
+  avatar,
+  idUser,
+  onUpdateInfo,
+}) {
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const dateFormat = "YYYY/MM/DD";
 
-  useEffect(() => {
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/User?id=${idUser}`, {
-      method: "GET",
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-        result.Avatar &&
-          setImageBase64(`data:image/png;base64,${result.Avatar}`);
-        result.Avatar && setImageByteArray(convertToByteArray(result.Avatar));
-        form.setFieldsValue({
-          name: result.Name,
-          address: result.Address,
-          email: result.Email,
-          phone: result.Phone,
-          birthday: moment(result.Birthday, dateFormat),
-        });
-        return fetch(
-          `${process.env.REACT_APP_HOST_DOMAIN}/api/User?id=${idUser}`,
-          {
-            method: "GET",
-          }
-        );
-      })
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result);
-        result.Avatar &&
-          setImageBase64(`data:image/png;base64,${result.Avatar}`);
-        result.Avatar && setImageByteArray(convertToByteArray(result.Avatar));
-        onUpdateInfo(result);
-      })
-      .catch(() => {
-        notify(
-          "LOAD FAILED",
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-      });
-  }, []);
-
-  const updateAccount = (values) => {
-    if (imageByteArray.length === 0) {
-      notify(
-        "CHOOSE AVATAR",
-        "Please choose avatar before updating.",
-        "warning"
-      );
-      return;
-    }
-    setLoading(true);
-    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/user/`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...values, avatar: imageByteArray, id: idUser }),
-    })
-      .then((response) => {
-        if (response.ok) {
-          notify(
-            "UPDATE SUCCESS",
-            "You have already update your info.",
-            "success"
-          );
-          setLoading(false);
-        } else {
-          return Promise.reject();
-        }
-      })
-      .catch(() => {
-        notify(
-          "LOAD FAILED",
-          "Something went wrong :( Please try again.",
-          "error"
-        );
-        setLoading(false);
-      });
-  };
+  const [
+    updateAccount,
+    loading,
+    imageBase64,
+    setImageBase64,
+    setImageByteArray,
+  ] = useUpdateProfile(
+    form,
+    name,
+    address,
+    email,
+    phone,
+    birthday,
+    avatar,
+    idUser,
+    onUpdateInfo
+  );
 
   return (
     <section className="admin">
@@ -121,9 +62,13 @@ function Profile({ idUser, onUpdateInfo }) {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.auth.id);
-  console.log(state.auth);
   return {
+    name: state.auth.name,
+    address: state.auth.address,
+    email: state.auth.email,
+    phone: state.auth.phone,
+    birthday: state.auth.birthday,
+    avatar: state.auth.avatar,
     idUser: state.auth.id,
   };
 };

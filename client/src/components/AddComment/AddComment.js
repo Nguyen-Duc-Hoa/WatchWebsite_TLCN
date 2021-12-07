@@ -16,6 +16,7 @@ function AddComment({
   token,
   username,
   avatarUser,
+  forceUpdate
 }) {
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,6 +49,7 @@ function AddComment({
         setLoading(false);
         form.resetFields();
       });
+      forceUpdate && forceUpdate()
   };
 
   const handleChange = (e) => {

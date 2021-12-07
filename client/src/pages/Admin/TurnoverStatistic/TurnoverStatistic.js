@@ -65,13 +65,6 @@ function Statistic({ token }) {
   };
 
   const onFinish = (values) => {
-    console.log({
-      typeDate: typeDate,
-      date: [
-        values.date[0].format("MM/dd/yyyy"),
-        values.date[1].format("MM/dd/yyyy"),
-      ],
-    });
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/statis/chart1`, {
       method: "POST",
       headers: {

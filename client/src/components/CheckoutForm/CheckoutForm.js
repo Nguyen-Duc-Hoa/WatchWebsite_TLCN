@@ -26,7 +26,7 @@ function CheckoutForm({ name, address, phone, onSetInfoOrder, orderInfo }) {
       });
     } else {
       form.setFieldsValue({
-        name: name !== "null" && name,
+        name: (name !== "null" && name) || "",
         address: (address !== "null" && address) || "",
         phone: (phone !== "null" && phone) || "",
       });

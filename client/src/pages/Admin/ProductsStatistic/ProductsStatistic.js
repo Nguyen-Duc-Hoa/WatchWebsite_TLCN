@@ -12,6 +12,7 @@ import {
 } from "antd";
 import LineChart from "../../../components/LineChart/LineChart";
 import ColumnChart from "../../../components/ColumnChart/ColumnChart";
+import { connect } from "react-redux";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -164,23 +165,38 @@ const productChartData = [
 const productColumns = [
   {
     title: "Name",
-    dataIndex: "name",
-    key: "name",
-    sorter: (a, b) => a.name > b.name,
-    sortDirections: ["descend"],
-  },
-  {
-    title: "Year",
-    dataIndex: "year",
-    key: "year",
-    sorter: (a, b) => a.year > b.year,
+    dataIndex: "Name",
+    key: "Name",
+    sorter: (a, b) => a.Name > b.Name,
     sortDirections: ["descend"],
   },
   {
     title: "Value",
-    dataIndex: "value",
-    key: "value",
-    sorter: (a, b) => a.value > b.value,
+    dataIndex: "Value",
+    key: "Value",
+    sorter: (a, b) => a.Value > b.Value,
+    sortDirections: ["descend"],
+  },
+  {
+    title: "Percent",
+    dataIndex: "Percent",
+    key: "Percent",
+    sorter: (a, b) => a.Percent > b.Percent,
+    sortDirections: ["descend"],
+  },
+  {
+    title: "AveragePrice",
+    dataIndex: "AveragePrice",
+    key: "AveragePrice",
+    sorter: (a, b) => a.AveragePrice > b.AveragePrice,
+    sortDirections: ["descend"],
+    render: (avg) => <p>{avg.toFixed(2)}</p>
+  },
+  {
+    title: "Quantity",
+    dataIndex: "Quantity",
+    key: "Quantity",
+    sorter: (a, b) => a.Quantity > b.Quantity,
     sortDirections: ["descend"],
   },
 ];
@@ -192,26 +208,50 @@ const titleStyle = {
   margin: "16px 0 32px",
 };
 
-function Statistic() {
-  const [typeDate, setTypeDate] = useState("day");
+function Statistic({ token }) {
+  const [typeDate, setTypeDate] = useState("month");
+  const [productChartData, setProductChartData] = useState([]);
+
   const selectOnChange = (value) => {
     setTypeDate(value);
   };
 
   const onFinish = (values) => {
-    console.log(values);
-    console.log(values.date[0]);
-    console.log(values.date[1]);
+    console.log({
+      typeDate: typeDate,
+      date: [values.date.format("MM/DD/yyyy")],
+    });
+    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/statis/chart2`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        typeDate: typeDate,
+        date: [values.date.format("MM/DD/yyyy")],
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        setProductChartData(result);
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
     <section className="admin">
       <div className="heading">Statistic</div>
-      <Form {...layout} onFinish={onFinish} initialValues={{ typeDate: "day" }}>
+      <Form
+        {...layout}
+        onFinish={onFinish}
+        initialValues={{ typeDate: "month" }}
+      >
         <Space>
           <Form.Item name="typeDate">
             <Select style={{ minWidth: 150 }} onChange={selectOnChange}>
-              <Option value="day">Day</Option>
+              {/* <Option value="day">Day</Option> */}
               <Option value="month">Month</Option>
               <Option value="year">Year</Option>
             </Select>
@@ -221,7 +261,7 @@ function Statistic() {
             name="date"
             rules={[{ required: true, message: "Date is required!" }]}
           >
-            <RangePicker picker={typeDate} />
+            <DatePicker picker={typeDate} />
           </Form.Item>
 
           <Form.Item>
@@ -232,34 +272,20 @@ function Statistic() {
         </Space>
       </Form>
 
-      {/* <div style={titleStyle}>Turnover</div>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
-                <Col span={14}>
-                    <LineChart
-                        data={turnOverChartData}
-                        xField={'year'}
-                        yField={'turnover'}
-                        size={5}
-                    />
-                </Col>
-                <Col span={10}>
-                    <Table
-                        columns={turnOverColumns}
-                        dataSource={turnOverChartData}
-                        pagination={{ position: ['none', 'none'] }}
-                        bordered={true} />
-                </Col>
-            </Row> */}
-
       <div style={titleStyle}>Product</div>
       <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
         <Col span={24}>
           <ColumnChart
-            xField="year"
-            yField="value"
-            seriesField="name"
+            xField="Name"
+            yField="Value"
+            seriesField=""
             data={productChartData}
           />
+          {/* <LineChart
+            data={productChartData}
+            xField={"Name"}
+            yField={"Value"}
+          /> */}
         </Col>
       </Row>
       <Divider />
@@ -278,4 +304,10 @@ function Statistic() {
   );
 }
 
-export default Statistic;
+const mapStateToProps = (state) => {
+  return {
+    token: state.auth.token,
+  };
+};
+
+export default connect(mapStateToProps)(Statistic);

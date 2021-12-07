@@ -3,9 +3,15 @@ import "./Menu.scss";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { connect } from "react-redux";
 import * as actionTypes from "../../../store/actions/actionTypes";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 
-function Menu({ onOpenSidebar, onOpenOverlay, brands, onSetBrands }) {
+function Menu({
+  onOpenSidebar,
+  onOpenOverlay,
+  brands,
+  onSetBrands,
+  onSetGender,
+}) {
   const history = useHistory();
   const openSidebarHandler = () => {
     onOpenSidebar();
@@ -18,7 +24,9 @@ function Menu({ onOpenSidebar, onOpenOverlay, brands, onSetBrands }) {
   return (
     <div className="menu">
       <div className="menu__item">
-        <span>Home</span>
+        <Link to="/">
+          <span>Home</span>
+        </Link>
       </div>
       <div className="menu__item">
         <span className="item-brand">Brands</span>
@@ -45,13 +53,19 @@ function Menu({ onOpenSidebar, onOpenOverlay, brands, onSetBrands }) {
         </div>
       </div>
       <div className="menu__item">
-        <span>Products</span>
+        <Link to="/products">
+          <span>Products</span>
+        </Link>
       </div>
       <div className="menu__item">
-        <span>Ladies</span>
+        <Link to="/products" onClick={() => onSetGender(0)}>
+          <span>Ladies</span>
+        </Link>
       </div>
       <div className="menu__item">
-        <span>Mens</span>
+        <Link to="/products" onClick={() => onSetGender(1)}>
+          <span>Mens</span>
+        </Link>
       </div>
       <div className="hamburger" onClick={openSidebarHandler}>
         <GiHamburgerMenu />
@@ -72,6 +86,8 @@ const mapDispatchToProps = (dispatch) => {
     onOpenOverlay: () => dispatch({ type: actionTypes.OPEN_OVERLAY }),
     onSetBrands: (brandName) =>
       dispatch({ type: actionTypes.FILTER_SET_BRAND, payload: brandName }),
+    onSetGender: (gender) =>
+      dispatch({ type: actionTypes.FILTER_SET_GENDER, payload: gender }),
   };
 };
 

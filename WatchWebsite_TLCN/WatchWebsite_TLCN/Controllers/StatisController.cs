@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WatchWebsite_TLCN.DTO;
@@ -20,6 +21,8 @@ namespace WatchWebsite_TLCN.Controllers
         {
             _statis = statis;
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("Chart1")]
         public IEnumerable<Chart1DTO> GetChart1([FromBody]Statis statis)
@@ -43,13 +46,8 @@ namespace WatchWebsite_TLCN.Controllers
 
         }
 
-
-        //GET: api/statis/chart2
-        /* {
-            "date":["2021-9-1"],
-            "typeDate":"month"
-        }*/
-        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
         [Route("Chart2")]
         public IEnumerable<Chart2DTO> GetChart2([FromBody] Statis statis)
         {

@@ -87,6 +87,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             try
             {
+                orderDTO.OrderDate = DateTime.Now;
                 var order = _mapper.Map<Entities.Order>(orderDTO);
                 order.Total = await CalculateOrderAmount(orderDTO.Products) / 100;
 

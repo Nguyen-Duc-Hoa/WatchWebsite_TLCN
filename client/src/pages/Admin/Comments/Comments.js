@@ -30,12 +30,11 @@ function Comments({ token, userId, avatarUser, username }) {
 
   const {
     data,
+    forceUpdate,
     currentPage,
     setCurrentPage,
     totalPage,
-    loading,
     spinning,
-    updateReq,
     deleteReq,
     deletiveArray,
   } = useFetchData(
@@ -139,6 +138,7 @@ function Comments({ token, userId, avatarUser, username }) {
         />
       </Spin>
       <AddComment
+        forceUpdate={forceUpdate}
         replyUserName={replyUserName}
         replyCommentId={replyCommentId}
         productId={productId}

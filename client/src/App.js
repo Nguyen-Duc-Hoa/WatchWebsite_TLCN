@@ -21,6 +21,7 @@ import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import PrivateRoute from "./components/Routes/PrivateRoute";
 import PageLoading from "./components/PageLoading/PageLoading";
+import ChangePassword from "./pages/ChangePassword/ChangePassword";
 
 function App({ onCheckAuthState, onFetchAllBrands }) {
   const [loading, setLoading] = useState(true);
@@ -54,14 +55,21 @@ function App({ onCheckAuthState, onFetchAllBrands }) {
               component={Products}
               layout={UserLayout}
             />
-            <PublicRoute
+            <PrivateRoute
               path="/checkout/payment"
               component={Payment}
               layout={UserLayout}
+              forUser
             />
             <PrivateRoute
               path="/checkout"
               component={Checkout}
+              layout={UserLayout}
+              forUser
+            />
+            <PrivateRoute
+              path="/changepassword"
+              component={ChangePassword}
               layout={UserLayout}
               forUser
             />
@@ -76,20 +84,23 @@ function App({ onCheckAuthState, onFetchAllBrands }) {
               component={Register}
               layout={UserLayout}
             />
-            <PublicRoute
+            <PrivateRoute
               path="/orderHistory"
               component={OrderHistory}
               layout={UserLayout}
+              forUser
             />
-            <PublicRoute
+            <PrivateRoute
               path="/orders/:id"
               component={OrderDetail}
               layout={UserLayout}
+              forUser
             />
-            <PublicRoute
+            <PrivateRoute
               path="/paymentSuccess"
               component={PaymentSuccess}
               layout={UserLayout}
+              forUser
             />
             <PrivateRoute
               path="/profile"

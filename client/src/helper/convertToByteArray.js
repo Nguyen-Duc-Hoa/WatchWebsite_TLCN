@@ -1,4 +1,5 @@
 export const convertToByteArray = (base64) => {
+  console.log(base64)
   var binary_string = window.atob(base64);
   var len = binary_string.length;
   var bytes = [];

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WatchWebsite_TLCN.Entities;
-using WatchWebsite_TLCN.IRepository;
+using WatchWebsite_TLCN.Methods;
 using WatchWebsite_TLCN.Models;
 using WatchWebsite_TLCN.Utilities;
 
@@ -22,31 +22,20 @@ namespace WatchWebsite_TLCN.Controllers
     public class AccountController : ControllerBase
     {
         private readonly MyDBContext _context;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IJwtAuthenticationManager _jwtAuthenticationManager;
+        private readonly ITokenRefresher _tokenRefresher;
 
-        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, MyDBContext context, IUnitOfWork unitOfWork)
+        public AccountController(IJwtAuthenticationManager jwtAuthenticationManager, ITokenRefresher tokenRefresher, MyDBContext context)
         {
             _context = context;
-            _unitOfWork = unitOfWork;
             _jwtAuthenticationManager = jwtAuthenticationManager;
+            _tokenRefresher = tokenRefresher;
         }
 
 
         [AllowAnonymous]
         [HttpPost]
         [Route("Register")]
-        //POST: api/account/register
-        /*JSON
-            {
-                "Username":"username",
-                "Email": "abc@gmail.com",
-                "Phone": "123456789",
-                "Password": "123",
-                "ConfirmPass": "123"
-            }
-
-         */
         public async Task<IActionResult> Register([FromBody] Register model)
         {
             var user = new User { Username = model.Username, Password = model.Password, Phone = model.Phone, Email = model.Email, State = true };
@@ -58,6 +47,11 @@ namespace WatchWebsite_TLCN.Controllers
 
                 if (result.Equals(1))
                 {
+                    string customerRole = Constant.customerRole;
+                    Role dbRole = _context.Roles.FirstOrDefault(r => r.RoleName == customerRole);
+                    User_Role usrRole = new User_Role { RoleId = dbRole.RoleId, UserId = user.Id };
+                    _context.User_Roles.Add(usrRole);
+                    await _context.SaveChangesAsync();
                     return Ok();
                 }
                 else
@@ -85,10 +79,8 @@ namespace WatchWebsite_TLCN.Controllers
             List<string> listRole = new List<string>();
             List<int> listRoleId = new List<int>();
 
-            //User user = _context.Users.Where(x => x.Username == username && x.Password == password).FirstOrDefault();
-            var user = await _unitOfWork.Users.Get(x => x.Username == username && x.Password == password);
-
-
+            User user = _context.Users.Where(x => x.Username == username && x.Password == password && x.State == true).FirstOrDefault();
+           
             if (user == null)
             {
                 username = null;
@@ -96,11 +88,6 @@ namespace WatchWebsite_TLCN.Controllers
             }
             else
             {
-                if (user.State is false)
-                {
-                    return BadRequest("UnAuthorize");
-                }
-
                 userid = user.Id;
                 var user_role = (from u in _context.User_Roles
                                  join r in _context.Roles on u.RoleId equals r.RoleId
@@ -111,7 +98,7 @@ namespace WatchWebsite_TLCN.Controllers
                                      r.RoleName
                                  }).ToList();
 
-                foreach (var item in user_role)
+                foreach(var item in user_role)
                 {
                     listRole.Add(item.RoleName);
                     listRoleId.Add(item.RoleId);
@@ -160,18 +147,17 @@ namespace WatchWebsite_TLCN.Controllers
         {
 
             // query id tu email va password de kiem tra dang nhap
-            var user = await _unitOfWork.Users.Get(x => x.Email == email);
 
-            //var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
+            var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
 
-            if (user != null && user.State is true)
+            if (user != null)
             {
-
-                string web_email = "laptrinhwebnhom9@gmail.com";
+                
+                string web_email = "nhomltweb@gmail.com";
                 // Cau hinh thong tin gmail
                 var mail = new SmtpClient("smtp.gmail.com", 25)
                 {
-                    Credentials = new NetworkCredential(web_email, "123asd456qwe"),
+                    Credentials = new NetworkCredential(web_email, "123456789a@"),
                     EnableSsl = true
                 };
                 // tao gmail
@@ -183,16 +169,13 @@ namespace WatchWebsite_TLCN.Controllers
                 // Create a random 6-digits number for verification code
                 Random random = new Random();
                 int code = random.Next(100000, 999999);
-
+                
 
                 message.Subject = "Reset Watch-Website Password";
                 message.Body = code + " is your account password.";
 
                 try
                 {
-                    // gui gmail    
-                    mail.Send(message);
-
                     //Update Password
                     (from p in _context.Users
                      where (p.Email == email)
@@ -201,18 +184,22 @@ namespace WatchWebsite_TLCN.Controllers
 
                     _context.SaveChanges();
 
+                    // gui gmail    
+                    mail.Send(message);
+
                     return Ok("Check your email");
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
                     return BadRequest(e.ToString());
                 }
-
+                
             }
             else
             {
                 return StatusCode(500);
             }
         }
+
     }
 }

@@ -76,6 +76,10 @@ function Register({ onRegister, loading, isAuth }) {
                 required: true,
                 message: "Please input your E-mail!",
               },
+              {
+                max: 80,
+                message: "Email length must be less than 80 characters!",
+              },
             ]}
           >
             <Input size="large" placeholder="E-mail" />
