@@ -43,7 +43,6 @@ function Product({ isAuth, token, userId, username, avatarUser, onAddToCart }) {
     fetchProductDetail();
   }, []);
 
-  console.log(comments)
 
   const fetchComments = () => {
     fetch(`https://localhost:44336/api/Comments?productId=${id}`, {
@@ -64,7 +63,6 @@ function Product({ isAuth, token, userId, username, avatarUser, onAddToCart }) {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
         setProductDetail({ ...result });
       })
       .catch((err) => console.log(err));
@@ -76,7 +74,6 @@ function Product({ isAuth, token, userId, username, avatarUser, onAddToCart }) {
   };
 
   const onFinish = (values) => {
-    console.log(values);
     if (isAuth) {
       onAddToCart(id, values.quantity, userId, token, notify);
     } else {

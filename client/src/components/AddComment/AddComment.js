@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Tooltip, Input, Button, Tag } from "antd";
 import Commenting from "../Comment/Comment";
 import moment from "moment";
@@ -48,7 +48,7 @@ function AddComment({
         setComments && setComments(result);
         setLoading(false);
         form.resetFields();
-      });
+      }).catch(err => console.log(err));
       forceUpdate && forceUpdate()
   };
 
@@ -102,6 +102,16 @@ function Editor({
     setReplyUserName();
   };
 
+  const [disable, setDisable] = useState(true)
+  useEffect(() => {
+    if(value.trim() !== "") {
+      setDisable(false)
+    }
+    else {
+      setDisable(true)
+    }
+  }, [value])
+
   return (
     <Form onFinish={handleSubmit} form={form}>
       {replyUserName && (
@@ -123,6 +133,7 @@ function Editor({
           htmlType="submit"
           loading={loading}
           type="primary"
+          disabled={disable}
         >
           Add Comment
         </Button>
