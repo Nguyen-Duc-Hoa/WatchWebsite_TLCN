@@ -1,43 +1,61 @@
 import "./App.less";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Home from "./pages/Home/Home";
 import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
-import Products from "./pages/Products/Products";
-import Product from "./pages/Product/Product";
-import Checkout from "./pages/Checkout/Checkout";
-import Payment from "./pages/Payment/Payment";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import OrderHistory from "./pages/OrderHistory/OrderHistory";
-import OrderDetail from "./pages/OrderDetail/OrderDetail";
-import AdminMain from "./pages/Admin/AdminMain/AdminMain";
+// import Products from "./pages/Products/Products";
+// import Product from "./pages/Product/Product";
+// import Checkout from "./pages/Checkout/Checkout";
+// import Payment from "./pages/Payment/Payment";
+// import Login from "./pages/Login/Login";
+// import Register from "./pages/Register/Register";
+// import OrderHistory from "./pages/OrderHistory/OrderHistory";
+// import OrderDetail from "./pages/OrderDetail/OrderDetail";
+// import AdminMain from "./pages/Admin/AdminMain/AdminMain";
 import PublicRoute from "./components/Routes/PublicRoute";
 import UserLayout from "./components/Layouts/UserLayout";
-import Profile from "./pages/Profile/Profile";
-import PaymentSuccess from "./pages/PaymentSuccess/PaymentSuccess";
-import LoginAdmin from "./pages/Admin/Login/Login";
+// import Profile from "./pages/Profile/Profile";
+// import PaymentSuccess from "./pages/PaymentSuccess/PaymentSuccess";
+// import LoginAdmin from "./pages/Admin/Login/Login";
 import * as actions from "./store/actions/index";
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense, lazy } from "react";
 import PrivateRoute from "./components/Routes/PrivateRoute";
 import PageLoading from "./components/PageLoading/PageLoading";
-import ChangePassword from "./pages/ChangePassword/ChangePassword";
+// import ChangePassword from "./pages/ChangePassword/ChangePassword";
+
+const Home = lazy(() => import("./pages/Home/Home"));
+const Product = lazy(() => import("./pages/Product/Product"));
+const Products = lazy(() => import("./pages/Products/Products"));
+const Payment = lazy(() => import("./pages/Payment/Payment"));
+const Checkout = lazy(() => import("./pages/Checkout/Checkout"));
+const ChangePassword = lazy(() =>
+  import("./pages/ChangePassword/ChangePassword")
+);
+const Login = lazy(() => import("./pages/Login/Login"));
+const Register = lazy(() => import("./pages/Register/Register"));
+const OrderHistory = lazy(() => import("./pages/OrderHistory/OrderHistory"));
+const OrderDetail = lazy(() => import("./pages/OrderDetail/OrderDetail"));
+const PaymentSuccess = lazy(() =>
+  import("./pages/PaymentSuccess/PaymentSuccess")
+);
+const Profile = lazy(() => import("./pages/Profile/Profile"));
+const LoginAdmin = lazy(() => import("./pages/Admin/Login/Login"));
+const AdminMain = lazy(() => import("./pages/Admin/AdminMain/AdminMain"));
 
 function App({ onCheckAuthState, onFetchAllBrands }) {
   const [loading, setLoading] = useState(true);
-  
-  console.log(`${process.env.REACT_APP_STRIPE_PROMISE}`)
+
   useEffect(() => {
     onCheckAuthState();
     onFetchAllBrands();
-    setLoading(false)
+    setLoading(false);
   }, []);
-  if(loading) {
-    return <PageLoading />
+  if (loading) {
+    return <PageLoading />;
   }
   return (
     <Router>
       <ErrorBoundary>
+        <Suspense fallback={<PageLoading />}>
           <Switch>
             <PublicRoute
               path="/"
@@ -115,6 +133,7 @@ function App({ onCheckAuthState, onFetchAllBrands }) {
             />
             <Route path="/admin" component={AdminMain} />
           </Switch>
+        </Suspense>
       </ErrorBoundary>
     </Router>
   );
