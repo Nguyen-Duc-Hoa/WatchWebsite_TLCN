@@ -46,7 +46,7 @@ function Product({ isAuth, token, userId, username, avatarUser, onAddToCart }) {
   console.log(comments)
 
   const fetchComments = () => {
-    fetch(`https://localhost:44336/api/Comments?productId=${id}`, {
+    fetch(`http://nguyenhoandh-001-site1.itempurl.com/api/Comments?productId=${id}`, {
       method: "GET",
     })
       .then((response) => response.json())

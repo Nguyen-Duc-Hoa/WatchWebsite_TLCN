@@ -34,7 +34,7 @@ function AddComment({
       date: new Date(),
       replyFrom: replyCommentId ? replyCommentId : null,
     };
-    fetch("https://localhost:44336/api/Comments/AddComment", {
+    fetch("http://nguyenhoandh-001-site1.itempurl.com/api/Comments/AddComment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
