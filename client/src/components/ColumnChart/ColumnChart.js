@@ -12,7 +12,6 @@ function ColumnChart({ data, xField, yField, seriesField }) {
         label: {
             position: 'middle',
             content: function content(item) {
-                console.log(item)
                 return item.Percent.toFixed(2);
             },
             style: { fill: '#000' },

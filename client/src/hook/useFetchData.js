@@ -97,7 +97,7 @@ export const useFetchData = (route, setEditingKey, updateData, token) => {
         if (response.ok) {
           notify(
             "DELETE SUCCESS",
-            "You have already deleted water resistances.",
+            "You have already deleted item(s).",
             "success"
           );
           setSpinning(false);

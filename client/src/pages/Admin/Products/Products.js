@@ -49,7 +49,7 @@ function Products({ token }) {
   };
 
   const deleteHandler = () => {
-    console.log(deletiveArray.current)
+    // console.log(deletiveArray.current)
     if (deletiveArray.current.length === 0) return;
     deleteReq();
   };
@@ -88,14 +88,14 @@ function Products({ token }) {
       filters: [
         {
           text: "Men",
-          value: "Men",
+          value: "1",
         },
         {
           text: "Women",
-          value: "Women",
+          value: "0",
         },
       ],
-      onFilter: (value, record) => record.sex.indexOf(value) === 0,
+      onFilter: (value, record) => record.gender === +value
     },
     {
       title: "Brand",

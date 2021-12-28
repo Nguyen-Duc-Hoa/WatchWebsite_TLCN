@@ -1,7 +1,7 @@
 import * as actionTypes from "./actionTypes";
 
 export const updateBrand = (brandInfo, isAdd, notify, token) => {
-  console.log(brandInfo);
+  // console.log(brandInfo);
   return (dispatch) => {
     dispatch(wating());
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/brands/`, {
@@ -77,7 +77,7 @@ export const deleteBrands = (deletiveArray, notify, token) => {
       body: JSON.stringify(deletiveArray),
     })
       .then((response) => {
-        console.log("respones", response);
+        // console.log("respones", response);
         if (response.ok) {
           return fetch(
             `${process.env.REACT_APP_HOST_DOMAIN}/api/brands/GetBrandsWithPagination?currentPage=1`,
