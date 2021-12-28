@@ -46,24 +46,31 @@ namespace WatchWebsite_TLCN.Repository
             //chua co san pham trong cart thi them san pham
             if(!ProductExists(cart))
             {
-                _context.Carts.Add(cart);
-                return Save();
+                if(CheckQuantity(cart))
+                {
+                    _context.Carts.Add(cart);
+                    return Save();
+                }
             }
             //Co san pham trong cart thi tang so luong
             else
             {
+
                 var cartItem = _context.Carts.Find(cart.UserId, cart.ProductId);
                 if (cartItem != null)
                 {
                     cart.Count += cartItem.Count;
                     //_context.Carts.Update(cart);
                     //return Save();
-
-                    (from p in _context.Carts
-                     where (p.UserId == cart.UserId) && (p.ProductId == cart.ProductId)
-                     select p).ToList()
+                    if (CheckQuantity(cart))
+                    {
+                        (from p in _context.Carts
+                         where (p.UserId == cart.UserId) && (p.ProductId == cart.ProductId)
+                         select p).ToList()
                                         .ForEach(x => x.Count = cart.Count);
-                    return Save();
+                        return Save();
+                    }
+                    
                 }
             }
             return false;
@@ -94,6 +101,19 @@ namespace WatchWebsite_TLCN.Repository
         {
             bool value = _context.Carts.Any(a => a.UserId == cart.UserId && a.ProductId == cart.ProductId);
             return value;
+        }
+
+        public bool CheckQuantity(Cart cart)
+        {
+            try
+            {
+                var product = _context.Products.Where(x => x.Id == cart.ProductId).FirstOrDefault();
+                if (cart.Count <= product.Amount) return true;
+            }
+            catch
+            { }
+
+            return false;
         }
 
         public bool Save()

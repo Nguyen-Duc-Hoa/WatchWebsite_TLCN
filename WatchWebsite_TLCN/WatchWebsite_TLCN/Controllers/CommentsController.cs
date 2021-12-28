@@ -63,6 +63,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             try
             {
+                comment.Date = DateTime.Now.AddHours(15); // cộng thêm giờ => giờ VN
                 await _unitOfWork.Comments.Insert(comment);
                 await _unitOfWork.Save();
                 return RedirectToAction(nameof(GetComments), new { productId = comment.ProductId });

@@ -47,7 +47,7 @@ namespace WatchWebsite_TLCN.Controllers
         {
             var result = await _unitOfWork.Orders.GetAllWithPagination(
                 expression: null,
-                orderBy: x => x.OrderBy(a => a.OrderId),
+                orderBy: x => x.OrderByDescending(a => a.OrderId),
                 pagination: new Pagination { CurrentPage = currentPage }
                 );
             return Ok(new
@@ -87,7 +87,9 @@ namespace WatchWebsite_TLCN.Controllers
         {
             try
             {
-                orderDTO.OrderDate = DateTime.Now;
+                DateTime now = DateTime.Now;
+                DateTime timeVN = now.AddHours(15);
+                orderDTO.OrderDate = timeVN;
                 var order = _mapper.Map<Entities.Order>(orderDTO);
                 order.Total = await CalculateOrderAmount(orderDTO.Products) / 100;
 

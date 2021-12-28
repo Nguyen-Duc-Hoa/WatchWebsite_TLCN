@@ -149,6 +149,7 @@ namespace WatchWebsite_TLCN.Controllers
             // query id tu email va password de kiem tra dang nhap
 
             var user = _context.Users.Where(x => x.Email == email).FirstOrDefault();
+            string oldPass = user.Password.ToString();
 
             if (user != null)
             {
@@ -191,6 +192,17 @@ namespace WatchWebsite_TLCN.Controllers
                 }
                 catch(Exception e)
                 {
+                    try
+                    {
+                        //tra lai Password cu
+                        (from p in _context.Users
+                         where (p.Email == email)
+                         select p).ToList()
+                                            .ForEach(x => x.Password = oldPass);
+
+                        _context.SaveChanges();
+                    }
+                    catch { }
                     return BadRequest(e.ToString());
                 }
                 

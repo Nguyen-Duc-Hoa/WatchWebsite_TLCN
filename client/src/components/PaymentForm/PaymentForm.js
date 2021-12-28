@@ -83,7 +83,7 @@ function PaymentForm({ cart, orderInfo, token, idUser, onFetchCart }) {
           quantity: element.Quantity,
         };
       });
-      fetch("http://nguyenhoandh-001-site1.itempurl.com/api/Orders/CreateOrder", {
+      fetch("https://localhost:44336/api/Orders/CreateOrder", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
