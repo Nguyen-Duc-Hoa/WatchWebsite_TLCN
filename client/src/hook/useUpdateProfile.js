@@ -20,7 +20,6 @@ export const useUpdateProfile = (
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(avatar);
     setImageBase64(`data:image/png;base64,${avatar}`);
     setImageByteArray(convertToByteArray(avatar));
     form.setFieldsValue({
@@ -69,7 +68,6 @@ export const useUpdateProfile = (
       })
       .then((response) => response.json())
       .then((result) => {
-        console.log(result);
         result.Avatar &&
           setImageBase64(`data:image/png;base64,${result.Avatar}`);
         result.Avatar && setImageByteArray(convertToByteArray(result.Avatar));

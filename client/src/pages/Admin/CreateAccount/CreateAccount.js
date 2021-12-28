@@ -16,8 +16,8 @@ function CreateAccount({token}) {
 
   const onFinish = (values) => {
     values.birthday = values.birthday && values.birthday.format(dateFormat)
-    console.log(values)
-    console.log(token)
+    // console.log(values)
+    // console.log(token)
     setLoading(true);
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/User/CreateEmployee`, {
       method: "POST",

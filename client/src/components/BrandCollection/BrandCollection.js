@@ -23,10 +23,8 @@ function BrandCollection({ brands, loading }) {
 
   useEffect(() => {
     setResizeFlag(windowDimensions.width > 750);
-    console.log(resizeFlag);
   }, [windowDimensions]);
 
-  console.log("re-render");
   return (
     <section className="brandCollection">
       <div className="heading">Brand Collection</div>

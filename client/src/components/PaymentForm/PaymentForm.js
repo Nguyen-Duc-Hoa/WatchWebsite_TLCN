@@ -49,7 +49,7 @@ function PaymentForm({ cart, orderInfo, token, idUser, onFetchCart }) {
       };
     });
     // Create PaymentIntent as soon as the page loads
-    fetch("https://localhost:44336/api/Orders/Payment", {
+    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Orders/Payment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -83,7 +83,7 @@ function PaymentForm({ cart, orderInfo, token, idUser, onFetchCart }) {
           quantity: element.Quantity,
         };
       });
-      fetch("https://localhost:44336/api/Orders/CreateOrder", {
+      fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Orders/CreateOrder`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

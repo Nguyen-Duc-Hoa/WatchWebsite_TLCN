@@ -45,7 +45,7 @@ function Product({ isAuth, token, userId, username, avatarUser, onAddToCart }) {
 
 
   const fetchComments = () => {
-    fetch(`https://localhost:44336/api/Comments?productId=${id}`, {
+    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Comments?productId=${id}`, {
       method: "GET",
     })
       .then((response) => response.json())
@@ -192,7 +192,7 @@ function Product({ isAuth, token, userId, username, avatarUser, onAddToCart }) {
                             author={rep.User.UserName}
                             avatar={rep.User.Avatar}
                             content={rep.Content}
-                            datetime={new Date(item.Date).toLocaleDateString()}
+                            datetime={new Date(rep.Date).toLocaleDateString()}
                             replyFrom={rep.ReplyFrom}
                             onReply={handleReply}
                           />

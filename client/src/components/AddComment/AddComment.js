@@ -34,7 +34,7 @@ function AddComment({
       date: new Date(),
       replyFrom: replyCommentId ? replyCommentId : null,
     };
-    fetch("https://localhost:44336/api/Comments/AddComment", {
+    fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Comments/AddComment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

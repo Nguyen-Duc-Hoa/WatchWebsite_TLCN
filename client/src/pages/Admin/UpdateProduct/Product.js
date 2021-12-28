@@ -37,7 +37,7 @@ function Product({ brands, onFetchAllBrands }) {
   const [imageByteArray, setImageByteArray] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hidden, setHidden] = useState(false);
-  console.log(useParams())
+  // console.log(useParams())
   let { id } = useParams();
   const isAdd =
     useLocation().pathname.slice(15).toLocaleLowerCase() === "addproduct"
@@ -74,7 +74,7 @@ function Product({ brands, onFetchAllBrands }) {
           };
         });
         setMaterials(materialArray);
-        console.log(materialArray);
+        // console.log(materialArray);
       })
       .catch(() => {
         console.log("fetch all materials failed");
