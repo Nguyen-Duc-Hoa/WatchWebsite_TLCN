@@ -122,6 +122,11 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 foreach (int item in id)
                 {
+                    var waterRes = await _unitOfWork.WaterResistances.Get(b => b.WaterId == item, new List<string> { "Products" });
+                    if (waterRes == null || waterRes.Products.Count != 0)
+                    {
+                        return BadRequest("Something was wrong!");
+                    }
                     await _unitOfWork.WaterResistances.Delete<int>(item);
                 }
                 await _unitOfWork.Save();

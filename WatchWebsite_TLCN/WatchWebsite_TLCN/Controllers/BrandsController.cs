@@ -151,8 +151,8 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 try
                 {
-                    var brand = await _unitOfWork.Brands.Get(b => b.BrandId == item);
-                    if (brand == null)
+                    var brand = await _unitOfWork.Brands.Get(b => b.BrandId == item, new List<string> { "Products" });
+                    if (brand == null || brand.Products.Count != 0)
                     {
                         return BadRequest("Something was wrong!");
                     }
