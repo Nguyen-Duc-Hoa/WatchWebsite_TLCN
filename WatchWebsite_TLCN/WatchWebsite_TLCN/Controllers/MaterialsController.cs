@@ -143,6 +143,11 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 foreach (int item in id)
                 {
+                    var material = await _unitOfWork.Materials.Get(b => b.MaterialId == item, new List<string> { "Products" });
+                    if (material == null || material.Products.Count != 0)
+                    {
+                        return BadRequest("Something was wrong!");
+                    }
                     await _unitOfWork.Materials.Delete<int>(item);
                 }
                 await _unitOfWork.Save();

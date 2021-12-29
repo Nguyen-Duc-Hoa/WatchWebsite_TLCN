@@ -245,17 +245,16 @@ namespace WatchWebsite_TLCN.Controllers
                     break;
             }
 
-            var result = await _unitOfWork.Products.GetAllWithPagination(
+            var result = await _unitOfWork.Products.GetAll(
                 expression: expression,
                 orderBy: orderBy,
-                pagination: new Pagination { CurrentPage = currentPage },
                 includes: new List<String>() { "Brand" });
 
             List<Product> productList = new List<Product>();
 
             if(filter.Brands != null && filter.Brands.Length != 0 )
             {
-                foreach(var item in result.Item1)
+                foreach(var item in result)
                 {
                     if(CheckBrands(item, filter.Brands))
                     {
@@ -265,16 +264,19 @@ namespace WatchWebsite_TLCN.Controllers
             }
             else
             {
-                productList = result.Item1;
+                productList = result;
             }
 
-            var listProductDTO = _mapper.Map<List<ProductResponseDTO>>(productList);
+            var listProductPaging = productList.Skip((currentPage - 1) * 5).Take(5);
+
+            var listProductDTO = _mapper.Map<List<ProductResponseDTO>>(listProductPaging);
+
 
             return Ok(new
             {
                 Products = listProductDTO,
-                CurrentPage = result.Item2.CurrentPage,
-                TotalPage = result.Item2.TotalPage
+                CurrentPage = currentPage,
+                TotalPage = Math.Ceiling((double)productList.Count / 5)
             });
         }
 

@@ -14,7 +14,7 @@ import { connect } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { notify } from "../../../helper/notify";
 import { convertToByteArray } from "../../../helper/convertToByteArray";
-import * as actions from '../../../store/actions/index'
+import * as actions from "../../../store/actions/index";
 
 const { Option } = Select;
 
@@ -56,10 +56,6 @@ function Product({ brands, onFetchAllBrands }) {
     if (!id) return;
     fetchProduct();
   }, [id]);
-
-  const onReset = () => {
-    form.resetFields();
-  };
 
   const fetchAllMaterials = () => {
     fetch(`${process.env.REACT_APP_HOST_DOMAIN}/api/Materials/GetAll`, {
@@ -406,16 +402,13 @@ function Product({ brands, onFetchAllBrands }) {
 
             <Form.Item>
               <Space>
-                <Button type="primary" htmlType="submit">
-                  Submit
-                </Button>
                 <Button
-                  htmlType="button"
-                  onClick={onReset}
+                  type="primary"
+                  htmlType="submit"
                   disabled={!imageBase64}
                   loading={loading}
                 >
-                  Reset
+                  Submit
                 </Button>
               </Space>
             </Form.Item>
@@ -439,10 +432,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchAllBrands: () => dispatch(actions.fetchAllBrands())
-  }
-}
+    onFetchAllBrands: () => dispatch(actions.fetchAllBrands()),
+  };
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Product);

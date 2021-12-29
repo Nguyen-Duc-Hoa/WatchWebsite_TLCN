@@ -154,6 +154,11 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 foreach (int item in id)
                 {
+                    var energy = await _unitOfWork.Energies.Get(b => b.EnergyId == item, new List<string> { "Products" });
+                    if (energy == null || energy.Products.Count != 0)
+                    {
+                        return BadRequest("Something was wrong!");
+                    }
                     await _unitOfWork.Energies.Delete<int>(item);
                 }
                 await _unitOfWork.Save();

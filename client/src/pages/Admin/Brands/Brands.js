@@ -49,7 +49,7 @@ function Brands({ brands, loading, onFetchBrands, totalPage, onDeleteBrands, tok
 
   const rowSelection = {
     onChange: (_, selectedRows) => {
-      deletiveArray = selectedRows.map((ele) => ele.key);
+      deletiveArray.current = selectedRows.map((ele) => ele.key);
     },
   };
 

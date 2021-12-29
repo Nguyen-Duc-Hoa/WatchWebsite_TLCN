@@ -122,10 +122,15 @@ namespace WatchWebsite_TLCN.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Size>> DeleteSize(int id)
         {
-            var size = await _unitOfWork.Sizes.Get(x=>x.SizeId==id);
+            var size = await _unitOfWork.Sizes.Get(x => x.SizeId == id, new List<string> { "Products" });
             if (size == null)
             {
                 return NotFound();
+            }
+
+            if (size.Products.Count != 0)
+            {
+                return BadRequest("Something was wrong");
             }
 
             await _unitOfWork.Sizes.Delete(id);
@@ -143,6 +148,11 @@ namespace WatchWebsite_TLCN.Controllers
             {
                 foreach (int item in id)
                 {
+                    var size = await _unitOfWork.Sizes.Get(x => x.SizeId == item, new List<string> { "Products" });
+                    if (size.Products.Count != 0)
+                    {
+                        return BadRequest("Something was wrong");
+                    }
                     await _unitOfWork.Sizes.Delete<int>(item);
                 }
                 await _unitOfWork.Save();
