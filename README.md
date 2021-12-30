@@ -26,9 +26,15 @@ B1: git clone -b deploy https://github.com/Nguyen-Duc-Hoa/WatchWebsite_TLCN.git
 
 B2: Cấu hình sslPort là 44336 trong file launchSetting.json (nếu port khác 44336)
 
-B3: Run project
+B3: Run project 
+
+--> Hoàn thành run backend
 
 B4: Mở folder client
 
 B5: Mở Terminal -> npm install -> npm start
+
+--> Hoàn thành run frontend
+
+B6: Hoàn thành cài đặt và run. Có thể sử dụng.
 
