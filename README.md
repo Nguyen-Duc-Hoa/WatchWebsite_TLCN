@@ -21,9 +21,14 @@ Sử dụng thẻ:
 
 
 Hướng dẫn cài đặt
+
 B1: git clone -b deploy https://github.com/Nguyen-Duc-Hoa/WatchWebsite_TLCN.git
+
 B2: Cấu hình sslPort là 44336 trong file launchSetting.json (nếu port khác 44336)
+
 B3: Run project
+
 B4: Mở folder client
+
 B5: Mở Terminal -> npm install -> npm start
 
