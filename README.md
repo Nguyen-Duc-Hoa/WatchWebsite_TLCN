@@ -5,6 +5,8 @@ Nhóm sinh viên thực hiện (Hệ đại trà)
 - Nguyễn Đức Hòa - 18110290
 - Lê Trần Đức Huy - 18110292
 
+Sản phẩm: http://minimix-watch-shop.surge.sh/
+
 Yêu cầu:
 - Visual studio 2019
 - Visual studio code
