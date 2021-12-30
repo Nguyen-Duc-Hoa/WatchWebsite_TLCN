@@ -13,3 +13,6 @@ Sử dụng thẻ:
 - CVC: 123
 - Date: 12/30
 - Zip: 99501
+
+Để thêm hình ảnh cho Brand (thương hiệu) phải dùng file csv:
+- Đây là file csv do nhóm thu thập được: https://drive.google.com/drive/folders/1UXuNe4hWm0oYS1PhggzuI78_eLkVtTfP?usp=sharing
