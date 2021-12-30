@@ -5,8 +5,10 @@ Nhóm sinh viên thực hiện (Hệ đại trà)
 - Nguyễn Đức Hòa - 18110290
 - Lê Trần Đức Huy - 18110292
 
-Cách tải dự án:
-git clone -b deploy https://github.com/Nguyen-Duc-Hoa/WatchWebsite_TLCN.git
+Yêu cầu:
+- Visual studio 2019
+- Visual studio code
+- Npm, nodejs
 
 Sử dụng thẻ:
 - Số tài khoản: 4242 4242 4242 4242
@@ -16,3 +18,12 @@ Sử dụng thẻ:
 
 Để thêm hình ảnh cho Brand (thương hiệu) phải dùng file csv:
 - Đây là file csv do nhóm thu thập được: https://drive.google.com/drive/folders/1UXuNe4hWm0oYS1PhggzuI78_eLkVtTfP?usp=sharing
+
+
+Hướng dẫn cài đặt
+B1: git clone -b deploy https://github.com/Nguyen-Duc-Hoa/WatchWebsite_TLCN.git
+B2: Cấu hình sslPort là 44336 trong file launchSetting.json (nếu port khác 44336)
+B3: Run project
+B4: Mở folder client
+B5: Mở Terminal -> npm install -> npm start
+
