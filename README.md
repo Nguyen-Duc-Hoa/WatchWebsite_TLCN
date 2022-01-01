@@ -8,9 +8,10 @@ Nhóm sinh viên thực hiện (Hệ đại trà)
 Sản phẩm: http://minimix-watch-shop.surge.sh/
 
 Yêu cầu:
-- Visual studio 2019
-- Visual studio code
-- Npm, nodejs
+- Visual studio 2019 (đã cài đặt gói ASP.NET and web development)
+- Visual studio code 1.62.2
+- Npm 8.1.2
+- Nodejs 16.13.1
 
 Sử dụng thẻ:
 - Số tài khoản: 4242 4242 4242 4242
@@ -26,13 +27,13 @@ Hướng dẫn cài đặt
 
 B1: git clone -b deploy https://github.com/Nguyen-Duc-Hoa/WatchWebsite_TLCN.git
 
-B2: Cấu hình sslPort là 44336 trong file launchSetting.json (nếu port khác 44336)
+B2: Mở file WatchWebsite_TLCN.sln trong folder WatchWebsite_TLCN. Cấu hình sslPort là 44336 trong file launchSetting.json (nếu port khác 44336).
 
 B3: Run project 
 
 --> Hoàn thành run backend
 
-B4: Mở folder client
+B4: Mở folder client bằng Visual studio code
 
 B5: Mở Terminal -> npm install -> npm start
 
