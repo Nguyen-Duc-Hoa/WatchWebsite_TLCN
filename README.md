@@ -10,7 +10,7 @@ Sản phẩm: http://minimix-watch-shop.surge.sh/
 Yêu cầu:
 - Visual studio 2019
 - Visual studio code
-- Npm, nodejs
+- Npm 8.1.2, nodejs 16.13.1
 
 Sử dụng thẻ:
 - Số tài khoản: 4242 4242 4242 4242
