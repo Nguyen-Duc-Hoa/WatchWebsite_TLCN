@@ -21,6 +21,7 @@ Sử dụng thẻ:
 
 Để thêm hình ảnh cho Brand (thương hiệu) phải dùng file csv:
 - Đây là file csv do nhóm thu thập được: https://drive.google.com/drive/folders/1UXuNe4hWm0oYS1PhggzuI78_eLkVtTfP?usp=sharing
+- Để vào trang admin: /secretRoute/login 
 
 
 Hướng dẫn cài đặt
